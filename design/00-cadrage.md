@@ -1298,7 +1298,7 @@ Ensuite, et alors seulement, l'entretien appelle le générateur.
 | Un gabarit par rôle dans `Templates/` | `roles[].champs` et `roles[].corps` |
 | `Documentation/<axe>/taxonomie.md` — les vocabulaires, les arbres, les places vides pour les départages | `axes` |
 | `Documentation/.../tags.md` — l'en-tête et la règle, vocabulaire vide | `vocabulaires` |
-| Les deux validateurs, **branchés** sur `brain.yml** (pas copiés) | le kit |
+| Les deux validateurs, **branchés** sur `brain.yml` (pas copiés) | le kit |
 | Les quatre générateurs, idem | le kit |
 | Les trois skills, instanciés avec le vocabulaire du brain, table de propagation **dérivée** | `libelles`, `roles`, `skills` |
 | `CLAUDE.md` + le contexte de mode, avec la **règle d'identité git en tête** | `brain`, `git`, `roles[].protege` |
