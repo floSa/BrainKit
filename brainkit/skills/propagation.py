@@ -65,6 +65,14 @@ AUTOMATIQUE = "automatique"
 A_ECRIRE = "à écrire"
 
 
+# Le GENRE d une ligne. Il ne sert pas au rendu : il sert au CONTROLE, qui doit
+# savoir comment trouver les objets de la ligne dans un vault reel. Vocabulaire
+# ferme par le kit, parce que c est du code, pas une donnee.
+G_HUB, G_PARENTS, G_VOISIN = "hub", "parents", "voisin"
+G_PAIRS, G_RESUMES, G_RALLIEMENT, G_TRANSVERSE = (
+    "pairs", "resumes", "ralliement", "transverse")
+
+
 @dataclass
 class Ligne:
     """Une ligne du rayon. `origine` dit CE QUI, dans le manifeste, l a produite."""
@@ -74,12 +82,24 @@ class Ligne:
     trouve_par: str
     par: str
     origine: str
+    genre: str = G_VOISIN
     sans_objet_si: str = ""
     role: str | None = None          # le role vise, quand la ligne en vise un
 
     @property
     def toujours_un_objet(self) -> bool:
         return not self.sans_objet_si
+
+    @property
+    def a_ecrire(self) -> bool:
+        """La ligne demande-t-elle un travail HUMAIN ?
+
+        Les lignes generees sont deleguees : `generer --check` et
+        `completude_du_hub` les tiennent, et un controle qui exigerait qu on les
+        « touche » signalerait un faux defaut. Seules les lignes a ecrire
+        peuvent etre TUES.
+        """
+        return A_ECRIRE in self.par
 
 
 def _dossier_type(mo: Modele) -> str:
@@ -184,7 +204,7 @@ def derive(mo: Modele, rid: str | None = None) -> list[Ligne]:
 
     # --- 1. le hub du dossier ------------------------------------------- #
     if mo.role_hub:
-        pose(cible=f"le hub du dossier d'accueil — `<D>/<D>.md`",
+        pose(genre=G_HUB, cible=f"le hub du dossier d'accueil — `<D>/<D>.md`",
              trouve_par=f'`ls "$D"` : le dossier porte une page à son nom',
              par=f"{GENERE} (zone AUTO) — **le corps, lui, est à relire**",
              origine=f"un rôle `fonction: hub` est déclaré (`{mo.role_hub}`)",
@@ -200,7 +220,7 @@ def derive(mo: Modele, rid: str | None = None) -> list[Ligne]:
             sans = ("toujours, dans ce brain : l'arbre est plat — aucune "
                     "sous-valeur n'est déclarée, donc aucun dossier n'a de "
                     "parent. La ligne existe pour le jour où une le sera")
-        pose(cible="les hubs parents, jusqu'à la racine",
+        pose(genre=G_PARENTS, cible="les hubs parents, jusqu'à la racine",
              trouve_par='remontée de chemin : chaque niveau de `$D` porte son hub',
              par=f"{GENERE} (zone AUTO) — **le corps, lui, est à relire**",
              origine=(f"`axes.rangement` : `niveaux: "
@@ -229,7 +249,7 @@ def derive(mo: Modele, rid: str | None = None) -> list[Ligne]:
     champ = champ_resume(mo)
     sections = sections_de_reinjection(mo)
     if champ and sections:
-        pose(cible=f"les résumés réinjectés — le `{champ}:` recopié chez les "
+        pose(genre=G_RESUMES, cible=f"les résumés réinjectés — le `{champ}:` recopié chez les "
                    f"pages citées",
              trouve_par=(f"les cibles des champs à réciprocité, dans "
                          + " · ".join(f"« {s} »" for s in sections)),
@@ -244,7 +264,7 @@ def derive(mo: Modele, rid: str | None = None) -> list[Ligne]:
         if not ral.get("dossier"):
             continue
         lien = str(ral.get("lien_retour") or "Voir aussi")
-        pose(cible=(f"le hub de ralliement `{ral['dossier']}/` — **hors du "
+        pose(genre=G_RALLIEMENT, cible=(f"le hub de ralliement `{ral['dossier']}/` — **hors du "
                     f"dossier**, à la racine"),
              trouve_par=(f"il ne se lit pas dans `ls \"$D\"` : il vit à la "
                          f"racine et réunit tous les "
@@ -261,7 +281,7 @@ def derive(mo: Modele, rid: str | None = None) -> list[Ligne]:
     # --- les hubs transverses — UNE ligne par axe ------------------------ #
     for t in mo.transverses:
         champ_t = str(t["champ"])
-        pose(cible=f"les hubs de `{champ_t}:` — `{t['dossier']}/`",
+        pose(genre=G_TRANSVERSE, cible=f"les hubs de `{champ_t}:` — `{t['dossier']}/`",
              trouve_par=f"les valeurs de `{champ_t}:` que la page porte",
              par=f"{GENERE} — le hub d'une valeur naît quand une page la porte",
              origine=f"une entrée de `axes.transverses` (`{champ_t}`)",
@@ -278,6 +298,7 @@ def _ligne_de_voisin(mo: Modele, r: str) -> dict:
     ou = (f'`ls "$D"/\'{prefixe}\'*`' if prefixe
           else f'`ls "$D"/*.md`, puis lire `{champ_du_role(mo)}:` dans chaque frontmatter')
     commun = {
+        "genre": G_VOISIN,
         "cible": f"la {_motif_de_role(mo, r)} du dossier — `{champ_du_role(mo)}: {r}`",
         "trouve_par": ou,
         "origine": f"`roles[{r}]` est `range_par: axe` et porte l'axe de rangement",
@@ -330,6 +351,7 @@ def _ligne_des_pairs(mo: Modele, rid: str) -> dict:
              "aucun champ à réciprocité n'est autorisé sur ce rôle")
 
     return {
+        "genre": G_PAIRS,
         "cible": f"les pairs — les autres `{champ_du_role(mo)}: {rid}` du dossier",
         "trouve_par": f'`ls "$D"/*.md`, puis lire `{champ_du_role(mo)}:` dans chaque frontmatter',
         "par": (f"{A_ECRIRE}, **réciprocité obligatoire** : " + recip
