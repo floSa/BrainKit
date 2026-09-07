@@ -2201,10 +2201,10 @@ agent:
 # tout `.md` de la racine pour son test d atteignabilite, sans qu aucun champ ne
 # dise lesquels aiguillent.
 #
-# TRANSCRIPTION, pas prescription : le vault reel porte huit `.md` a sa racine
+# TRANSCRIPTION, pas prescription : le vault reel porte NEUF `.md` a sa racine
 # (CHANGELOG, CLAUDE.md, CLAUDE-build.md, CLAUDE-project.md, CONTRIBUTING,
-# Home, INSTALL, Inbox, LICENSE, README). Deux seulement sont des PAGES au sens
-# du vault, et une seule aiguille. Les autres sont des documents de depot — ils
+# Home, INSTALL, Inbox, README) plus un LICENSE sans extension. Deux seulement
+# sont des PAGES au sens du vault, et une seule aiguille. Les autres sont des documents de depot — ils
 # ne citent aucun hub, donc `page_atteignable` ne les lit pour rien, et le semis
 # n a aucune raison de les poser.
 # ==============================================================================
