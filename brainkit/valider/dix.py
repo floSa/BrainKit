@@ -63,8 +63,13 @@ def reciprocite(ctx: Contexte, r: Rapport) -> None:
         r.etat(rid, constat.NON_APPLICABLE)
         return
 
+    vues_pages, couples = 0, 0
     for p in ctx.lisibles:
         nom = str(p.fm.get(ctx.champ_identite) or p.chemin)
+        porte = sum(len(vault.cibles_du_champ(p.fm, c)) for c in champs)
+        if porte:
+            vues_pages += 1
+            couples += porte
         for champ in champs:
             rec = declares.get(champ) or {}
             mode = rec.get("mode", "symetrique")
@@ -84,6 +89,8 @@ def reciprocite(ctx: Contexte, r: Rapport) -> None:
                              f"`{champ}:` cite `{cible}` {mot} — manque `{nom}` "
                              f"dans son `{oppose}:`",
                              p.chemin, cle=champ, codes=codes)
+    r.population(rid, vues_pages, objets=couples,
+                 objet="couple cité dans un champ à réciprocité")
 
 
 # --------------------------------------------------------------------------- #
@@ -117,7 +124,7 @@ def chemin_categorie(ctx: Contexte, r: Rapport) -> None:
         r.ajoute(rid, sev, f"{message} — le dossier n'est pas dérivable",
                  cle="promotion", codes=codes)
 
-    sans_valeur = 0
+    sans_valeur, confrontees = 0, 0
     for p in ctx.lisibles:
         if p.role not in mo.roles or not mo.porte_l_axe_de_rangement(p.role):
             continue
@@ -125,6 +132,7 @@ def chemin_categorie(ctx: Contexte, r: Rapport) -> None:
         if not vals:
             sans_valeur += 1
             continue
+        confrontees += 1
         if len(vals) > 1 and mo.exclusif:
             r.ajoute(rid, sev,
                      f"`{mo.champ_rangement}:` porte {len(vals)} valeurs alors que "
@@ -167,6 +175,7 @@ def chemin_categorie(ctx: Contexte, r: Rapport) -> None:
             r.ajoute(rid, sev,
                      f"aucune de ses {len(retenues)} valeurs ne mène à son dossier "
                      f"— candidats : {sorted(set(attendus))}", p.chemin, codes=codes)
+    r.population(rid, confrontees)
     if sans_valeur:
         r.note(f"{rid} : {sans_valeur} page(s) sans valeur d'axe de rangement — "
                f"écartées de la dérivation, jamais en silence")
@@ -191,6 +200,7 @@ def completude_du_hub(ctx: Contexte, r: Rapport) -> None:
     codes = tuple(mo.codes(rid))
     roles = mo.regle(rid).get("roles") or [rid_ for rid_ in mo.roles
                                            if mo.apparait_dans_le_hub(rid_)]
+    r.population(rid, sum(len(ctx.pages_du_role(x)) for x in roles))
     for rid_role in roles:
         for p in ctx.pages_du_role(rid_role):
             hub = chemins.hub_du_dossier(p.dossier)
@@ -222,14 +232,22 @@ def voisinage_declare(ctx: Contexte, r: Rapport) -> None:
         return
     sev = mo.severite(rid)
     codes = tuple(mo.codes(rid))
+    # La population est le nombre de pages ou une violation etait POSSIBLE :
+    # une page seule de son role dans son dossier n a pas de voisinage a
+    # declarer, et la compter gonflerait le denominateur d une regle qui ne l a
+    # jamais regardee.
+    entourees = 0
     for rid_role in mo.roles_qui_portent(champ):
         for p in ctx.pages_du_role(rid_role):
             voisins = ctx.pages_par_dossier_et_role[(p.dossier, rid_role)] - 1
+            if voisins > 0:
+                entourees += 1
             if not p.fm.get(champ) and voisins > 0:
                 r.ajoute(rid, sev,
                          f"`{champ}:` vide alors que le dossier porte {voisins} "
                          f"autre(s) page(s) du même rôle — voisinage non déclaré",
                          p.chemin, codes=codes)
+    r.population(rid, entourees)
 
 
 # --------------------------------------------------------------------------- #
@@ -260,12 +278,23 @@ def redirection_sourcee(ctx: Contexte, r: Rapport) -> None:
     codes = tuple(mo.codes(rid))
     re_marqueur = re.compile(marqueur)
 
+    # Cette regle ne mesure pas des pages : elle mesure des CELLULES. Les deux
+    # comptes sont declares, parce que « 1 violation sur 1 388 » et « 1
+    # violation sur 337 » ne disent pas la meme chose, et que le plancher de
+    # durcissement, lui, se lit en pages.
+    porteuses, cellules = 0, 0
     for rid_role in sorted(mo.roles):
         section = mo.section_de_genre(rid_role, GENRE_DECISION)
         if section is None:
             continue
         positif = section.get("colonne_positive") or ""
         for p in ctx.pages_du_role(rid_role):
+            vues_ici = sum(len(vault.cellules_de_colonne(p.sections.get(t),
+                                                         positif, colonne))
+                           for t in titres)
+            if vues_ici:
+                porteuses += 1
+                cellules += vues_ici
             moi = {str(p.fm.get(ctx.champ_identite) or "").lower()}
             if ctx.champ_alias:
                 moi |= {str(a).lower() for a in p.fm.get(ctx.champ_alias) or []}
@@ -288,6 +317,8 @@ def redirection_sourcee(ctx: Contexte, r: Rapport) -> None:
                                      f"« {cellule[:80]} »",
                                      p.chemin, codes=codes)
                             break
+    r.population(rid, porteuses, objets=cellules,
+                 objet=f"cellule de la colonne « {colonne} »")
 
 
 # --------------------------------------------------------------------------- #
@@ -313,9 +344,11 @@ def reinjection_du_resume(ctx: Contexte, r: Rapport) -> None:
     codes = tuple(mo.codes(rid))
     titres_vises = mo.regle(rid).get("sections")
 
+    porteuses, puces = 0, 0
     for p in ctx.lisibles:
         if p.role not in mo.roles:
             continue
+        vues_ici = 0
         for titre, champ in mo.sections_adossees(p.role):
             if titres_vises and titre not in titres_vises:
                 continue
@@ -330,12 +363,18 @@ def reinjection_du_resume(ctx: Contexte, r: Rapport) -> None:
                 cible = (m.group(2) or m.group(1)).split("/")[-1]
                 if cible not in cibles:
                     continue                        # puce hors du champ — exemptee
+                vues_ici += 1
                 attendu = vault.normalise_resume(ctx.resume(cible))
                 if attendu and not vault.normalise_resume(m.group(3)).startswith(attendu):
                     r.ajoute(rid, sev,
                              f"la puce de `{cible}` en `{titre}` ne commence pas "
                              f"par son `{champ_resume}:` courant « {attendu} »",
                              p.chemin, cle=titre, codes=codes)
+        if vues_ici:
+            porteuses += 1
+            puces += vues_ici
+    r.population(rid, porteuses, objets=puces,
+                 objet="puce adossée à une cible du champ")
 
 
 # --------------------------------------------------------------------------- #
@@ -365,9 +404,16 @@ def etiquettes_fermees(ctx: Contexte, r: Rapport) -> None:
             permises = set(section.get("permises") or [])
             obligatoires = set(section.get("obligatoires") or [])
             sev = mo.severite(rid, titre)
+            # La severite se lit par section, donc la population aussi : deux
+            # sections du meme genre n ont ni le meme denominateur ni le meme
+            # verdict, et melanger les deux rendrait la mesure inutilisable.
+            porteuses, etiq = 0, 0
             for p in ctx.pages_du_role(rid_role):
                 sec = p.sections.get(titre)
                 vues = vault.etiquettes(sec)
+                if sec is not None:
+                    porteuses += 1
+                    etiq += len(vues)
                 for lab in vues:
                     if lab not in permises:
                         r.ajoute(rid, sev,
@@ -379,6 +425,8 @@ def etiquettes_fermees(ctx: Contexte, r: Rapport) -> None:
                     r.ajoute(rid, sev,
                              f"`{titre}` sans l'étiquette {sorted(manque)}",
                              p.chemin, cle=titre, codes=codes)
+            r.population(rid, porteuses, cle=titre, objets=etiq,
+                         objet=f"étiquette lue en `{titre}`")
 
 
 # --------------------------------------------------------------------------- #
@@ -403,6 +451,9 @@ def citation_unique(ctx: Contexte, r: Rapport) -> None:
         return
     sev = mo.severite(rid)
     codes = tuple(mo.codes(rid))
+    # Une page qui ne porte qu UNE des sections visees ne peut pas citer deux
+    # fois : la population est celle des pages qui en portent au moins DEUX.
+    exposees, entrees = 0, 0
     for rid_role in sorted(mo.roles):
         titres = [mo.titre(s) for s in mo.corps(rid_role)
                   if s.get("genre") == GENRE_LISTE and mo.titre(s) in titres_vises]
@@ -410,17 +461,23 @@ def citation_unique(ctx: Contexte, r: Rapport) -> None:
             continue
         for p in ctx.pages_du_role(rid_role):
             listee: dict[str, set[str]] = collections.defaultdict(set)
+            portees = 0
             for titre in titres:
                 sec = p.sections.get(titre)
                 if sec is None:
                     continue
+                portees += 1
                 for cible in vault.entrees_de_puces(sec):
                     listee[cible].add(titre)
+            if portees > 1:
+                exposees += 1
+                entrees += sum(len(ou) for ou in listee.values())
             for cible, ou in sorted(listee.items()):
                 if len(ou) > 1:
                     r.ajoute(rid, sev,
                              f"`{cible}` listé dans {sorted(ou)} — une cible ne se "
                              f"liste que dans une section", p.chemin, codes=codes)
+    r.population(rid, exposees, objets=entrees, objet="entrée de puce")
 
 
 # --------------------------------------------------------------------------- #
@@ -495,6 +552,10 @@ def anti_repetition(ctx: Contexte, r: Rapport) -> None:
         r.etat(rid, constat.NON_APPLICABLE)
         return
 
+    # La population n est PAS « les pages qui portent la section » : c est
+    # celles dont au moins une valeur de bandeau a un motif borne declare. Une
+    # page dont la licence n est dans aucune table n a jamais ete regardee.
+    exposees, controles = 0, 0
     for rid_role in porte_par:
         section = mo.section_de_genre(rid_role, GENRE_PROSE)
         if section is None:
@@ -502,13 +563,22 @@ def anti_repetition(ctx: Contexte, r: Rapport) -> None:
         titre = mo.titre(section)
         for p in ctx.pages_du_role(rid_role):
             texte = p.sections.get(titre) or ""
+            vus_ici = 0
             for _cle, champ, table in groupes:
                 valeur = p.fm.get(champ)
                 motif = table.get(valeur) if isinstance(valeur, str) else None
-                if motif and re.search(motif, texte, re.I):
+                if motif is None:
+                    continue
+                vus_ici += 1
+                if re.search(motif, texte, re.I):
                     r.ajoute(rid, sev,
                              f"`{titre}` redit peut-être `{champ}: {valeur}`, déjà "
                              f"au bandeau — à relire", p.chemin, codes=codes)
+            if vus_ici:
+                exposees += 1
+                controles += vus_ici
+    r.population(rid, exposees, objets=controles,
+                 objet="valeur de bandeau à motif borné déclaré")
 
 
 IMPLEMENTEES = {

@@ -149,6 +149,20 @@ def couverture_des_vues(ctx: Contexte, r: Rapport) -> None:
         v = chemins.valeur_dominante(p.fm, p.dossier, mo)
         if v:
             compte[v] += 1
+    # Les quatre sous-constats n ont PAS le meme denominateur, et les melanger
+    # rendrait chacun illisible : (a) se mesure en valeurs d axe assez peuplees,
+    # (b) et (d) en fichiers de vue, (e) en pages de l unite.
+    r.population(rid, len(ctx.pages_du_role(rid_unite)), cle="e")
+    r.population(rid, len(membres), cle="b", objets=len(membres),
+                 objet="fichier de vue")
+    r.population(rid, len(membres), cle="d", objets=len(membres),
+                 objet="fichier de vue")
+    r.population(rid, len(membres), cle="c", objets=len(membres),
+                 objet="fichier de vue")
+    assez_peuplees = sum(1 for _v, n in compte.items() if n >= seuil_valeur)
+    r.population(rid, len(ctx.pages_du_role(rid_unite)), cle="a",
+                 objets=assez_peuplees,
+                 objet=f"valeur d'axe à au moins {seuil_valeur} membres")
     for valeur, n in sorted(compte.items()):
         if n < seuil_valeur:
             continue

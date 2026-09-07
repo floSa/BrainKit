@@ -31,6 +31,7 @@ def frontmatter_lisible(ctx: Contexte, r: Rapport) -> None:
     """
     rid = "frontmatter_lisible"
     sev = ctx.mo.severite(rid)
+    r.population(rid, len(ctx.pages))
     for p in ctx.pages:
         if p.illisible:
             r.ajoute(rid, sev, f"frontmatter illisible — {p.illisible}",
@@ -54,6 +55,7 @@ def gabarit_par_role(ctx: Contexte, r: Rapport) -> None:
     rid = "gabarit_par_role"
     sev = ctx.mo.severite(rid)
     mo = ctx.mo
+    r.population(rid, len(ctx.lisibles))
     for p in ctx.lisibles:
         if p.role not in mo.roles:
             r.ajoute(rid, sev,
@@ -119,9 +121,11 @@ def vocabulaire_ferme(ctx: Contexte, r: Rapport) -> None:
                      f"vocabulaire fermé `{nom}` illisible — {voc.illisible}",
                      codes=("R4",))
 
+    enumerees, valeurs_lues = 0, 0
     for p in ctx.lisibles:
         if p.role not in mo.roles:
             continue
+        vues_ici = 0
         for champ in sorted(map(str, p.fm.keys())):
             d = mo.champ(champ)
             typ = d.get("type")
@@ -132,6 +136,7 @@ def vocabulaire_ferme(ctx: Contexte, r: Rapport) -> None:
             brut = p.fm.get(champ)
             if brut is None:
                 continue
+            vues_ici += len(vault.valeurs(brut)) or 1
             if typ == "liste_enum" and not isinstance(brut, list):
                 r.ajoute(rid, sev,
                          f"`{champ}: {brut}` doit être une liste, pas un scalaire",
@@ -149,11 +154,18 @@ def vocabulaire_ferme(ctx: Contexte, r: Rapport) -> None:
                     r.ajoute(rid, sev,
                              f"`{champ}: {v}` hors du vocabulaire déclaré",
                              p.chemin, codes=("R4",))
+        if vues_ici:
+            enumerees += 1
+            valeurs_lues += vues_ici
+    r.population(rid, enumerees, objets=valeurs_lues,
+                 objet="valeur d'un champ énuméré")
 
     # --- R14b : l ABSENCE d une valeur d axe de nature -------------------- #
     if mo.champ_nature and mo.nature_portee_par:
         sev_vide = (constat.AVERTISSEMENT if mo.nature_vide_autorise
                     else ctx.mo.severite(rid))
+        r.population(rid, sum(len(ctx.pages_du_role(x))
+                              for x in mo.nature_portee_par), cle="axe_vide")
         for rid_role in mo.nature_portee_par:
             for p in ctx.pages_du_role(rid_role):
                 if mo.champ_nature not in p.fm:
@@ -175,6 +187,8 @@ def nom_egal_fichier(ctx: Contexte, r: Rapport) -> None:
         r.etat(rid, constat.NON_APPLICABLE)
         return
     sev = ctx.mo.severite(rid)
+    r.population(rid, sum(1 for p in ctx.lisibles
+                          if p.fm.get(ctx.champ_identite)))
     for p in ctx.lisibles:
         nom = p.fm.get(ctx.champ_identite)
         if not nom:
@@ -197,7 +211,12 @@ def liens_resolus(ctx: Contexte, r: Rapport) -> None:
     """
     rid = "liens_resolus"
     sev = ctx.mo.severite(rid)
+    liantes, liens = 0, 0
     for p in ctx.lisibles:
+        n_ici = len(p.liens_du_corps()) + len(p.liens_du_frontmatter())
+        if n_ici:
+            liantes += 1
+            liens += n_ici
         for t in p.liens_du_corps():
             if not vault.cible_resolue(t, ctx.noms_resolvables, ctx.racine,
                                        ctx.extensions):
@@ -207,25 +226,60 @@ def liens_resolus(ctx: Contexte, r: Rapport) -> None:
                                        ctx.extensions):
                 r.ajoute(rid, sev, f"`{cle}:` lien mort [[{t}]]", p.chemin,
                          codes=("R2",))
+    r.population(rid, liantes, objets=liens, objet="wikilink")
 
 
 # --------------------------------------------------------------------------- #
+def sources_d_aiguillage(ctx: Contexte) -> tuple[list, str]:
+    """Les fichiers de la racine qui AIGUILLENT. Rend (chemins, comment on le sait).
+
+    LOT 8 — remontee 1 du lot 5, tenue ouverte par la remontee 5 du lot 6. Le
+    bloc `racine:` existe depuis le lot 5 ; aucune regle ne le lisait, et
+    `page_atteignable` prenait `racine.glob("*.md")` : TOUT `.md` pose a la
+    racine elargissait silencieusement l atteignabilite de tous les hubs de
+    premier niveau. Un brouillon suffisait.
+
+    Le perimetre se LIT maintenant dans `racine.pages[].aiguille`. Le repli sur
+    le glob reste, et il n est pas une precaution de confort : un manifeste
+    ecrit avant le lot 5 n a pas le bloc, et la regle doit y garder le
+    comportement qu elle avait — un durcissement silencieux sur un manifeste
+    muet serait exactement ce que le lot 8 interdit.
+
+    Ce que le branchement a COUTE, mesure avant de le poser : sur DevBrain, 9
+    `.md` a la racine dont UN seul aiguille (`Home.md`) — et ZERO page perd son
+    atteignabilite quand les huit autres cessent de compter. Sur HistoBrain, 4
+    fichiers a la racine, un seul aiguille, et les 13 constats sont les MEMES
+    dans les deux perimetres. Le durcissement etait gratuit, et c est parce
+    qu il l etait qu il est pose.
+    """
+    bloc = ctx.mo.m.get("racine") or {}
+    declarees = bloc.get("pages")
+    if not declarees:
+        return sorted(ctx.racine.glob("*.md")), "tout `.md` de la racine (aucun `racine.pages[]` déclaré)"
+    chemins_ = [ctx.racine / e["fichier"] for e in declarees if e.get("aiguille")]
+    return ([c for c in chemins_ if c.is_file()],
+            "les pages `racine.pages[].aiguille: true` du manifeste")
+
+
 def page_atteignable(ctx: Contexte, r: Rapport) -> None:
     """R7 — toute page est atteignable depuis un hub.
 
     Les pages d aiguillage sont les pages du role `fonction: hub`, PLUS les
-    `.md` de la RACINE du vault. La racine n est pas un dossier de pages — le
-    perimetre s enumere par la negative — et c est la que le vault pose sa porte
-    d entree : ce sont les hubs de premier niveau qui n ont pas de parent, et
-    seule la porte d entree les cite.
+    fichiers de la racine que le manifeste DECLARE aiguilleurs. La racine n est
+    pas un dossier de pages — le perimetre s enumere par la negative — et c est
+    la que le vault pose sa porte d entree : ce sont les hubs de premier niveau
+    qui n ont pas de parent, et seule la porte d entree les cite.
     """
     rid = "page_atteignable"
     sev = ctx.mo.severite(rid)
     qualifies: set[str] = set()
     nus: set[str] = set()
     textes = [p.corps for p in ctx.lisibles if p.role == ctx.mo.role_hub]
-    for md in sorted(ctx.racine.glob("*.md")):
+    sources, comment = sources_d_aiguillage(ctx)
+    for md in sources:
         textes.append(md.read_text(encoding="utf-8"))
+    r.note(f"{rid} : périmètre d'aiguillage — {comment} ({len(sources)} fichier(s))")
+    r.population(rid, len(ctx.lisibles))
     for txt in textes:
         for t in vault.LIEN_RE.findall(txt):
             t = t.strip().split("#")[0]
@@ -245,10 +299,14 @@ def hub_par_niveau(ctx: Contexte, r: Rapport) -> None:
     dossiers = {p.dossier for p in ctx.lisibles
                 if p.role in mo.roles and mo.porte_l_axe_de_rangement(p.role)}
     manquants: set[str] = set()
+    niveaux_vus: set[str] = set()
     for d in dossiers:
         for niveau in chemins.niveaux(d):
+            niveaux_vus.add(niveau)
             if niveau not in ctx.hubs:
                 manquants.add(niveau)
+    r.population(rid, len(dossiers), objets=len(niveaux_vus),
+                 objet="niveau de chemin à couvrir")
     for niveau in sorted(manquants):
         r.ajoute(rid, sev,
                  f"`{niveau}/` : aucune page `{mo.role_hub}` à son nom",
@@ -284,6 +342,9 @@ def unicite_du_nom_de_fichier(ctx: Contexte, r: Rapport) -> None:
             if parts and parts[0] in vault.HORS_VAULT:
                 continue
             lots[ext][f.stem.lower()].append(f.relative_to(ctx.racine).as_posix())
+    r.population(rid, len(ctx.pages),
+                 objets=sum(len(x) for x in lots.values()),
+                 objet="nom de fichier, par extension")
     for extension, par_nom in sorted(lots.items()):
         for nom, lot in sorted(par_nom.items()):
             if len(lot) > 1:
@@ -298,6 +359,9 @@ def taille_avertissement(ctx: Contexte, r: Rapport) -> None:
     """Une page au-dela de `roles[].taille_avertissement` lignes suggere une scission."""
     rid = "taille_avertissement"
     sev = ctx.mo.severite(rid)
+    r.population(rid, sum(1 for p in ctx.lisibles
+                          if (ctx.mo.roles.get(p.role) or {}).get(
+                              "taille_avertissement")))
     for p in ctx.lisibles:
         limite = (ctx.mo.roles.get(p.role) or {}).get("taille_avertissement")
         if not limite:
@@ -320,6 +384,10 @@ def collision_alias(ctx: Contexte, r: Rapport) -> None:
         r.etat(rid, constat.NON_APPLICABLE)
         return
     sev = ctx.mo.severite(rid)
+    r.population(rid, sum(1 for p in ctx.lisibles
+                          if p.fm.get(ctx.champ_alias)),
+                 objets=sum(len(p.fm.get(ctx.champ_alias) or [])
+                            for p in ctx.lisibles), objet="alias déclaré")
     noms: dict[tuple, str] = {}
     for p in ctx.lisibles:
         nom = p.fm.get(ctx.champ_identite)
@@ -396,19 +464,27 @@ def couverture_de_section(ctx: Contexte, r: Rapport) -> None:
     """
     rid = "couverture_de_section"
     sev = ctx.mo.severite(rid)
+    adossees, promesses = 0, 0
     for p in ctx.lisibles:
         if p.role not in ctx.mo.roles:
             continue
+        vues_ici = 0
         for titre, champ in ctx.mo.sections_adossees(p.role):
             cibles = vault.cibles_du_champ(p.fm, champ)
             if not cibles:
                 continue
+            vues_ici += len(cibles)
             en_section = vault.cibles_de_la_section(p.sections.get(titre) or "")
             manquants = sorted(cibles - en_section)
             if manquants:
                 r.ajoute(rid, sev,
                          f"cible(s) de `{champ}:` absente(s) de la section "
                          f"`{titre}` {manquants}", p.chemin, codes=("R11", "R22"))
+        if vues_ici:
+            adossees += 1
+            promesses += vues_ici
+    r.population(rid, adossees, objets=promesses,
+                 objet="cible déclarée qu'une section promet de lister")
 
 
 # --------------------------------------------------------------------------- #
@@ -427,6 +503,7 @@ def lien_vers_une_page_a_comprendre(ctx: Contexte, r: Rapport) -> None:
         r.etat(rid, constat.NON_APPLICABLE)
         return
     sev = ctx.mo.severite(rid)
+    r.population(rid, len(ctx.pages_du_role(rid_unite)))
     for p in ctx.pages_du_role(rid_unite):
         cibles = {t.split("|")[0].split("/")[-1].strip().lower()
                   for t in p.liens_du_corps()}
@@ -464,6 +541,10 @@ def paire_inverse_bien_declaree(ctx: Contexte, r: Rapport) -> None:
             r.ajoute(rid, sev,
                      f"`{nom}` déclare l'inverse `{cible}`, qui ne déclare pas "
                      f"`{nom}` en retour")
+    inverses = sum(1 for rec in mo.champs_a_reciprocite().values()
+                   if rec.get("mode") == "inverse")
+    r.population(rid, 0, objets=inverses, objet="champ `reciproque: inverse`",
+                 sur_le_manifeste=True)
     if not trouve:
         r.etat(rid, constat.NON_APPLICABLE)
 
