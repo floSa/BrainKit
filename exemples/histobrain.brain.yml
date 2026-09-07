@@ -265,13 +265,29 @@ roles:
         genre: auto
         balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
         perimetre: dossier
+        # `depuis:` est la lecture MACHINE de `source:`, ajoutee au lot 4 pour
+        # le DevBrain et OUBLIEE ici — corrige au lot 5. Sans elle, le
+        # generateur ignore chaque sous-section et rend « (dossier vide) » quel
+        # que soit le contenu du dossier : le defaut ne se voit pas sur un brain
+        # vierge (le lot 5 est vert quand meme), il se verrait a la premiere
+        # page capturee, au lot 7.
         sections:
-          - { titre: "Sous-périodes",  source: "sous-dossiers portant un hub", separateur: " · " }
-          - { titre: "Notions",        source: "role: notion du dossier" }
-          - { titre: "Sources",        source: "role: source du dossier" }
-          - { titre: "Controverses",   source: "role: controverse du dossier" }
-          - { titre: "Méthodes",       source: "role: methode du dossier" }
-          - { titre: "Chronologies",   source: "role: chronologie du dossier" }
+          - { titre: "Sous-périodes",  source: "sous-dossiers portant un hub",
+              depuis: sous_dossiers, separateur: " · " }
+          - { titre: "Notions",        source: "role: notion du dossier",
+              depuis: role, role: notion }
+          - { titre: "Sources",        source: "role: source du dossier",
+              depuis: role, role: source }
+          - { titre: "Controverses",   source: "role: controverse du dossier",
+              depuis: role, role: controverse }
+          - { titre: "Méthodes",       source: "role: methode du dossier",
+              depuis: role, role: methode }
+          - { titre: "Chronologies",   source: "role: chronologie du dossier",
+              depuis: role, role: chronologie }
+              # `depuis: role` et non `depuis: vues` : le DevBrain lit une
+              # EXTENSION de fichier ici (remontee 2 du lot 4, latente), et un
+              # brain neuf n a aucune raison d heriter d une anomalie. C est la
+              # PAGE `role: chronologie` qui se liste, pas son `.base`.
     motif: >
       Les sous-titres de la zone AUTO SE DERIVENT du manifeste : ils sont la liste
       des roles au pluriel. Rien a ecrire — c est exactement ce que B2 de l
@@ -955,6 +971,16 @@ vocabulaires:
   tags:
     fichier: "Documentation/general/tags.md"
     mode: ferme
+    lecture: "colonne 1 des tableaux, en backticks"
+    motif_lecture: >
+      AJOUTE AU LOT 5. Le champ manquait, et le manque n etait pas theorique :
+      `vocabulaires.py` ne sait lire QU UNE forme, et un vocabulaire `ferme`
+      dont il ne connait pas la lecture est declare ILLISIBLE — soit une
+      violation DURE de `vocabulaire_ferme` des la premiere validation de
+      l instance semee. Le contrat du lot 1 ne l imposait pas parce qu un
+      vocabulaire `libre` n en a pas besoin ; le semis, lui, ECRIT le fichier,
+      et un fichier ecrit dans une forme que le moteur ne relit pas est pire
+      qu un fichier absent.
     regle: >
       Le skill pioche, il n invente JAMAIS. Un tag manquant se propose, s ajoute
       ici, puis s utilise.
