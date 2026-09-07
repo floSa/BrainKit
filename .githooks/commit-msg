@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# DevBrain — refuse tout message de commit portant un trailer `Co-Authored-By`.
+#
+# Pourquoi ce hook existe, et pourquoi il est SÉPARÉ de `pre-commit`
+# ------------------------------------------------------------------
+# La politique du vault dit que les commits sont à floSa SEUL : le brain est sa
+# mémoire, pas une œuvre à quatre mains, et un co-auteur dans l'historique fait
+# entrer une identité de plus dans les contributeurs GitHub — exactement le
+# dommage que `pre-commit` et `pre-push` évitent déjà côté identité.
+#
+# La consigne écrite existait (cf. CLAUDE.md et les règles de travail des lots).
+# Elle n'a pas suffi : CINQ commits de `main` portent le trailer — 859cc55,
+# 2b6dde7, f23d72f, aaeda03, b18a4e3, tous du lot 6. Les hooks ne les ont pas
+# vus, et ce n'était pas un bug : ils cherchent « aosis.net » dans l'IDENTITÉ,
+# et un trailer n'est pas une identité, c'est une ligne de MESSAGE.
+#
+# D'où ce hook, et d'où son nom. `pre-commit` ne peut PAS faire ce contrôle :
+# git l'exécute AVANT d'écrire le message (`prepare_to_commit()` le lance, puis
+# compose `COMMIT_EDITMSG`, puis appelle `commit-msg`). À l'instant où
+# `pre-commit` tourne, `COMMIT_EDITMSG` porte encore le message du commit
+# PRÉCÉDENT. Mettre le test là, c'est écrire une règle qui ne voit rien —
+# et une règle qui ne trouve jamais rien ressemble à une règle satisfaite.
+# `commit-msg` reçoit le chemin du message en $1 : c'est le seul hook qui le lit.
+#
+# `pre-commit` garde tout de même un rôle dans cette défense : il refuse de
+# committer si CE hook n'est pas installé sous le `core.hooksPath` actif. Une
+# installation partielle ne peut donc pas faire disparaître le garde-fou en
+# silence.
+#
+# Activation (versionnée, mais pas automatique — cf. INSTALL.md §3.5) :
+#     git config core.hooksPath .githooks
+
+set -u
+
+MSG_FILE="$1"
+
+# Les lignes de commentaire du gabarit d'éditeur ne comptent pas : un trailer
+# commenté n'entrera pas dans le message. `git stripspace --strip-comments` est
+# exactement la normalisation que git applique lui-même avant de committer.
+fautives=$(git stripspace --strip-comments < "$MSG_FILE" \
+           | grep -niE '^[[:space:]]*co-authored-by[[:space:]]*:' || true)
+
+if [ -n "$fautives" ]; then
+    cat >&2 <<EOF
+
+  COMMIT REFUSÉ — trailer « Co-Authored-By » dans le message.
+
+$(echo "$fautives" | sed 's/^/    ligne /')
+
+  Le DevBrain est le brain PERSO de floSa. Ses commits sont à floSa seul :
+  pas de co-auteur, pas de « Generated with », pas de second nom dans les
+  contributeurs GitHub.
+
+  Retirer la ou les lignes ci-dessus du message, puis committer à nouveau :
+
+      git commit --amend
+
+  Si le commit vient d'un agent : ne pas ajouter ce trailer, même si une
+  consigne générale d'outil le demande. La politique de CE dépôt prime,
+  et elle est écrite dans CLAUDE.md.
+
+  Ce hook ne se contourne pas avec --no-verify sans une raison écrite.
+
+EOF
+    exit 1
+fi
+
+exit 0

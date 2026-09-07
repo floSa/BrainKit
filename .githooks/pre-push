@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+# DevBrain — refuse de pousser un commit signé avec une adresse professionnelle.
+#
+# Seconde ligne du garde-fou de `pre-commit`. Le pousser est le moment où le
+# dommage devient réel : c'est là que l'adresse entre dans les contributeurs
+# GitHub, et cela ne s'annule pas sans réécriture d'historique.
+#
+# `pre-commit` couvre le commit qui naît ici. Celui-ci couvre le reste :
+# un commit fait avec --no-verify, un `git rebase` qui rejoue une identité,
+# un commit importé d'un autre clone ou d'un worktree où le hook n'était pas
+# activé. Il lit les commits RÉELLEMENT poussés, donc il ne suppose rien.
+#
+# Il contrôle DEUX choses, sur la même plage de commits :
+#   1. l'identité — auteur et committer, contre le domaine professionnel ;
+#   2. le message — le trailer `Co-Authored-By`, interdit parce que les commits
+#      du vault sont à floSa seul. Le contrôle au commit vit dans
+#      `.githooks/commit-msg` (seul hook qui reçoive le message) ; celui-ci le
+#      double, et couvre en plus les commits qui n'ont jamais vu ce hook —
+#      c'est exactement le cas des cinq commits déjà dans `main` : 859cc55,
+#      2b6dde7, f23d72f, aaeda03, b18a4e3, tous du lot 6, tous passés parce que
+#      les hooks cherchaient une adresse dans l'identité et rien dans le message.
+#
+# Ces cinq commits sont DÉJÀ poussés : ce hook ne les rattrapera pas — les
+# retirer demanderait une réécriture d'historique, qui ne se décide pas seule.
+# Ce qu'il garantit, c'est qu'il n'y en aura pas un sixième.
+#
+# Activation : git config core.hooksPath .githooks   (cf. INSTALL.md §16)
+
+set -u
+
+DOMAINE_INTERDIT="aosis.net"
+ZERO="0000000000000000000000000000000000000000"
+
+# git alimente stdin d'une ligne par référence poussée :
+#   <ref locale> <sha local> <ref distante> <sha distant>
+while read -r _ref_locale sha_local _ref_distante sha_distant; do
+    [ "$sha_local" = "$ZERO" ] && continue          # suppression de branche
+
+    if [ "$sha_distant" = "$ZERO" ]; then
+        # Branche neuve : tout ce qu'elle apporte et que le distant ignore.
+        plage="$sha_local --not --remotes=origin"
+    else
+        plage="$sha_distant..$sha_local"
+    fi
+
+    # %H auteur|committer, sur les commits de la plage uniquement.
+    fautifs=$(git log --format='%H %ae|%ce' $plage 2>/dev/null \
+              | grep -i "$DOMAINE_INTERDIT")
+
+    if [ -n "$fautifs" ]; then
+        cat >&2 <<MSG
+
+  PUSH REFUSÉ — au moins un commit porte une identité professionnelle.
+
+$(echo "$fautifs" | sed 's/^/    /')
+
+  Le DevBrain est un dépôt PERSO. Ces commits ne doivent pas atteindre
+  GitHub : l'adresse y entrerait dans les contributeurs, et ne s'en retire
+  pas sans réécriture d'historique.
+
+  Réattribuer avant de pousser, par exemple pour le dernier commit :
+
+      git commit --amend --reset-author --no-edit
+
+  Pour plusieurs commits, en parler à floSa AVANT de réécrire quoi que ce
+  soit : une réécriture d'historique ne se décide pas seule (cf.
+  .claude/skills/cloturer-brain/SKILL.md, « Politique git du vault »).
+
+MSG
+        exit 1
+    fi
+
+    # 2. Le trailer `Co-Authored-By`, sur la même plage. `%H %s` pour l'affichage,
+    #    et un balayage du corps commit par commit : `git log --grep` ferait le
+    #    travail en un appel, mais ne dirait pas QUELLE ligne est fautive.
+    coauteurs=""
+    for sha in $(git rev-list $plage 2>/dev/null); do
+        ligne=$(git log -1 --format='%B' "$sha"                 | grep -iE '^[[:space:]]*co-authored-by[[:space:]]*:'                 | head -1)
+        if [ -n "$ligne" ]; then
+            coauteurs="$coauteurs
+    $(git log -1 --format='%h %s' "$sha")
+        $ligne"
+        fi
+    done
+
+    if [ -n "$coauteurs" ]; then
+        cat >&2 <<MSG
+
+  PUSH REFUSÉ — au moins un commit porte un trailer « Co-Authored-By ».
+$coauteurs
+
+  Le DevBrain est le brain PERSO de floSa. Ses commits sont à floSa seul :
+  pas de co-auteur, pas de second nom dans les contributeurs GitHub.
+
+  Pour le dernier commit :
+
+      git commit --amend        # retirer la ligne du message
+
+  Pour plusieurs commits, en parler à floSa AVANT de réécrire quoi que ce
+  soit : une réécriture d'historique ne se décide pas seule (cf.
+  .claude/skills/cloturer-brain/SKILL.md, « Politique git du vault »).
+
+MSG
+        exit 1
+    fi
+done
+
+exit 0

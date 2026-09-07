@@ -1,0 +1,135 @@
+#!/bin/sh
+#
+# DevBrain — refuse tout commit signé avec une adresse professionnelle.
+#
+# Pourquoi ce hook existe
+# -----------------------
+# Le harnais de Claude Code annonce à chaque conversation « The user's email
+# address is florian.horellou@aosis.net ». C'est l'adresse PRO. Le dépôt est
+# PERSO (git@github.com-perso:floSa/DevBrain.git). Une conversation a déjà signé
+# cinq commits avec l'adresse pro ; une fois poussée, elle apparaît dans les
+# contributeurs GitHub et ne s'en retire pas sans réécriture d'historique.
+#
+# La consigne écrite existait déjà. Elle n'a pas suffi. D'où ce garde-fou
+# mécanique : la règle est vérifiée par git, pas par la bonne volonté d'un agent.
+#
+# Activation (versionnée, mais pas automatique — cf. INSTALL.md §16) :
+#     git config core.hooksPath .githooks
+#
+# Ce que le hook contrôle : l'auteur ET le committer, les deux pouvant différer,
+# plus la PRÉSENCE du hook `commit-msg`, qui porte l'autre moitié de la règle.
+#
+# Le trailer `Co-Authored-By` est interdit lui aussi — les commits du vault sont
+# à floSa seul — mais ce hook ne peut pas le lire : git l'exécute AVANT de
+# composer le message, et `COMMIT_EDITMSG` porte alors encore celui du commit
+# précédent. Le test vit donc dans `.githooks/commit-msg`, seul hook qui reçoive
+# le message. Ce qui reste ici est le contrôle d'INSTALLATION : refuser de
+# committer quand ce hook-là manque, pour qu'une installation partielle ne fasse
+# pas disparaître le garde-fou en silence. Cinq commits de `main` portent le
+# trailer (859cc55, 2b6dde7, f23d72f, aaeda03, b18a4e3) précisément parce que
+# rien ne le cherchait.
+
+set -u
+
+DOMAINE_INTERDIT="aosis.net"
+
+# git var résout l'identité EFFECTIVE du commit à venir : config locale, globale,
+# variables d'environnement GIT_AUTHOR_EMAIL / GIT_COMMITTER_EMAIL, et l'override
+# `git -c user.email=...`. C'est donc la seule lecture qui ne se contourne pas.
+auteur=$(git var GIT_AUTHOR_IDENT 2>/dev/null | sed -n 's/.*<\(.*\)>.*/\1/p')
+committer=$(git var GIT_COMMITTER_IDENT 2>/dev/null | sed -n 's/.*<\(.*\)>.*/\1/p')
+
+refuse() {
+    cat >&2 <<MSG
+
+  COMMIT REFUSÉ — identité professionnelle sur un dépôt personnel.
+
+    $1 : $2
+
+  Le DevBrain est un dépôt PERSO. Son identité git est celle de la config
+  LOCALE du dépôt, et rien d'autre :
+
+    $(git config --local user.name 2>/dev/null || echo '(non configuré)') <$(git config --local user.email 2>/dev/null || echo '(non configuré)')>
+
+  Si cette identité locale est absente ou fausse, la poser une fois :
+
+      git config --local user.name  "floSa"
+      git config --local user.email "<adresse perso>"
+
+  Si le commit vient d'un agent : ne JAMAIS passer « -c user.email », ne
+  JAMAIS reprendre l'adresse annoncée par le harnais. Cette adresse identifie
+  l'utilisateur auprès de l'outil ; elle n'attribue pas un commit.
+
+  Ce hook ne se contourne pas avec --no-verify sans une raison écrite.
+
+MSG
+    exit 1
+}
+
+case "$auteur" in
+    *"$DOMAINE_INTERDIT"*) refuse "auteur   " "$auteur" ;;
+esac
+
+case "$committer" in
+    *"$DOMAINE_INTERDIT"*) refuse "committer" "$committer" ;;
+esac
+
+# --- Le garde-fou du garde-fou : `commit-msg` doit être installé -------------
+# Sans lui, rien ne cherche le trailer `Co-Authored-By`, et l'absence ne se voit
+# pas : un commit passe, simplement. On lit le `core.hooksPath` EFFECTIF, celui
+# que git utilisera, pas le chemin où ce fichier se trouve.
+hooks_dir=$(git config --get core.hooksPath || echo "")
+if [ -z "$hooks_dir" ]; then
+    hooks_dir="$(git rev-parse --git-common-dir)/hooks"
+fi
+# `core.hooksPath` peut être relatif (« .githooks », le cas documenté) ou absolu,
+# et sous Windows un chemin absolu arrive avec des ANTISLASHES. On normalise les
+# séparateurs d'abord : la première version testait l'absolu par une expression
+# entre crochets, `[A-Za-z]:[/\]*`, où l'antislash échappait le crochet fermant
+# au lieu d'entrer dedans. Le motif ne matchait donc jamais, le chemin absolu du
+# dépôt principal se voyait préfixer par la racine du worktree, et TOUT commit
+# était refusé. Trouvé en committant, pas en relisant — et le hook a bien échoué
+# bruyamment, ce qui est son travail.
+hooks_dir=$(printf '%s' "$hooks_dir" | tr '\\' '/')
+case "$hooks_dir" in
+    /* | ?:/*) ;;                                  # déjà absolu — POSIX ou Windows
+    *) hooks_dir="$(git rev-parse --show-toplevel)/$hooks_dir" ;;
+esac
+
+# La condition reproduit celle de GIT, pas celle du shell : sous Windows,
+# `test -x` répond sur des heuristiques de nom de fichier, alors que git juge un
+# hook exécutable dès qu'il porte le bit d'exécution OU commence par `#!`
+# (`is_executable()`, compat/mingw.c). Tester `-x` seul refuserait tous les
+# commits d'un clone Windows parfaitement installé.
+installe=no
+if [ -f "$hooks_dir/commit-msg" ]; then
+    if [ -x "$hooks_dir/commit-msg" ]; then
+        installe=oui
+    else
+        case "$(head -c 2 "$hooks_dir/commit-msg" 2>/dev/null)" in
+            '#!') installe=oui ;;
+        esac
+    fi
+fi
+
+if [ "$installe" != oui ]; then
+    cat >&2 <<MSG
+
+  COMMIT REFUSÉ — le hook « commit-msg » est absent ou non exécutable.
+
+    attendu : $hooks_dir/commit-msg
+
+  C'est lui qui refuse le trailer « Co-Authored-By » ; « pre-commit » ne peut
+  pas le faire (git compose le message APRÈS son passage). Sans lui, la règle
+  « les commits sont à floSa seul » n'est plus vérifiée par rien.
+
+  Réparer :
+
+      git config core.hooksPath .githooks
+      chmod +x .githooks/commit-msg
+
+MSG
+    exit 1
+fi
+
+exit 0
