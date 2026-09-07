@@ -356,8 +356,28 @@ class Modele:
         return str(s or "a_mesurer")
 
     def codes(self, rid: str) -> list[str]:
+        """La PROVENANCE d une regle : les identifiants de l ancien validateur.
+
+        `code:` ne dit que d ou la regle vient. Ce qui la TIENT aujourd hui, quand
+        ce n est pas le validateur, se lit dans `porte_par()`.
+        """
         r = self.regles.get(rid) or self.socle.get(rid) or {}
         return [str(c) for c in (r.get("code") or [])]
+
+    def porte_par(self, rid: str) -> str | None:
+        """L outil qui TIENT la regle, quand le validateur la delegue. None sinon.
+
+        Tranche au lot 4 (remontee 10 du lot 3). `code:` portait tantot un
+        identifiant de regle (`R21`, `R8e`), tantot un nom de script
+        (`check_arbo`), tantot une COMMANDE (`build_bandeau --check`) : le moteur
+        devait deviner par convention laquelle des trois il lisait, et annoncer
+        une delegation sur cette devinette. Les deux premieres sont de la
+        provenance, la troisieme une delegation — et une delegation qui se
+        devine est une delegation qui, un jour, ne se voit plus.
+        """
+        r = self.regles.get(rid) or self.socle.get(rid) or {}
+        v = r.get("porte_par")
+        return str(v) if v else None
 
     def enonce(self, rid: str) -> str:
         r = self.regles.get(rid) or self.socle.get(rid) or {}

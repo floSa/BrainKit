@@ -429,19 +429,24 @@ def citation_unique(ctx: Contexte, r: Rapport) -> None:
 def bandeau_a_jour(ctx: Contexte, r: Rapport) -> None:
     """La zone AUTO du bandeau concorde avec le frontmatter — DELEGUEE.
 
-    Le manifeste declare qui la porte : `code: [build_bandeau --check]`. Verifier
-    cette regle, c est REGENERER le bandeau et comparer les octets — donc
-    posseder le generateur, qui n est pas dans ce lot. Le validateur ne la
-    reimplemente pas a moitie : il declare a haute voix qu il la delegue, et par
-    qui. Une regle qu on croit tenue sans qu aucun code ne la tienne est le pire
-    des deux mondes.
+    Le manifeste declare qui la porte : `porte_par:`. Verifier cette regle, c est
+    REGENERER le bandeau et comparer les octets — donc posseder le generateur,
+    qui vit dans `brainkit.generer`. Le validateur ne la reimplemente pas a
+    moitie : il declare a haute voix qu il la delegue, et par qui. Une regle
+    qu on croit tenue sans qu aucun code ne la tienne est le pire des deux
+    mondes.
+
+    Le porteur se LIT dans `porte_par:` depuis le lot 4, et non plus dans
+    `code:`. C etait la remontee 10 du lot 3 : `code:` melangeait provenance et
+    delegation, et le moteur devinait laquelle des deux par convention. Le repli
+    sur `code:` reste, pour un manifeste ecrit avant l arbitrage.
     """
     rid = "bandeau_a_jour"
     mo = ctx.mo
     if not mo.regle_active(rid):
         r.etat(rid, constat.INACTIVE)
         return
-    porteur = ", ".join(mo.codes(rid)) or "un autre outil"
+    porteur = mo.porte_par(rid) or ", ".join(mo.codes(rid)) or "un autre outil"
     r.etat(rid, f"{constat.DELEGUEE} — portée par `{porteur}`")
 
 
