@@ -1,0 +1,2 @@
+# Les hooks sont interpretes par /bin/sh : jamais de CRLF, il casse le shebang.
+.githooks/* text eol=lf
