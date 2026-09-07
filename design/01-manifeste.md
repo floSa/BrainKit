@@ -160,7 +160,19 @@ ce sont des fichiers de contenu (cf. §4, point 1).
 |---|---|---|---|
 | `requis` | liste unique | **O** | Doublon. Champs **non vides** attendus sur toute page du rôle. |
 | `autorises` | liste unique, non vide | **O** | Vide, ou doublon. **EXACTS** : tout champ hors liste fait échouer la page. |
-| `conditionnels[]` | liste de `{champ, si}` | F | **REFUS 4 — `champ` ou `si` manquant.** Un conditionnel sans `si` est un champ autorisé qui se croit conditionnel : le validateur de vault ne saurait jamais quand l'exiger. Tout autre champ dans l'entrée est refusé. |
+| `conditionnels[]` | liste de `{champ, si}` | F | **REFUS 4 — `champ` ou `si` manquant.** Un conditionnel sans `si` est un champ autorisé qui se croit conditionnel : le validateur de vault ne saurait jamais quand le **permettre**. Tout autre champ dans l'entrée est refusé. |
+
+> **`si` est une PERMISSION, pas une OBLIGATION.** *Corrigé au lot 2, mesuré.* La
+> première rédaction écrivait « quand l'**exiger** » : elle lisait la condition
+> comme une obligation, et la mesure du lot 2 montre que DevBrain n'en fait rien
+> de tel. `hosted:` et `scaling:` sont portés par 98 briques ; 119 briques sont
+> d'une famille hébergée. Les **21** de l'écart ne portent ni l'un ni l'autre, et
+> les vingt-et-une portent `os:` à la place — R16 refuse le champ **hors** des
+> trois familles, il ne l'exige nulle part. Lire `si` comme une obligation aurait
+> donc produit 42 fausses violations sur un vault que ses deux validateurs
+> déclarent verts. Un champ qui exprimerait une **vraie** obligation
+> conditionnelle n'existe pas dans le contrat, et le lot 2 ne le crée pas : cf.
+> `design/02-rapport-fidelite.md`, *Remontées*, point 2.
 | `deprecies` | liste unique | F | §5.11, recommandation écrite, point non tranché : autorisés, absents du gabarit généré, comptés par la passe de mesure. |
 
 Contrainte de cohérence **C1** : tout nom cité dans `requis`, `deprecies` ou
@@ -192,6 +204,22 @@ Champ facultatif utile sur toute section : `titre_rendu`, quand le titre écrit
 dans le manifeste et le titre rendu dans la page diffèrent par une ligature ou un
 accent. `mesure` porte le nombre de pages qui portent effectivement la section —
 c'est une mesure, jamais une cible.
+
+> **`existe_si` est permis sur TOUTE section, et seulement *exigé* sur une
+> `conditionnelle`.** *Corrigé au lot 2.* Le schéma l'encodait déjà ainsi
+> (`if genre == conditionnelle then required: [existe_si]`, jamais
+> « allowed only then ») ; c'est le tableau ci-dessus qui laissait croire que
+> `existe_si` était l'apanage d'un genre. La différence est réelle et vaut d'être
+> écrite : `conditionnelle` est le genre d'une section que sa condition
+> **définit** — on ne sait rien d'autre d'elle ; `existe_si` sur un autre genre
+> dit seulement que la section **n'est pas universelle**, sans rien changer à ce
+> que son genre contrôle. Sans cette nuance, cinq sections de DevBrain étaient
+> déclarées universelles alors que le manifeste portait déjà leur mesure exacte :
+> `Alternatives` (324/337), `Compléments` (103/337), `Notes` (13/74), et les deux
+> sections d'aiguillage d'un hub (71/74). C'est la faute de la remontée 3, sur
+> cinq sections que personne n'avait comptées — et un `mesure:` qui n'égale pas la
+> population du rôle **est** la déclaration qu'une condition manque. Cf.
+> `design/02-rapport-fidelite.md`, boîte 1.
 
 Contrainte **C9** : toute section nommée dans `regles[].sections` ou dans une
 `regles[].severite` par section doit exister comme `titre` ou `titre_rendu` d'un
@@ -516,15 +544,34 @@ colle pas est une remontée, pas un arrondi** — les écarts sont en §7.
 C'est le constat E4 pris au mot : la source de vérité du gabarit est la page, pas
 le gabarit. Chaque section du manifeste porte son compte réel dans `mesure:`.
 
+> *Complété au lot 2.* Les mesures de ce tableau sont exactes — le comparateur
+> `outils/fidelite.py` a confronté les **54** comptes déclarés du manifeste au
+> vault et n'en a trouvé **aucun** en écart. Ce qui manquait n'était pas un
+> chiffre mais une **conséquence** : cinq des sections dont la mesure n'égale pas
+> la population de leur rôle étaient déclarées universelles. Elles portent depuis
+> un `existe_si` (colonne de droite, en gras).
+
 | Rôle | Sections déclarées | Ce que la mesure donne |
 |---|---|---|
-| `brique` (337 pages) | **10** | bandeau 337 · Définition 337 · Prendre si / Écarter si 337 · Mise en œuvre 337 · Écosystème **333** · Alternatives 324 · Compléments 103 · Ressources 337 · Voir aussi 337 · Retours **0** |
+| `brique` (337 pages) | **10** | bandeau 337 · Définition 337 · Prendre si / Écarter si 337 · Mise en œuvre 337 · Écosystème **333** · Alternatives **324, `existe_si`** · Compléments **103, `existe_si`** · Ressources 337 · Voir aussi 337 · Retours **0** |
 | `notion` (297) | **6** | Aperçu 297 · Concepts clés 297 · Les maths, simplement **282** · En pratique 297 · Approches voisines & alternatives 297 · Pour aller plus loin 297 |
 | `comparatif` (47) | **4** | accroche · embed · Ce qui départage 47 · Voir aussi 47 |
-| `hub` (74) | **4** + **6** sous-sections AUTO | Ce qu'il faut comprendre 71 · Choisir 71 · zone AUTO · Notes 13 · sous-sections : Sous-domaines 10, Notions 39, Briques 58, Patterns 1, Rules 1, Comparatifs 37 |
+| `hub` (74) | **4** + **6** sous-sections AUTO | Ce qu'il faut comprendre **71, `existe_si`** · Choisir **71, `existe_si`** · zone AUTO (**trois formes**, cf. ci-dessous) · Notes **13, `existe_si`** · sous-sections : Sous-domaines 10, Notions 39, Briques 58, Patterns 1, Rules 1, Comparatifs 37 |
 | `pattern` (5) | **5** | Contexte · Stack · Décisions clés · Pièges · Voir aussi — les 5 sur 5 |
 | `rule` (5) | **9** | Principe · MUST · SHOULD · NICE-TO-HAVE · Exemples · Bon · Mauvais · Exceptions · Voir aussi — les 5 sur 5 |
 | **Total** | **38** sections | plus 6 sous-sections de zone AUTO |
+
+> **La zone AUTO d'un hub a trois formes, et le manifeste n'en déclarait qu'une.**
+> *Corrigé au lot 2 pour le constat, la forme reste à trancher.* Les six
+> sous-sections ci-dessus décrivent un hub d'**arbre** (67 pages, `perimetre:
+> dossier`). Le vault en a deux autres : le hub de **ralliement** (1,
+> « Comparatifs », `perimetre: role`, dont les 12 sous-titres sont des libellés de
+> domaine et non des sections de gabarit) et le hub **transverse** (6, `Métiers/`,
+> `perimetre: champ`, sans aucune sous-section). `perimetre` énumère déjà les
+> trois valeurs ; ce qui manque est de savoir si un rôle porte **plusieurs**
+> gabarits de zone AUTO ou si la forme se **dérive** de `hub_par_valeur` et de
+> `hub_de_ralliement`. C'est une décision de générateur : elle appartient au
+> lot 4. Cf. `design/02-rapport-fidelite.md`, *Remontées*, point 1.
 
 Étiquettes des deux sections `etiquetee`, mesurées :
 

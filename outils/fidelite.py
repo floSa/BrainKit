@@ -116,9 +116,10 @@ VERDICTS: dict[str, tuple[str, str]] = {
                                "transverse. Motif ajoute, forme a trancher au lot 4"),
     "F7/brique.hosted": (M, "`si:` etait ecrit comme une OBLIGATION (« quand l exiger ») "
                             "et DevBrain n en fait qu une PERMISSION — 21 briques des "
-                            "trois familles ne portent pas le champ. Spec corrigee"),
-    "F7/brique.scaling": (M, "meme cas que `hosted:` — la condition permet, elle "
-                             "n exige pas"),
+                            "trois familles ne portent pas le champ, et les 21 portent "
+                            "`os:` a la place. Spec corrigee au lot 2"),
+    "F7/brique.scaling": (M, "meme cas que `hosted:`, memes 21 pages — la condition "
+                             "permet, elle n exige pas"),
 
     # ------------------------------------------------ boite 2 : le vault
     "A1/skill/code-quality": (V, "valeur declaree sans page — la regle de retrait n a "
@@ -528,9 +529,15 @@ def passe_frontmatter(mo: Modele, pages: list[Page], r: Rapport) -> None:
                          f"`{champ}:` present alors que sa condition (`{cond}`) "
                          f"n est pas remplie", page=ou)
             if verdict and not present:
+                # `si:` est une PERMISSION, pas une obligation (§2.7 du contrat,
+                # corrige au lot 2) : la condition dit que le champ n existe QUE
+                # si elle tient, jamais qu il est exige quand elle tient. Le cas
+                # est donc LEGAL, et il se compte — c est la mesure qui a fait
+                # corriger la spec.
                 r.ajoute("F7", f"{p.role}.{champ}",
                          f"condition de `{champ}:` remplie (`{cond}`) et le champ "
-                         f"est absent", page=ou)
+                         f"est absent — legal, `si:` permet et n exige pas ; "
+                         f"compte pour memoire", page=ou)
 
         # --- champs declares vestigiaux, encore portes
         for c in ch.get("deprecies") or []:

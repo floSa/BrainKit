@@ -127,6 +127,18 @@ roles:
         par defaut de tout ce qui n est pas distribue. Deux champs qui decrivent
         100 % des fiches ne discriminent rien. Une bibliotheque ne s heberge pas
         et ne scale pas.
+      note_sens_de_la_condition: >
+        CORRIGE AU LOT 2, boite 1. `si:` est une PERMISSION, pas une OBLIGATION :
+        elle dit que le champ n existe QUE si la condition tient, jamais qu il est
+        exige quand elle tient. La distinction n etait pas ecrite, et §2.7 du
+        contrat disait meme l inverse (« le validateur ne saurait jamais quand
+        l EXIGER »). Mesure du lot 2 : 98 briques portent `hosted:` et `scaling:`,
+        119 sont d une famille hebergee — 21 briques des trois familles ne portent
+        NI l un NI l autre, et LES VINGT-ET-UNE portent `os:` a la place
+        (18 `application`, 2 `saas`, 1 `plateforme`). Lire `si:` comme une
+        obligation aurait donc produit 42 fausses violations. Le contrat est
+        corrige, et exprimer une VRAIE obligation conditionnelle demanderait un
+        second champ, que ce lot ne cree pas — cf. rapport du lot 2, remontee 2.
     corps:
       - { titre: "<bandeau>", niveau: 0, genre: bandeau, mesure: 337 }
       - { titre: "Definition", titre_rendu: "Définition", niveau: 2, genre: prose,
@@ -151,10 +163,34 @@ roles:
           Ruff, Quarto. C est le seul titre de corps de brique qui ne soit pas a
           337/337. Fait du vault, rapporte, non corrige (interdiction du lot 1).
           Cf. Remontee 4.
-      - { titre: "Alternatives", niveau: 3, genre: liste_liens, champ: alternatives,
-          mesure: 324 }
-      - { titre: "Complements", titre_rendu: "Compléments", niveau: 3,
-          genre: liste_liens, champ: complements, mesure: 103 }
+      - titre: "Alternatives"
+        niveau: 3
+        genre: liste_liens
+        champ: alternatives
+        mesure: 324
+        existe_si: "la brique a des voisines interchangeables à nommer — soit `alternatives:` est renseigné, soit la section écrit en clair qu'aucune n'est fichée"
+        motif: >
+          CORRIGE AU LOT 2, boite 1. Le lot 1 declarait la section sans condition
+          alors qu il en portait deja la mesure : 324 sur 337. Le compte se
+          decompose en 273 pages dont `alternatives:` est renseigne, plus 51 qui
+          portent la section avec un champ VIDE — la forme que la regle 8
+          recommande (« Aucune outillee dans le brain : l approche concurrente est
+          [[X]] »), ou le lien EXPLIQUE au lieu de LISTER. Les 13 restantes n ont
+          ni voisine ni rien a en dire. Le `champ:` seul surdeclarait donc un
+          miroir strict du frontmatter, que le vault n a jamais tenu.
+      - titre: "Complements"
+        titre_rendu: "Compléments"
+        niveau: 3
+        genre: liste_liens
+        champ: complements
+        mesure: 103
+        existe_si: "`complements:` est renseigné"
+        motif: >
+          CORRIGE AU LOT 2, boite 1. Declaree sans condition pour 103 pages sur
+          337. Contrairement a sa voisine `Alternatives`, celle-ci EST le miroir
+          exact de son champ : zero page porte la section avec un champ vide, zero
+          page a un champ renseigne sans la section. La condition s ecrit donc sur
+          le champ, et rien d autre.
       - { titre: "Ressources", niveau: 2, genre: etiquetee, mesure: 337,
           obligatoires: [],
           permises: [Documentation, Dépôt, Tutoriel, Article, Papier, Cours, Vidéo],
@@ -314,15 +350,51 @@ roles:
         champs facultatifs. C est cette fusion qui a supprime la seule collision
         de nom du vault, « Bases de donnees ».
     corps:
-      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre, mesure: 71,
-          ecrit_a_la_main: true }
-      - { titre: "Choisir", niveau: 2, genre: libre, mesure: 71,
-          ecrit_a_la_main: true }
+      - titre: "Ce qu'il faut comprendre"
+        niveau: 2
+        genre: libre
+        mesure: 71
+        ecrit_a_la_main: true
+        existe_si: "le hub porte un corps d'aiguillage écrit à la main"
+        motif: >
+          CORRIGE AU LOT 2, boite 1 — deux fois. Declaree sans condition pour
+          71 hubs sur 74, et le `motif:` du role nommait les MAUVAIS trois. Les
+          trois qui ne la portent pas, mesures : « Bases de donnees » et
+          « Text-to-SQL », deux hubs de domaine qui ont absorbe une notion chapeau
+          et gardent son corps de NOTION (`## Apercu`, `## Concepts cles`…), et
+          « Metiers/Infrastructure & Ops », un hub transverse qui n a AUCUN corps
+          ecrit — son unique contenu est sa zone AUTO. Le hub « Comparatifs »,
+          que le lot 1 comptait parmi les trois, porte les deux sections.
+      - titre: "Choisir"
+        niveau: 2
+        genre: libre
+        mesure: 71
+        ecrit_a_la_main: true
+        existe_si: "le hub porte un corps d'aiguillage écrit à la main"
+        motif: "Meme cas et memes trois hubs que la section precedente."
       - titre: "<AUTO>"
         niveau: 0
         genre: auto
         balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
         perimetre: dossier
+        motif_trois_formes: >
+          CORRIGE AU LOT 2, boite 1 : les `sections[]` ci-dessous decrivent UNE
+          forme de zone AUTO — celle d un hub d ARBRE, dont le perimetre est son
+          dossier. Le vault en a TROIS, et le manifeste du lot 1 n en declarait
+          qu une :
+            - hub d ARBRE (67) — perimetre `dossier`, les six sous-sections ci-dessous ;
+            - hub de RALLIEMENT (1, « Comparatifs ») — perimetre `role`, GROUPE par
+              le premier segment du chemin : ses 12 sous-titres sont des libelles
+              de domaine, pas des sections de gabarit (cf. roles[comparatif].
+              hub_de_ralliement.groupe_par) ;
+            - hub TRANSVERSE (6, « Metiers/ ») — perimetre `champ`, aucune
+              sous-section : une phrase puis une puce par sous-hub.
+          Les mesures ci-dessous sont comptees sur les 74 hubs et restent justes ;
+          ce qui manquait est la FORME. `perimetre` enumere deja les trois valeurs
+          (`dossier`, `champ`, `role`) : ce qui reste a trancher est de savoir si
+          un rôle porte plusieurs gabarits de zone AUTO ou si la forme se derive
+          de `hub_par_valeur` et de `hub_de_ralliement`. Le lot 4 le decide, pas
+          celui-ci — cf. rapport du lot 2, remontee 1.
         sections:
           - { titre: "Sous-domaines", source: "sous-dossiers portant un hub",
               separateur: " · ", mesure: 10 }
@@ -338,15 +410,26 @@ roles:
               fichiers. Anomalie du code actuel, rapportee sans etre corrigee :
               depuis le lot 5 la page `role: comparatif` existe a cote du .base,
               et c est elle qui devrait etre listee. Cf. Remontee 5.
-      - { titre: "Notes", niveau: 2, genre: libre, mesure: 13,
-          ecrit_a_la_main: true, hors_zone_auto: true,
-          motif: "Section manuelle preservee par le generateur, presente sur 13 hubs." }
+      - titre: "Notes"
+        niveau: 2
+        genre: libre
+        mesure: 13
+        ecrit_a_la_main: true
+        hors_zone_auto: true
+        existe_si: "le hub porte une note manuelle sous sa zone AUTO"
+        motif: >
+          Section manuelle preservee par le generateur, presente sur 13 hubs.
+          CORRIGE AU LOT 2, boite 1 : elle etait declaree sans condition, ce qui
+          faisait de 61 hubs sur 74 des pages incompletes. Une section presente
+          sur 13 pages sur 74 est facultative par construction — c est la
+          declaration qui manquait, pas les 61 sections.
     motif: >
-      La page d un dossier, l aiguillage. 71 des 74 portent le corps ci-dessus :
-      les trois qui ne le portent pas sont les hubs de ralliement, dont le corps
-      est une phrase et une zone AUTO propre (Comparatifs) ou deux notions
-      chapeaux absorbees qui gardent le corps de notion (mesure : 2 hubs portent
-      `## Apercu` / `## Concepts cles`). Fait du vault, rapporte, non corrige.
+      La page d un dossier, l aiguillage. 71 des 74 portent les deux sections
+      d aiguillage ci-dessus ; les trois qui ne les portent pas sont nommes dans
+      le `motif:` de « Ce qu il faut comprendre » — deux hubs de domaine qui ont
+      absorbe une notion chapeau et gardent son corps de notion, plus le hub
+      transverse « Infrastructure & Ops » qui n a aucun corps ecrit. Fait du
+      vault, rapporte, non corrige.
 
   # --- 5/6 -------------------------------------------------------------------
   - id: pattern
