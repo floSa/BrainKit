@@ -190,6 +190,22 @@ def _racine(mo: Modele) -> list[str]:
             r.append(f"`racine.pages[{i}].fichier` n'est pas un `.md`")
         if not p.get("titre"):
             r.append(f"`racine.pages[{i}].titre` manquant")
+    # Les dossiers d ATELIER (lot 6) : declares, vides, et HORS du perimetre du
+    # validateur. Sans la seconde condition, le contenu d un carnet de notes
+    # serait lu comme des pages fautives — un dossier d atelier ne porte ni
+    # role ni categorie, par definition.
+    for i, d in enumerate(bloc.get("dossiers") or []):
+        chemin = str((d or {}).get("chemin") or "").strip("/")
+        if not chemin:
+            r.append(f"`racine.dossiers[{i}].chemin` manquant")
+            continue
+        tete = chemin.split("/")[0]
+        if tete not in mo.non_pages:
+            r.append(f"`racine.dossiers[{i}]` déclare `{chemin}/` sans que "
+                     f"`{tete}` soit dans `genere.non_pages` — le validateur "
+                     f"lirait son contenu comme des pages, et un dossier "
+                     f"d'atelier ne porte ni rôle ni catégorie")
+
     if porte and not any((p or {}).get("aiguille") for p in pages):
         r.append("aucune page de `racine.pages[]` ne porte `aiguille: true` — les "
                  "hubs de premier niveau ne seraient cités par personne")

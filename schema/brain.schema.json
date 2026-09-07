@@ -1109,6 +1109,23 @@
               }
             }
           }
+        },
+        "dossiers": {
+          "$comment": "AJOUTE AU LOT 6 — l arbitrage `Projects/`, remontee 4 du lot 5. Le DevBrain porte un `Projects/` que son manifeste ne nomme que dans `genere.non_pages`, c est-a-dire dans la liste de ce qu il NE FAUT PAS LIRE : le semis ne le creait donc pas, et le dossier n existait nulle part comme intention. Deux issues etaient possibles — le coder en dur dans le semis, ou le DECLARER. La premiere aurait pose dans chaque instance un dossier que personne n a demande ; la mesure du DevBrain la condamne (ZERO page en dix-huit mois). Ce champ est la seconde : un dossier d atelier existe SI ET SEULEMENT SI l entretien l a demande (question 9.6), il naît vide avec un `.gitkeep`, et son premier segment doit figurer dans `genere.non_pages` — sans quoi le validateur lirait son contenu comme des pages. Le defaut est ZERO dossier.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["chemin"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "chemin": {
+                "description": "Le dossier, relatif a la racine du vault. Son premier segment doit etre dans `genere.non_pages`.",
+                "type": "string", "minLength": 1
+              },
+              "role_editorial": { "enum": ["atelier", "journal", "archive"] }
+            }
+          }
         }
       }
     },

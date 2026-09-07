@@ -404,3 +404,13 @@ def seme_la_racine(mo: Modele, prose: ProseSemis, plan: Plan) -> None:
         texte = (porte_d_entree(mo, prose, fichier, titre) if fichier == porte
                  else page_de_racine(mo, prose, decl))
         plan.pose(fichier, texte, "racine")
+
+    # Les dossiers d ATELIER — arbitrage du lot 6, remontee 4 du lot 5. Ils
+    # naissent VIDES, avec un `.gitkeep` (git ne suit aucun dossier vide), et
+    # ils n existent que si l entretien les a demandes. Le defaut est ZERO :
+    # un dossier vide que personne n a demande reste vide, et la mesure du
+    # DevBrain le dit — son `Projects/` porte zero page en dix-huit mois.
+    for decl in bloc.get("dossiers") or []:
+        chemin = str((decl or {}).get("chemin") or "").strip("/")
+        if chemin:
+            plan.dossier(chemin, garde=True)
