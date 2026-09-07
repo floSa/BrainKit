@@ -228,6 +228,14 @@ def mesure_les_regles(mo: Modele, v: Verdict, vault: str, date: str = "") -> Mes
                                  if c.regle == rid and c.cle == k),
                           r.populations.get((rid, k))) for k in sous],
             )
+            # Une regle dont la severite est SCALAIRE mais qui n a declare
+            # sa population que par sous-cle : on prend la plus large de ses
+            # sous-populations. Imprimer « — » la ou la regle a mesure dix
+            # pages effacerait la seule chose que le lot 8 ajoute.
+            if li.population is None and li.details:
+                candidates = [pop for _k, _n, pop in li.details if pop]
+                if candidates:
+                    li.population = max(candidates, key=lambda x: x.pages)
             _verdict(li, m.plancher_tenu)
             m.lignes.append(li)
 

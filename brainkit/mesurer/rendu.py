@@ -234,10 +234,17 @@ def markdown(m: Mesure, rec, occupations, bl) -> list[str]:
           f"n'a rien prouvé — elle n'a rien vu. **Aucun durcissement n'est donc "
           f"proposé, pour aucune règle.**")
     a("")
+    a("Ce que chaque règle a mesuré malgré tout — le chiffre est vrai, c'est sa "
+      "portée qui ne l'est pas encore :")
+    a("")
     for li in m.lignes:
-        if li.verdict in (gardes.REFUS_INSTANCE, gardes.REFUS_POPULATION):
-            a(f"- `{li.id_affiche}` — 0 violation sur {_denominateur(li)}. "
-              f"{_pourquoi(li, m)}")
+        if li.verdict == gardes.REFUS_INSTANCE:
+            a(f"- `{li.id_affiche}` — {li.violations} violation(s) sur "
+              f"{_denominateur(li)}.")
+        elif li.verdict == gardes.REFUS_POPULATION:
+            a(f"- `{li.id_affiche}` — {li.violations} violation(s) sur "
+              f"{_denominateur(li)} : la règle elle-même n'a vu que {li.pages} "
+              f"page(s), il lui en manque {li.manque}.")
     a("")
 
     a("## À partir de combien de pages on saura")
