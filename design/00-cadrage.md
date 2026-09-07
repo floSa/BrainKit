@@ -1704,3 +1704,397 @@ gabarit, pas à laisser en place « au cas où ». Cela relève du lot 8 (mesure
 | `protege:` sur un rôle | **passe**, et devient le mécanisme le plus important |
 | Les hooks git | **passent**, avec une polarité à inverser selon `usage:` |
 | La triade de skills | **passe**, le troisième entièrement réécrit |
+
+---
+
+# 5. Les risques et les points à trancher
+
+Douze points. Chacun a une recommandation ; aucune n'est prise, elles attendent
+floSa. Les deux premiers sont ceux que le prompt de cadrage désigne, et ce sont
+effectivement les deux qui commandent tout le reste.
+
+## 5.1 Dépôt-gabarit qu'on clone, ou générateur qu'on lance ?
+
+**Le choix, posé net.** Soit BrainKit est un dépôt qu'on `git clone` puis qu'on vide
+et qu'on adapte — soit c'est un outil qu'on installe une fois et qu'on lance pour
+**écrire** un vault neuf.
+
+**Ce qui plaide pour le gabarit cloné :** l'instance est autonome le jour un, sans
+dépendance, ce qui compte pour un client on-prem ou air-gapped. Et c'est plus rapide
+à faire — on part du DevBrain, on retire le dev.
+
+**Ce qui le condamne :** le jour du clone, **le code fourche**. Les 10 règles du
+validateur, les 4 générateurs et la dérivation d'`arbo` sont exactement les briques
+qui vont continuer à recevoir des corrections (le mode inverse de la rupture 2, la
+boucle transverse de la rupture 4, le `re-seuiller` de la rupture 5). Avec trois
+instances clonées, chaque correction se réapplique trois fois à la main, et la
+troisième divergera. C'est le problème qui a déjà été observé **à l'intérieur** du
+DevBrain, en petit : deux sources décrivaient le même gabarit, `Templates/` a pris du
+retard sur les 338 pages (E4).
+
+**Recommandation : générateur, avec un mode de figeage.**
+
+- BrainKit est un paquet Python installable (`uv tool install brainkit`), et une
+  instance ne contient que : son contenu, son `brain.yml`, ses documents générés, ses
+  hooks. **Pas de code.**
+- `brain.yml` porte la **version du kit** avec laquelle l'instance a été générée. Le
+  kit refuse de tourner sur un manifeste d'une version qu'il ne connaît pas, dans les
+  deux sens.
+- `brainkit freeze` copie les scripts dans `AI/scripts/` de l'instance et coupe la
+  dépendance. **Ce mode n'est pas optionnel** : la spécialité de floSa est l'on-prem,
+  et un vault livré chez un industriel ne pourra pas installer un outil depuis
+  internet. Une instance figée est explicitement une instance qui ne recevra plus de
+  correctif — et le manifeste doit l'écrire.
+
+**Risque résiduel :** deux chemins de code (branché / figé) qui peuvent se comporter
+différemment. Mitigation : `freeze` copie, il ne réécrit pas, et le lot 10 ajoute un
+test qui fait tourner les deux chemins sur la même instance.
+
+## 5.2 DevBrain devient-il une instance de BrainKit ?
+
+**Ce qui plaide pour le garder séparé :** il marche. C'est le brain de travail
+quotidien de floSa, il vient de sortir de huit lots de migration, et le transformer
+en instance est un neuvième chantier dont il n'a aucun besoin.
+
+**Ce qui plaide pour le migrer :** c'est **le seul corpus réel**. 738 pages, dix
+règles mesurées, 1 388 cellules de tableau de décision, 47 vues. Un kit validé
+uniquement sur une instance neuve à zéro page n'est pas validé : les mécanismes qui
+cassent cassent à 300 pages, pas à 0. Garder DevBrain dehors, c'est se priver du seul
+banc d'essai qui a du volume — et accepter que BrainKit soit vendu avant d'avoir été
+éprouvé une seule fois.
+
+**Recommandation : oui, mais en dernier, et par génération inverse.**
+
+L'ordre est le point important :
+
+1. Les lots 2 à 4 font tourner le validateur et les générateurs de BrainKit **sur
+   DevBrain en lecture seule**, et exigent une **identité octet pour octet** : même
+   verdict règle par règle, même compte de violations, et des artefacts régénérés dans
+   un arbre de travail séparé dont le `diff` avec les vrais est **vide**.
+2. Tant que ce `diff` n'est pas vide, on n'a pas compris ce que fait le DevBrain, et
+   on ne touche à rien.
+3. Le lot 9 seulement remplace l'outillage du DevBrain par le kit, en un commit qui
+   **ne change aucun contenu**.
+
+**Risque résiduel :** DevBrain vit pendant tout ce temps — floSa y écrit. Mitigation :
+tous les lots 1 à 8 travaillent en lecture seule sur un chemin de travail isolé, et le
+lot 9 commence par la vérification de divergence de `cloturer-brain`.
+
+## 5.3 Le nom de l'unité fuit partout
+
+**Risque.** Le mot « brique » est dans les noms de skill, les titres de section, la
+prose des guides, les valeurs de `role:`, le nom des tables du code. Si le générateur
+interpole ce mot mais que le kit **raisonne** dessus, alors deux instances ne sont plus
+comparables : aucun outil partagé ne peut filtrer « les unités » sans connaître les
+mots de chaque brain.
+
+**Recommandation : le dédoublement `id:` / `fonction:` de §2.0.** Le vault porte
+`role: brique` ou `role: source` — le mot de l'utilisateur, littéralement, parce que
+la fidélité au DevBrain l'exige et parce qu'un vault doit se lire. Le kit ne raisonne
+que sur `fonction:`, prise dans une liste de six. Un seul endroit fait le pont : le
+manifeste.
+
+**À trancher tout de même :** faut-il indexer `fonction:` dans le frontmatter des
+pages, en plus de `role:` ? Recommandation : **non** — un champ dérivable ne se
+stocke pas, et le validateur a le manifeste sous la main.
+
+## 5.4 La langue
+
+**Risque.** Tout le système est en français : titres de section, libellés, questions
+des arbres de décision, prose générée, messages des hooks. Un brain vendu à un client
+anglophone demanderait de traduire non pas des chaînes, mais des **documents générés**.
+
+**Recommandation : déclarer `langue: fr` et n'implémenter que le français en v1**, en
+l'écrivant comme une limite et non comme un oubli. Le pont est déjà en place : la prose
+générée sort de gabarits, et un gabarit se duplique par langue. Ne pas s'engager sur
+`en` avant que deux instances françaises tournent.
+
+## 5.5 L'accrochage à Obsidian
+
+**Risque.** Quatre plugins requis (Local REST API, Templater, Dataview, File Hider),
+plus les `.base` qui dépendent d'une version récente d'Obsidian, plus des couleurs de
+graphe **gitignorées** donc à réappliquer par poste. Un client ne fera pas les onze
+étapes d'`INSTALL.md`.
+
+**Recommandation : deux profils déclarés dans le manifeste.**
+
+- `profil: obsidian` — tout, y compris les `.base` et les couleurs.
+- `profil: nu` — markdown, frontmatter, validateurs, générateurs, skills. **Pas** de
+  `.base`, donc les rôles `fonction: vue` deviennent des pages avec un tableau
+  markdown généré au lieu d'une vue vivante.
+
+Point important : le **bandeau** survit au profil nu (c'est du markdown pur), et c'est
+lui qui porte l'essentiel du confort de lecture. Ce qui est perdu en profil nu est la
+vue filtrée, pas la fiche.
+
+## 5.6 Les sévérités, et la tentation de les hériter
+
+**Risque.** Une instance neuve sans aucune règle dure est molle : rien n'empêche
+d'écrire n'importe quoi les trois premiers mois. La tentation sera forte de livrer les
+sept règles dures du DevBrain « puisqu'elles marchent ».
+
+**Recommandation : ne jamais hériter, et livrer l'outil de mesure avec le kit.**
+`brainkit mesurer` sort, règle par règle, le compte de violations sur l'instance, et
+propose le durcissement de celles qui sont à zéro. Trois garde-fous :
+
+- une règle ne se durcit pas sous **30 pages** de l'unité — en dessous, zéro violation
+  ne prouve rien ;
+- une règle qui reste en avertissement doit porter un `motif:` **écrit** ; le kit
+  refuse un `severite: avertissement` sans motif ;
+- deux règles sont structurellement dures dès le départ, parce qu'une violation y est
+  une **incohérence de structure** et non un défaut de rédaction : `chemin_categorie`
+  et `bandeau_a_jour`. À trancher : est-ce une exception acceptable au principe 1 ?
+  Recommandation : oui, et l'écrire comme telle dans le kit.
+
+## 5.7 Le produit vendable — ce qui se vend n'est pas ce qui se code
+
+**Risque.** Le réflexe est de vendre le kit. Mais la valeur mesurée en section 1 se
+répartit ainsi : 44 % de mécanique générique (du code, copiable, sans avantage
+concurrentiel), 34 % d'extraction (du travail), 22 % de valeurs — et, hors inventaire,
+**la discipline d'arbitrage**, qui est le seul actif non copiable et qui ne tient dans
+aucun fichier.
+
+**Recommandation : ne pas vendre un outil, vendre un cadrage outillé.** Concrètement,
+la prestation est *« nous construisons le second brain de votre domaine »* — l'entretien
+mené avec les experts métier du client, le manifeste comme **livrable de conception**,
+l'instance générée et figée, et une passe de mesure après les 50 premières pages. Le
+kit est l'outil du consultant, pas le produit du client.
+
+**À trancher :** faut-il ouvrir le kit (licence permissive) et vendre le cadrage, ou
+le garder fermé ? Recommandation : ouvrir le **kit**, garder fermées les **méthodes
+d'entretien** (les 45 questions, les 13 refus, la mesure) — c'est là qu'est le savoir,
+et c'est ce qu'un concurrent ne retrouvera pas en lisant le code.
+
+## 5.8 La propriété de la taxonomie d'un brain client
+
+**Risque.** `brain.yml` d'un brain client contient l'ontologie du métier du client :
+ses domaines, ses natures de document, ses règles de départage. C'est un actif de
+conseil, et c'est en même temps une description de son organisation. Qui le possède,
+qui peut le réutiliser chez un concurrent du client ?
+
+**Recommandation :** le `brain.yml` est un **livrable au client**, cédé, et le kit est
+licencié. Ne pas réutiliser une taxonomie client, même « anonymisée » — un arbre de
+décision est signant. À faire trancher avant la première vente, pas après.
+
+## 5.9 L'amorçage — un brain vide n'est pas utilisable
+
+**Risque.** À la fin de l'entretien, le vault contient des hubs et zéro page. Personne
+ne remplit 300 pages à la main, et un brain à 20 pages ne rend aucun service — le
+DevBrain n'a commencé à servir qu'à plusieurs centaines.
+
+**Recommandation :** deux mesures, et elles sont dans le plan de lots.
+
+- Les vingt titres de la passe 2.1 partent dans `Inbox.md` comme premier backlog. Ce
+  n'est pas du remplissage, c'est du travail déjà identifié.
+- Le skill de capture doit avoir un **mode lot** : capturer dix à vingt unités d'un
+  même dossier en une conversation, en n'appliquant la propagation qu'une fois à la
+  fin. Sans ce mode, l'amorçage coûte une conversation par page et personne ne le fera.
+
+## 5.10 La dette morte du code source
+
+**Risque.** `build_mocs.py` porte encore `MOC_CONCEPT`, `WIKI_LABEL` et `wiki_group()`
+pour des dossiers supprimés au lot 4 ; `build_links.py` porte un jeu `V1` de champs
+hérités de la v1 ; `check_brain.py` porte `V1_MARKERS` et `is_active_v2()`. Porter ce
+code dans le kit, c'est porter la dette du DevBrain dans **toutes** les instances.
+
+**Recommandation : la portabilité se fait par réécriture guidée, pas par copie.** Le
+lot 3 réécrit le validateur en le **branchant** sur le manifeste, et prouve
+l'équivalence par le verdict, pas par la ressemblance du code. Le critère
+d'acceptation (même verdict, même compte) autorise à jeter tout ce qui ne sert plus.
+
+## 5.11 Les champs vestiges
+
+**Risque.** `os:` et `domaines:` sont autorisés sur une brique parce que les gabarits
+`service` et `outil` ont fusionné au lot 2 : leur présence est un vestige. Le
+manifeste les déclarera comme des champs légitimes et perdra cette information.
+
+**Recommandation :** ajouter `deprecated: true` sur un champ autorisé — le validateur
+le tolère, le générateur ne le met pas dans le gabarit, et `mesurer` compte combien de
+pages le portent encore. Coût faible, et cela évite qu'un vestige devienne une
+intention par transposition.
+
+## 5.12 Le nombre de rôles, et la tentation d'en ajouter
+
+**Risque.** Six rôles dans le DevBrain, six en histoire — la coïncidence est
+rassurante et trompeuse. Un utilisateur en entretien voudra en ajouter (« et les
+personnages ? et les lieux ? et les événements ? »). Chaque rôle ajouté coûte un
+gabarit, une couleur, une ligne de propagation, une section de zone AUTO et un
+sous-titre dans chaque hub.
+
+**Recommandation : un plafond souple à six rôles, avec une question de contrôle.**
+Avant d'accepter un rôle de plus, l'entretien demande : *« cette page se range-t-elle
+sur le même axe que les autres, et y a-t-il une règle qui ne s'applique qu'à elle ? »*
+Si non aux deux, ce n'est pas un rôle, c'est une **valeur de l'axe de nature** ou un
+**tag**. Les personnages et les lieux d'un brain d'histoire sont, presque toujours, des
+notions.
+
+---
+
+# 6. Le plan de lots
+
+Un lot = une conversation. Chaque lot porte son périmètre, son livrable, son critère
+d'acceptation et ses interdictions. Deux interdictions valent pour **tous** les lots
+et ne sont pas répétées ensuite :
+
+> **Interdictions générales.** (1) **Aucune écriture, aucun déplacement, aucune
+> suppression dans DevBrain** avant le lot 9 — lecture seule, dans un arbre de travail
+> isolé, floSa continue de s'en servir. (2) **Aucun trailer `Co-Authored-By`** dans
+> aucun message de commit, et l'identité git est celle de la config **locale** du
+> dépôt BrainKit — jamais l'adresse annoncée par le harnais.
+>
+> Et une règle de conduite : **un lot qui découvre un problème hors de son périmètre
+> l'écrit dans ses *Remontées* et ne le corrige pas.** C'est le mécanisme qui a fait
+> tenir les huit lots du DevBrain.
+
+## Lot 0 — Le cadrage *(fait, c'est ce document)*
+
+**Livrable :** `design/00-cadrage.md`, six sections, dépôt initialisé avec ses hooks.
+
+## Lot 1 — Le contrat du manifeste
+
+- **Périmètre.** Figer la structure de `brain.yml` : chaque champ, son type, son
+  caractère obligatoire, ses valeurs légales. Écrire les deux remplissages **en
+  entier**, sans troncature — les 20 préfixes et 39 sous-libellés du DevBrain, ses 94
+  catégories, ses 9 familles, ses 14 arbres de décision.
+- **Livrable.** `design/01-manifeste.md` (la spécification) · `schema/brain.schema.json`
+  (le contrat vérifiable) · `exemples/devbrain.brain.yml` **complet** ·
+  `exemples/histobrain.brain.yml`.
+- **Acceptation.** Le schéma valide les deux exemples. Un troisième fichier, volontairement
+  incorrect, est refusé avec un message qui nomme le champ fautif.
+- **Interdictions.** Aucun code d'exécution en dehors de la validation de schéma. Aucun
+  vault. Ne pas décider les points ouverts de §5 — les citer.
+
+## Lot 2 — Le test de fidélité, en lecture seule
+
+- **Périmètre.** Un outil qui lit DevBrain **et** `devbrain.brain.yml` et rapporte
+  chaque divergence entre ce que le manifeste dit et ce que le vault est.
+- **Livrable.** `outils/fidelite.py` · `design/02-rapport-fidelite.md` avec les comptes :
+  combien de pages conformes au schéma déclaré, combien de champs hors manifeste,
+  combien de valeurs d'énumération inconnues, combien de sections de corps absentes ou
+  en trop.
+- **Acceptation.** Le rapport est **explicable ligne par ligne** : chaque divergence est
+  soit une erreur du manifeste à corriger, soit un fait connu du vault à documenter. Aucune
+  divergence « inexpliquée » ne subsiste.
+- **Interdictions.** Ne rien générer. Ne rien réparer dans DevBrain — les divergences se
+  **rapportent**, y compris celles qui sont de vraies fautes du vault.
+
+## Lot 3 — Le moteur de validation, branché sur le manifeste
+
+- **Périmètre.** Réécrire `check_brain` et `check_arbo` en validateur piloté par
+  `brain.yml`. Y compris les deux mécanismes que le test à blanc a exigés : le mode
+  `reciproque: inverse` (rupture 2) et l'axe de rangement non exclusif avec sa règle de
+  majorité et son préfixe transversal (rupture 3).
+- **Livrable.** `brainkit/valider/` · `design/03-validation.md` : la correspondance
+  règle par règle avec l'ancien code, et ce qui a été **jeté** (dette de §5.10).
+- **Acceptation.** Sur DevBrain en lecture seule : **même verdict, règle par règle, et
+  même compte de violations qu'aujourd'hui** — 0 dure, et les comptes exacts du lot 8
+  sur les trois avertissements. Un écart d'une seule violation est un échec du lot.
+- **Interdictions.** Aucune règle nouvelle. Aucun changement de sévérité. Ne pas
+  « améliorer » une règle au passage : une amélioration casse le critère d'acceptation.
+
+## Lot 4 — Les générateurs, branchés sur le manifeste
+
+- **Périmètre.** Les quatre : index, hubs et axes transverses (avec la boucle sur
+  `axes.transverses`, rupture 4), liens, bandeau. Plus le moteur de zone AUTO commun et
+  son `--check`.
+- **Livrable.** `brainkit/generer/` · `design/04-generation.md`.
+- **Acceptation.** Régénérer les artefacts dérivés de DevBrain **dans un arbre de travail
+  séparé** et obtenir un `diff` **vide** contre les vrais : `brain-index.json`, `liens.md`,
+  les zones AUTO des 75 hubs, les 6 hubs de `Métiers/`, `Comparatifs.md`, les 338 bandeaux.
+- **Interdictions.** Écrire dans DevBrain, y compris « juste pour tester ». Le mode par
+  défaut des générateurs, pendant ce lot, est `--dry-run` avec une sortie vers un chemin
+  imposé en argument.
+
+## Lot 5 — Le générateur d'instance
+
+- **Périmètre.** De `brain.yml` à un vault vierge : l'arbre, un hub par dossier, les
+  gabarits par rôle, la taxonomie générée, les vocabulaires vides, `CLAUDE.md` et son
+  contexte de mode, les trois hooks avec l'identité locale, la table de couleurs,
+  `Home.md`, `Inbox.md`, `AI/`. Plus l'opération `re-seuiller` (rupture 5) et le mode
+  `freeze` (§5.1).
+- **Livrable.** `brainkit/semer/` · une instance HistoBrain vierge écrite **hors de
+  DevBrain** · `design/05-semis.md`.
+- **Acceptation.** Les deux validateurs **verts sur zéro page d'unité**, un hub par
+  niveau de chemin, et l'instance committée avec l'identité déclarée — les hooks passent.
+  `re-seuiller` sur l'instance vierge ne produit aucun `git mv` et le dit.
+- **Interdictions.** Aucun entretien : le manifeste est donné en fichier. **Aucune page de
+  contenu générée** — pas une source d'exemple, pas une notion de démonstration.
+
+## Lot 6 — L'entretien
+
+- **Périmètre.** Le skill qui conduit les onze passes de §3, produit un `brain.yml`
+  valide, le redit en prose, obtient un oui, puis appelle le lot 5. Les treize refus de
+  §3.5 sont écrits dans le skill comme une liste fermée.
+- **Livrable.** `skills/initialiser-brain/SKILL.md` · `design/06-entretien.md` avec le
+  **journal d'un entretien réel**.
+- **Acceptation.** Un entretien mené **avec floSa, en direct, sur un troisième sujet**
+  — ni le dev, ni l'histoire : le cinéma, ou un domaine client. Le manifeste produit passe
+  le schéma du lot 1, et le lot 5 le sème au vert. Et un contrôle négatif : sur une réponse
+  manquante à la question 0.4, l'entretien **s'arrête**.
+- **Interdictions.** Écrire une page de contenu. Proposer une liste de domaines à cocher.
+  Écrire une sévérité autre que `a_mesurer`.
+
+## Lot 7 — Les trois skills, instanciés
+
+- **Périmètre.** Capture (avec sa table de propagation **dérivée** du manifeste, son mode
+  mise à jour et sa table des effets de bord), clôture, exploitation. Plus le **mode lot**
+  de la capture (§5.9).
+- **Livrable.** `brainkit/skills/` (les gabarits) · les trois skills générés dans
+  HistoBrain · `design/07-skills.md`.
+- **Acceptation.** Capturer **dix sources réelles** dans HistoBrain, dans au moins deux
+  dossiers, et les clôturer. Vérifier que le rayon de propagation a été honoré : chaque
+  ligne de la table est soit faite, soit **déclarée sans objet** — jamais tue. Les
+  réciprocités, y compris une paire `prolonge` / `prolonge_par`, sont vertes.
+- **Interdictions.** Toucher aux skills du DevBrain.
+
+## Lot 8 — La mesure et le durcissement
+
+- **Périmètre.** `brainkit mesurer` : par règle, le compte de violations, la population
+  mesurée, la date, et une proposition de durcissement pour celles à zéro. Les trois
+  garde-fous de §5.6 (plancher de 30 pages, motif obligatoire, les deux règles
+  structurellement dures).
+- **Livrable.** `brainkit/mesurer/` · `design/08-mesure.md` · le premier rapport de mesure
+  de HistoBrain.
+- **Acceptation.** Sur DevBrain en lecture seule, `mesurer` retrouve **les comptes du
+  lot 8 du DevBrain** — 62 pour le voisinage déclaré, 5 pour les étiquettes de ressources,
+  11 candidats dont 2 vrais pour l'anti-répétition. Sur HistoBrain à 10 pages, il **refuse**
+  de proposer un durcissement et dit pourquoi.
+- **Interdictions.** Durcir quoi que ce soit sans mesure écrite. Modifier une sévérité dans
+  `devbrain.brain.yml`.
+
+## Lot 9 — DevBrain devient une instance
+
+- **Périmètre.** Le **premier lot autorisé à écrire dans DevBrain**, et seulement après que
+  les lots 2, 3, 4 et 8 ont tous passé leur acceptation. Poser `brain.yml` à la racine,
+  remplacer l'outillage de `AI/scripts/` par le kit, régénérer, vérifier l'identité.
+- **Livrable.** DevBrain avec son manifeste · `AI/migration/lot-9-brainkit.md` (le journal
+  de lot, dans DevBrain, à sa place habituelle) · `design/09-migration-devbrain.md`.
+- **Acceptation.** **Aucun contenu de page modifié** — `git diff --stat` ne touche que
+  `AI/scripts/`, `brain.yml` et les artefacts régénérés, et ces derniers doivent être
+  **identiques** (donc absents du diff). Les deux validateurs verts. Les trois hooks
+  passent. La clôture se fait par `cloturer-brain`, pas à la main.
+- **Interdictions.** Commencer avant la vérification de divergence avec `origin/main`.
+  Corriger une faute de contenu au passage, même évidente — elle va aux *Remontées*.
+  Toucher aux 299 notions, quelle que soit la raison.
+
+## Lot 10 — L'emballage
+
+- **Périmètre.** `INSTALL.md` généré (avec le manifeste d'images de N3), les guides
+  générés, les deux profils `obsidian` / `nu` (§5.5), le test croisé branché/figé (§5.1),
+  la licence, le `README`.
+- **Livrable.** Un dépôt installable et documenté · `design/10-emballage.md`.
+- **Acceptation.** Une **installation à blanc sur une machine neuve**, en suivant
+  l'`INSTALL.md` généré et sans rien savoir du projet, aboutit à une instance verte. Et
+  l'instance figée passe les mêmes validateurs que l'instance branchée.
+- **Interdictions.** Aucun mécanisme nouveau. Aucune promesse commerciale dans le dépôt
+  — §5.7 et §5.8 doivent être tranchés d'abord.
+
+## Ce qui n'est pas dans le plan, et pourquoi
+
+- **Une interface graphique pour l'entretien.** L'entretien est conversationnel par
+  nature ; le mettre dans un formulaire ramènerait les listes à cocher que §3 refuse.
+- **Le multilingue.** §5.4 : après deux instances françaises.
+- **Un brain client réel.** Il vient après le lot 10, et c'est une prestation, pas un lot.
+- **Un import depuis un corpus existant** (une bibliothèque Zotero, un dossier de PDF).
+  C'est le vrai chantier d'amorçage, il mérite son propre cadrage, et il dépend
+  entièrement du sujet.
