@@ -1,0 +1,1041 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/floSa/BrainKit/schema/brain.schema.json",
+  "title": "BrainKit — contrat de brain.yml, version de manifeste 1",
+  "description": "Contrat verifiable du manifeste d un brain. JSON Schema 2020-12, sans extension : les cinq refus structurels du critere d acceptation du lot 1 sont ici. Le sixieme — une valeur d enumeration absente de la declaration de son axe — est intra-document et n est PAS exprimable en JSON Schema : il vit dans les contraintes de coherence C1..C10 de schema/valider.py, qui les nomme et les cite. Cf. design/01-manifeste.md.",
+
+  "type": "object",
+  "required": ["manifeste", "brain", "git", "libelles", "roles", "axes", "champs", "regles"],
+  "additionalProperties": false,
+
+  "properties": {
+
+    "manifeste": {
+      "$comment": "REFUS 5 — une version de manifeste inconnue. Le kit refuse un manifeste dont il ne connait pas la version, dans les deux sens.",
+      "description": "Version du CONTRAT, pas du brain.",
+      "enum": [1]
+    },
+
+    "kit": {
+      "description": "§5.1, recommandation ecrite, point NON tranche : la version du kit qui a produit l instance, et son mode.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "mode"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "mode": {
+          "description": "`branche` : le code vit dans le kit. `fige` : le code a ete copie dans l instance, qui ne recevra plus de correctif.",
+          "enum": ["branche", "fige"]
+        }
+      }
+    },
+
+    "brain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nom", "sujet", "langue", "volume_cible", "usage", "proprietaire"],
+      "properties": {
+        "nom": { "type": "string", "minLength": 1 },
+        "sujet": { "type": "string", "minLength": 1 },
+        "langue": {
+          "$comment": "§5.4 — `fr` seul en v1. Limite ecrite, pas oubli.",
+          "enum": ["fr"]
+        },
+        "volume_cible": {
+          "description": "Nombre de pages vise a terme. C est de la QUE le seuil de promotion se derive, jamais d une valeur tapee a la main.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "usage": {
+          "description": "Decide la POLARITE du garde-fou d identite git, et si le vault peut contenir de la donnee client.",
+          "enum": ["perso", "pro", "client"]
+        },
+        "profil": {
+          "description": "§5.5, recommandation ecrite, point NON tranche.",
+          "enum": ["obsidian", "nu"],
+          "default": "obsidian"
+        },
+        "proprietaire": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["nom"],
+          "properties": { "nom": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identite", "domaines_refuses", "trailers_refuses", "branche_principale"],
+      "properties": {
+        "identite": {
+          "description": "Posee en config LOCALE du depot. JAMAIS lue depuis l annonce du harnais.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "email"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "email": { "type": "string", "minLength": 3, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$" }
+          }
+        },
+        "domaines_refuses": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "trailers_refuses": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "branche_principale": { "type": "string", "minLength": 1 },
+        "motif": { "type": "string" }
+      }
+    },
+
+    "libelles": {
+      "description": "Le vocabulaire visible, au singulier et au pluriel. Seul endroit du kit ou le mot de l unite existe.",
+      "type": "object",
+      "required": ["unite", "hub", "axe_rangement"],
+      "properties": {
+        "unite":          { "$ref": "#/$defs/libelle" },
+        "notion":         { "$ref": "#/$defs/libelle" },
+        "vue":            { "$ref": "#/$defs/libelle" },
+        "hub":            { "$ref": "#/$defs/libelle" },
+        "prescription":   { "$ref": "#/$defs/libelle" },
+        "axe_rangement":  { "$ref": "#/$defs/libelle" },
+        "axe_nature":     { "$ref": "#/$defs/libelle" },
+        "axe_transverse": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/libelle" }
+        },
+        "motif": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "roles": {
+      "description": "Une entree par nature de page. `id` est le mot que l utilisateur lit ; `fonction` est ce sur quoi le kit raisonne.",
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/role" },
+
+      "allOf": [
+        {
+          "$comment": "REFUS 2 — l absence d EXACTEMENT UN role de fonction `unite`.",
+          "contains": {
+            "type": "object",
+            "required": ["fonction"],
+            "properties": { "fonction": { "const": "unite" } }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "$comment": "REFUS 3 — l absence d EXACTEMENT UN role de fonction `hub`.",
+          "contains": {
+            "type": "object",
+            "required": ["fonction"],
+            "properties": { "fonction": { "const": "hub" } }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "$comment": "Une fonction `notion` est facultative, mais il n en existe jamais deux.",
+          "contains": {
+            "type": "object",
+            "required": ["fonction"],
+            "properties": { "fonction": { "const": "notion" } }
+          },
+          "minContains": 0,
+          "maxContains": 1
+        },
+        {
+          "$comment": "Idem pour `vue`.",
+          "contains": {
+            "type": "object",
+            "required": ["fonction"],
+            "properties": { "fonction": { "const": "vue" } }
+          },
+          "minContains": 0,
+          "maxContains": 1
+        }
+      ]
+    },
+
+    "axes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rangement", "transverses"],
+      "properties": {
+        "rangement":   { "$ref": "#/$defs/axeRangement" },
+        "nature":      { "$ref": "#/$defs/axeNature" },
+        "transverses": {
+          "description": "ZERO OU PLUSIEURS. La liste peut etre VIDE : un brain sans axe transverse est legal, et le generateur ne cree alors aucun dossier.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/axeTransverse" }
+        }
+      }
+    },
+
+    "champs": {
+      "description": "Le dictionnaire, une fois. Chaque champ cite dans un role y est defini une seule fois.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/champ" }
+    },
+
+    "bandeau":            { "$ref": "#/$defs/bandeau" },
+    "regles":             { "$ref": "#/$defs/regles" },
+    "regles_de_socle":    { "type": "array", "items": { "$ref": "#/$defs/regleDeSocle" } },
+    "seuils":             { "$ref": "#/$defs/seuils" },
+    "vocabulaires":       { "type": "object", "additionalProperties": { "$ref": "#/$defs/vocabulaire" } },
+    "graphe":             { "$ref": "#/$defs/graphe" },
+    "genere":             { "$ref": "#/$defs/genere" },
+    "propagation":        { "$ref": "#/$defs/propagation" },
+    "skills":             { "$ref": "#/$defs/skills" },
+    "agent":              { "$ref": "#/$defs/agent" },
+    "frontieres_d_ecriture": { "$ref": "#/$defs/frontieres" }
+  },
+
+  "$defs": {
+
+    "annotations": {
+      "$comment": "Propriete 2 du manifeste : TOUTE valeur peut porter son motif. Un `motif`, `motif_<quelque chose>` ou `note_<quelque chose>` est donc accepte partout, et c est la SEULE porte ouverte dans les objets fermes.",
+      "patternProperties": {
+        "^(motif|note)(_[a-z0-9_]+)?$": { "type": "string" }
+      }
+    },
+
+    "libelle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["s", "p"],
+      "properties": {
+        "s": { "type": "string", "minLength": 1 },
+        "p": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "identifiant": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+
+    "couleur": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+
+    "mesure": {
+      "description": "Un compte, une population et une date. Une mesure sans date n est pas une mesure.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "population": { "type": "integer", "minimum": 0 },
+        "violations": { "type": "integer", "minimum": 0 },
+        "candidats": { "type": "integer", "minimum": 0 },
+        "vrais": { "type": "integer", "minimum": 0 },
+        "detail": { "type": "string" }
+      }
+    },
+
+    "fonction": {
+      "$comment": "REFUS 1 — une `fonction:` hors de la liste FERMEE de six. Le vault se lit dans la langue de son sujet ; le kit ne raisonne que sur ces six mots.",
+      "enum": ["unite", "notion", "hub", "vue", "prescription", "transverse"]
+    },
+
+    "genre": {
+      "description": "Le genre d une section de corps. C est LUI qui branche les regles.",
+      "enum": ["prose", "bandeau", "decision", "etiquetee", "liste_liens", "auto", "libre", "conditionnelle"]
+    },
+
+    "section": {
+      "type": "object",
+      "required": ["titre", "niveau", "genre"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "titre":       { "type": "string", "minLength": 1 },
+        "titre_rendu": { "type": "string", "minLength": 1 },
+        "niveau":      { "enum": [0, 2, 3] },
+        "genre":       { "$ref": "#/$defs/genre" },
+        "champ":       { "type": ["string", "null"] },
+        "mesure":      { "type": "integer", "minimum": 0 },
+        "doctrine":    { "type": "string" },
+        "ecrit_a_la_main": { "type": "boolean" },
+        "hors_zone_auto":  { "type": "boolean" },
+        "forme":       { "type": "string" },
+        "colonne_positive": { "type": "string" },
+        "colonne_negative": { "type": "string" },
+        "obligatoires": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "permises":     { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "mesure_etiquettes": { "type": "string" },
+        "existe_si":    { "type": "string", "minLength": 1 },
+        "balises":      { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 2 },
+        "perimetre":    { "enum": ["dossier", "champ", "role"] },
+        "groupe_par":   { "type": "string" },
+        "sous_titres_depuis": { "type": "string" },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["titre", "source"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "titre":  { "type": "string", "minLength": 1 },
+              "source": { "type": "string", "minLength": 1 },
+              "separateur": { "type": "string" },
+              "mesure": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      },
+      "if": { "properties": { "genre": { "const": "conditionnelle" } }, "required": ["genre"] },
+      "then": {
+        "$comment": "Une section `conditionnelle` DOIT dire a quelle condition elle existe — sinon elle est une section libre qui se croit conditionnelle.",
+        "required": ["existe_si"]
+      }
+    },
+
+    "role": {
+      "type": "object",
+      "required": ["id", "fonction", "libelle", "range_par"],
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/annotations" },
+        {
+          "$comment": "Un role range par son ROLE vit dans un dossier a la racine : il faut donc le nommer.",
+          "if": { "properties": { "range_par": { "const": "role" } }, "required": ["range_par"] },
+          "then": { "required": ["dossier"] }
+        },
+        {
+          "$comment": "Un role de fonction `vue` embarque une table filtree : la vue et son hub de ralliement sont sa raison d etre.",
+          "if": { "properties": { "fonction": { "const": "vue" } }, "required": ["fonction"] },
+          "then": { "required": ["vue_embarquee", "regle_de_categorie"] }
+        }
+      ],
+      "properties": {
+        "id":       { "$ref": "#/$defs/identifiant" },
+        "fonction": { "$ref": "#/$defs/fonction" },
+        "libelle":  { "$ref": "#/$defs/libelle" },
+        "range_par": {
+          "description": "`axe` : le chemin se derive de l axe de rangement. `role` : le dossier est celui du role, a la racine.",
+          "enum": ["axe", "role"]
+        },
+        "dossier":  { "type": "string", "minLength": 1 },
+        "prefixe_nom": { "type": "string" },
+        "protege":  { "type": "boolean" },
+        "pese_sur_le_seuil":    { "type": "boolean" },
+        "apparait_dans_le_hub": { "type": "boolean" },
+        "porte_categorie":      { "type": "boolean" },
+        "couleur":  { "$ref": "#/$defs/couleur" },
+        "taille_avertissement": { "type": ["integer", "null"], "minimum": 1 },
+        "population": { "type": "integer", "minimum": 0 },
+        "repartition": { "type": "string" },
+        "regle_de_categorie": { "enum": ["majorite", "unique"] },
+        "vue_embarquee": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "required": ["extension", "moteur"],
+          "properties": {
+            "extension": { "type": "string", "pattern": "^\\." },
+            "moteur":    { "type": "string", "minLength": 1 },
+            "embed":     { "type": "string" },
+            "tri_par":   { "type": "string" },
+            "direction": { "enum": ["asc", "desc"] },
+            "genere":    { "type": "boolean" },
+            "colonnes_par_defaut": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "hub_de_ralliement": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "required": ["dossier", "lien_retour"],
+          "properties": {
+            "dossier":     { "type": "string", "minLength": 1 },
+            "lien_retour": { "type": "string", "minLength": 1 },
+            "groupe_par":  { "type": "string" }
+          }
+        },
+        "champs": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "required": ["requis", "autorises"],
+          "properties": {
+            "requis":    { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+            "autorises": {
+              "description": "EXACTS : tout champ hors de cette liste fait echouer la page.",
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "deprecies": {
+              "description": "§5.11, recommandation ecrite, point NON tranche : autorises, absents du gabarit genere, comptes par la passe de mesure.",
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "conditionnels": {
+              "$comment": "REFUS 4 — un champ conditionnel SANS condition. `champ` et `si` sont tous deux requis : un conditionnel sans `si` est un champ autorise qui se croit conditionnel, et le validateur de vault ne saurait jamais quand l exiger.",
+              "type": "array",
+              "items": {
+                "$comment": "REFUS 4 — un champ conditionnel SANS condition. `champ` et `si` sont tous deux requis.",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["champ", "si"],
+                "properties": {
+                  "champ": { "type": "string", "minLength": 1 },
+                  "si":    { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        },
+        "corps": { "type": "array", "items": { "$ref": "#/$defs/section" } }
+      }
+    },
+
+    "arbreDeDecision": {
+      "description": "ORDRE STRICT, premiere reponse positive gagne. L ordre EST la decision de conception : il se prend une fois et s ecrit ici.",
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["n", "question", "si_oui"],
+        "unevaluatedProperties": false,
+        "allOf": [{ "$ref": "#/$defs/annotations" }],
+        "properties": {
+          "n": { "type": "string", "minLength": 1 },
+          "question": { "type": "string", "minLength": 1 },
+          "si_oui": {
+            "oneOf": [
+              { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              { "type": "string", "minLength": 1 }
+            ]
+          },
+          "arret":  { "type": "boolean" },
+          "defaut": { "type": "boolean" }
+        }
+      }
+    },
+
+    "departages": {
+      "description": "NAIT VIDE dans un brain neuf. L endroit ou s ecrit un arbitrage recurrent, une fois, avec le cas qui l a provoque.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["n", "regle"],
+        "unevaluatedProperties": false,
+        "allOf": [{ "$ref": "#/$defs/annotations" }],
+        "properties": {
+          "n":     { "type": "string", "minLength": 1 },
+          "regle": { "type": "string", "minLength": 1 },
+          "cas":   { "type": "string" }
+        }
+      }
+    },
+
+    "frontieresDisputees": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entre", "et", "distinction"],
+        "unevaluatedProperties": false,
+        "allOf": [{ "$ref": "#/$defs/annotations" }],
+        "properties": {
+          "entre": { "type": "string", "minLength": 1 },
+          "et":    { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+          "distinction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "sousValeur": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "libelle": {
+          "description": "Le nom du dossier le jour ou la valeur franchit le seuil. Son absence fait ECHOUER la derivation plutot que d inventer un nom.",
+          "type": "string",
+          "minLength": 1
+        },
+        "frontiere": { "type": "string" },
+        "portee":    { "type": "string" }
+      }
+    },
+
+    "prefixe": {
+      "type": "object",
+      "required": ["cle", "dossier", "sous"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "cle":     { "$ref": "#/$defs/identifiant" },
+        "dossier": { "type": "string", "minLength": 1 },
+        "portee":  { "type": "string" },
+        "rattachement_de": { "type": "array", "items": { "$ref": "#/$defs/identifiant" } },
+        "sous": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "additionalProperties": { "$ref": "#/$defs/sousValeur" }
+        }
+      }
+    },
+
+    "axeRangement": {
+      "description": "EXACTEMENT UN. C est lui qui donne le chemin.",
+      "type": "object",
+      "required": ["champ", "exclusif", "seuil_promotion", "plafond_promotion", "prefixes",
+                   "arbre_de_decision", "departages", "frontieres"],
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/annotations" },
+        {
+          "$comment": "Rupture 3 : si l axe n est PAS exclusif, la regle de majorite et le prefixe transversal deviennent OBLIGATOIRES. Sans eux, l utilisateur mentirait dans le champ et le validateur resterait vert — le pire des resultats.",
+          "if": { "properties": { "exclusif": { "const": false } }, "required": ["exclusif"] },
+          "then": { "required": ["regle_de_majorite", "prefixe_transversal"] }
+        },
+        {
+          "$comment": "Un seuil se DERIVE du volume cible : le calcul s ecrit, il ne se suppose pas.",
+          "required": ["motif_seuil"]
+        }
+      ],
+      "properties": {
+        "champ": { "type": "string", "minLength": 1 },
+        "exclusif": { "type": "boolean" },
+        "regle_de_majorite": { "type": "boolean" },
+        "definition_de_la_majorite": { "type": "string" },
+        "prefixe_transversal": { "$ref": "#/$defs/identifiant" },
+        "seuil_promotion": { "type": "integer", "minimum": 2 },
+        "plafond_promotion": { "type": "boolean" },
+        "niveaux": { "enum": [1, 2] },
+        "valeur_courte_autorisee": {
+          "description": "`true` si le prefixe seul est une valeur legale de l axe. DevBrain : false — `categorie:` est toujours `prefixe/sous`.",
+          "type": "boolean"
+        },
+        "consequence_du_seuil": { "type": "string" },
+        "regle_de_retrait": { "type": "string" },
+        "mesure": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "date": { "type": "string" },
+            "valeurs_declarees": { "type": "integer", "minimum": 0 },
+            "valeurs_declarees_detail": { "type": "string" },
+            "valeurs_portees": { "type": "integer", "minimum": 0 },
+            "prefixes": { "type": "integer", "minimum": 1 },
+            "sous_libelles_declares": { "type": "integer", "minimum": 0 },
+            "sous_domaines_promus": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "prefixes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/prefixe" } },
+        "rattachements": {
+          "description": "Prefixes qui ne sont PAS des valeurs de l axe et qu une decision EXPLICITE, nommee et datee, range quand meme dans l arbre.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["dossier"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "dossier": { "type": "string", "minLength": 1 },
+              "sous": {
+                "type": "object",
+                "additionalProperties": { "$ref": "#/$defs/sousValeur" }
+              }
+            }
+          }
+        },
+        "arbre_de_decision": { "$ref": "#/$defs/arbreDeDecision" },
+        "departages": { "$ref": "#/$defs/departages" },
+        "frontieres": { "$ref": "#/$defs/frontieresDisputees" }
+      }
+    },
+
+    "axeNature": {
+      "description": "ZERO OU UN. Il qualifie l unite, il ne la range pas. Un brain sans axe de nature est valide, et l entretien ne doit pas insister.",
+      "type": "object",
+      "required": ["champ", "porte_par", "vide_autorise", "valeurs", "arbre_de_decision", "departages"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "champ": { "type": "string", "minLength": 1 },
+        "porte_par":    { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/identifiant" } },
+        "interdit_sur": { "type": "array", "items": { "$ref": "#/$defs/identifiant" } },
+        "vide_autorise": {
+          "description": "Un champ vide est le SEUL signal prevu pour « l arbre n a pas tranche ». Une valeur inventee est une faute, un champ vide est une question ouverte.",
+          "type": "boolean"
+        },
+        "mesure": { "$ref": "#/$defs/mesure" },
+        "valeurs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["cle", "definition"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "cle":        { "$ref": "#/$defs/identifiant" },
+              "definition": { "type": "string", "minLength": 1 },
+              "frontiere":  { "type": "string" }
+            }
+          }
+        },
+        "arbre_de_decision": { "$ref": "#/$defs/arbreDeDecision" },
+        "departages": { "$ref": "#/$defs/departages" },
+        "frontieres": { "$ref": "#/$defs/frontieresDisputees" }
+      }
+    },
+
+    "axeTransverse": {
+      "type": "object",
+      "required": ["champ", "dossier", "multivalue", "valeurs"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "champ":   { "type": "string", "minLength": 1 },
+        "dossier": { "type": "string", "minLength": 1 },
+        "multivalue": { "type": "boolean" },
+        "hub_par_valeur": { "type": "boolean" },
+        "pointe_vers": { "type": "string" },
+        "valeurs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["cle", "libelle"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "cle":     { "$ref": "#/$defs/identifiant" },
+              "libelle": { "type": "string", "minLength": 1 },
+              "couvre":  { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "champ": {
+      "type": "object",
+      "required": ["type"],
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/annotations" },
+        {
+          "$comment": "Un champ `enum` ou `liste_enum` doit dire OU son vocabulaire est declare : soit une `source` (un axe, un vocabulaire), soit une liste `valeurs` en propre. Ni l un ni l autre, ou les deux, est une erreur de manifeste — c est le versant exprimable du refus 6.",
+          "if": {
+            "properties": { "type": { "enum": ["enum", "liste_enum"] } },
+            "required": ["type"]
+          },
+          "then": {
+            "oneOf": [
+              { "required": ["source"], "not": { "required": ["valeurs"] } },
+              { "required": ["valeurs"], "not": { "required": ["source"] } }
+            ]
+          }
+        },
+        {
+          "$comment": "Une valeur eliminatoire n a de sens que sur une enumeration : elle nomme la ou les valeurs qui DISQUALIFIENT une page aupres du skill d exploitation. Aucune valeur par defaut, jamais.",
+          "if": { "required": ["eliminatoire"] },
+          "then": { "properties": { "type": { "enum": ["enum", "liste_enum"] } } }
+        }
+      ],
+      "properties": {
+        "type": { "enum": ["ligne", "texte", "liste", "enum", "liste_enum", "liens", "url", "bool", "date"] },
+        "source":  { "type": "string", "minLength": 1 },
+        "valeurs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "fonction": {
+          "description": "`resume_court` : le champ reinjecte. `identite` : egal au nom de fichier. `alias`. `aucune`.",
+          "enum": ["resume_court", "identite", "alias", "aucune"]
+        },
+        "reciproque": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode"],
+              "properties": { "mode": { "const": "symetrique" } }
+            },
+            {
+              "$comment": "Le mode INVERSE n existe pas dans DevBrain, et il est necessaire ailleurs : « A prolonge B » implique « B est prolonge par A », pas « B prolonge A ». Le champ oppose est OBLIGATOIRE.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode", "champ"],
+              "properties": {
+                "mode":  { "const": "inverse" },
+                "champ": { "type": "string", "minLength": 1 }
+              }
+            }
+          ]
+        },
+        "section": { "type": ["string", "null"] },
+        "reinjecte_dans": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "eliminatoire": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "deprecated": { "type": "boolean" },
+        "unicite":    { "enum": ["stricte", "souple"] },
+        "exemption":  { "type": "string" }
+      }
+    },
+
+    "bandeau": {
+      "type": "object",
+      "required": ["porte_par", "vide", "colonnes"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "porte_par": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/identifiant" } },
+        "vide": {
+          "description": "Le caractere affiche quand la source manque. Une cellule sans source dans le frontmatter l affiche, JAMAIS une valeur plausible.",
+          "type": "string",
+          "minLength": 1
+        },
+        "balises": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 2 },
+        "position": { "type": "string" },
+        "porte_le_resume": { "type": "boolean" },
+        "regle_dure": { "type": "string" },
+        "echappement": { "type": "string" },
+        "colonnes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "$comment": "Plus de cinq colonnes : l entretien redemande. Le bandeau existe PARCE QUE dix-huit proprietes poussaient le texte sous la ligne de flottaison.",
+          "items": {
+            "type": "object",
+            "required": ["titre", "source"],
+            "$comment": "Une colonne dont la source n est pas un champ declare est une ERREUR DE MANIFESTE, pas une colonne vide — verifiee par la contrainte de coherence C2.",
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "titre":  { "type": "string", "minLength": 1 },
+              "source": { "type": "string", "minLength": 1 },
+              "qualifie_par": { "type": "string", "minLength": 1 },
+              "table": { "type": "object", "additionalProperties": { "type": "string" } },
+              "exception_qualification": {
+                "type": "object",
+                "required": ["si"],
+                "unevaluatedProperties": false,
+                "allOf": [{ "$ref": "#/$defs/annotations" }],
+                "properties": { "si": { "type": "string", "minLength": 1 } }
+              },
+              "depend_de": {
+                "type": "object",
+                "unevaluatedProperties": false,
+                "allOf": [{ "$ref": "#/$defs/annotations" }],
+                "properties": {
+                  "familles": { "type": "array", "items": { "type": "string" } },
+                  "champs":   { "type": "array", "items": { "type": "string" } },
+                  "table_hosted":  { "type": "object", "additionalProperties": { "type": "string" } },
+                  "table_scaling": { "type": "object", "additionalProperties": { "type": "string" } },
+                  "repli": {
+                    "type": "object",
+                    "required": ["si", "source"],
+                    "unevaluatedProperties": false,
+                    "allOf": [{ "$ref": "#/$defs/annotations" }],
+                    "properties": {
+                      "si":     { "type": "string", "minLength": 1 },
+                      "source": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "severite": {
+      "description": "`a_mesurer` est la valeur PAR DEFAUT de toute instance neuve, et la seule que l entretien sait ecrire. Porter une severite, c est porter une mesure qu on n a pas faite.",
+      "oneOf": [
+        { "enum": ["dure", "avertissement", "a_mesurer"] },
+        {
+          "$comment": "Une severite PAR SECTION, quand une regle porte sur plusieurs sections dont la mesure differe.",
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "enum": ["dure", "avertissement", "a_mesurer"] }
+        }
+      ]
+    },
+
+    "regles": {
+      "description": "La liste des dix est FERMEE par le kit : le manifeste les BRANCHE, il ne les decrit pas. Le kit garde du code par regle.",
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["id", "active", "severite"],
+        "unevaluatedProperties": false,
+        "allOf": [
+          { "$ref": "#/$defs/annotations" },
+          {
+            "$comment": "Une regle qui reste en AVERTISSEMENT doit porter un motif ECRIT : le kit refuse un avertissement sans motif (§5.6).",
+            "if": { "properties": { "severite": { "const": "avertissement" } }, "required": ["severite"] },
+            "then": { "required": ["motif"] }
+          }
+        ],
+        "properties": {
+          "id": {
+            "enum": ["reciprocite", "chemin_categorie", "completude_du_hub", "voisinage_declare",
+                     "redirection_sourcee", "reinjection_du_resume", "etiquettes_fermees",
+                     "citation_unique", "bandeau_a_jour", "anti_repetition"]
+          },
+          "enonce":   { "type": "string" },
+          "active":   { "type": "boolean" },
+          "severite": { "$ref": "#/$defs/severite" },
+          "definitif": { "type": "boolean" },
+          "reecrite":  { "type": "boolean" },
+          "scriptable": { "type": "boolean" },
+          "structurellement_dure": { "type": "boolean" },
+          "code":     { "type": "array", "items": { "type": "string" } },
+          "champ":    { "type": "string" },
+          "champs":   { "type": "array", "items": { "type": "string" } },
+          "modes":    { "type": "object", "additionalProperties": { "enum": ["symetrique", "inverse"] } },
+          "roles":    { "type": "array", "items": { "$ref": "#/$defs/identifiant" } },
+          "sections": { "type": "array", "items": { "type": "string" } },
+          "colonne":  { "type": "string" },
+          "marqueur": { "type": "string" },
+          "condition": { "type": "string" },
+          "champ_resume": { "type": "string" },
+          "normalisation": { "type": "string" },
+          "definition_de_liste": { "type": "string" },
+          "sortie":   { "type": "string" },
+          "complication": { "type": "string" },
+          "motifs_bornes": { "type": "object" },
+          "mesure": {
+            "$comment": "anyOf et non oneOf : une mesure simple satisfait aussi la forme « une mesure par section », et oneOf refuserait les deux a la fois.",
+            "anyOf": [
+              { "$ref": "#/$defs/mesure" },
+              { "type": "object", "additionalProperties": { "$ref": "#/$defs/mesure" } },
+              { "type": "array", "items": { "type": "object" } }
+            ]
+          },
+          "mesure_des_formes_ecartees": { "type": "array", "items": { "type": "object" } }
+        }
+      }
+    },
+
+    "regleDeSocle": {
+      "type": "object",
+      "required": ["id", "severite", "enonce"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "id":       { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "severite": { "$ref": "#/$defs/severite" },
+        "enonce":   { "type": "string", "minLength": 1 },
+        "code":     { "type": "array", "items": { "type": "string" } },
+        "depuis":   { "type": "string" },
+        "mesure":   { "type": "object" },
+        "quatre_motifs_distingues": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "seuils": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "vue_min_valeurs_axe": { "type": "integer", "minimum": 1 },
+        "vue_min_membres":     { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "vocabulaire": {
+      "type": "object",
+      "required": ["fichier", "mode"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "fichier": { "type": "string", "minLength": 1 },
+        "mode":    { "enum": ["ferme", "propose", "libre"] },
+        "regle":   { "type": "string" },
+        "lecture": { "type": "string" },
+        "porte":   { "type": "string" },
+        "genere":  { "type": "boolean" },
+        "vide":    { "type": "boolean" }
+      }
+    },
+
+    "graphe": {
+      "type": "object",
+      "required": ["ordre"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "cible":      { "type": "string" },
+        "versionne":  { "type": "boolean" },
+        "hors_graphe": { "type": "string" },
+        "ordre": {
+          "description": "L ORDRE COMPTE : une requete `path:` passe avant une requete `role:`, sinon un hub special prend la couleur des hubs ordinaires.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["requete", "couleur"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "requete": { "type": "string", "minLength": 1 },
+              "couleur": { "$ref": "#/$defs/couleur" },
+              "rgb":     { "type": "integer", "minimum": 0, "maximum": 16777215 }
+            }
+          }
+        }
+      }
+    },
+
+    "genere": {
+      "description": "La liste des chemins qu AUCUNE main n edite.",
+      "type": "object",
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "required": ["chemins"],
+      "properties": {
+        "chemins": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["chemin", "par"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "chemin":  { "type": "string", "minLength": 1 },
+              "par":     { "type": "string", "minLength": 1 },
+              "depuis":  { "type": "string" },
+              "balises": { "type": "array", "items": { "type": "string" }, "minItems": 2, "maxItems": 2 }
+            }
+          }
+        },
+        "contrat": { "type": "string" },
+        "non_pages": { "type": "array", "items": { "type": "string" } },
+        "index": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "fichiers": { "type": "array", "items": { "type": "string" } },
+            "champs":   { "type": "array", "items": { "type": "string" } },
+            "plus":     { "type": "array", "items": { "type": "string" } },
+            "tri":      { "enum": ["stable"] },
+            "horodatage": { "const": false }
+          }
+        },
+        "liens": {
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "fichier":  { "type": "string" },
+            "sections": { "type": "array", "items": { "type": "string" } },
+            "masque_du_graphe": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "propagation": {
+      "type": "object",
+      "required": ["enonce", "clause", "table"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "enonce": { "type": "string", "minLength": 1 },
+        "clause": {
+          "description": "Une ligne sans objet se DECLARE sans objet, elle ne se tait pas.",
+          "type": "string",
+          "minLength": 1
+        },
+        "derivee": { "const": true },
+        "table":   { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/lignePropagation" } },
+        "hubs_transverses": { "type": "array", "items": { "$ref": "#/$defs/lignePropagation" } }
+      }
+    },
+
+    "lignePropagation": {
+      "type": "object",
+      "required": ["n", "cible", "trouve_par", "par"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "n":          { "type": "string", "pattern": "^P[0-9]+$" },
+        "cible":      { "type": "string", "minLength": 1 },
+        "trouve_par": { "type": "string", "minLength": 1 },
+        "par":        { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "skills": {
+      "type": "object",
+      "required": ["capture", "cloture"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "capture":      { "$ref": "#/$defs/skill" },
+        "cloture":      { "$ref": "#/$defs/skill" },
+        "exploitation": { "$ref": "#/$defs/skill" }
+      }
+    },
+
+    "skill": {
+      "type": "object",
+      "required": ["nom"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "nom": { "type": "string", "minLength": 1 },
+        "ecrit_dans_le_brain": { "type": "boolean" },
+        "mode_lot":  { "type": "boolean" },
+        "livrable":  { "type": "string" },
+        "archetypes": { "type": "string" },
+        "questions": { "type": "string" },
+        "filtre_eliminatoire": { "type": ["string", "null"] },
+        "forme":     { "type": "string" },
+        "etapes":    { "type": "array", "items": { "type": "string" } },
+        "porte":     { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "agent": {
+      "type": "object",
+      "required": ["racine", "sous"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "racine": { "type": "string", "minLength": 1 },
+        "sous": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["chemin", "role"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "chemin": { "type": "string", "minLength": 1 },
+              "role":   { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "hook_stop": { "type": "string" }
+      }
+    },
+
+    "frontieres": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "libre":                 { "type": "array", "items": { "type": "string" } },
+        "sur_confirmation":      { "type": "array", "items": { "type": "string" } },
+        "sur_demande_explicite": { "type": "array", "items": { "type": "string" } },
+        "jamais_a_la_main":      { "type": "array", "items": { "type": "string" } },
+        "jamais_sans_accord":    { "type": "array", "items": { "type": "string" } },
+        "deplacement":           { "type": "string" },
+        "second_mode":           { "type": "boolean" }
+      }
+    }
+  }
+}

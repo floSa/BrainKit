@@ -1,0 +1,170 @@
+# ==============================================================================
+# invalide.brain.yml — LE CONTRE-EXEMPLE. Volontairement faux.
+# ------------------------------------------------------------------------------
+# Ce fichier ne decrit AUCUN brain. Il existe pour une seule raison : prouver que
+# le contrat refuse, et qu il NOMME le champ fautif. Il porte les SIX refus du
+# critere d acceptation du lot 1, un par faute, chacune marquee `# FAUTE n`.
+#
+#   FAUTE 1  une `fonction:` hors de la liste fermee de six
+#            -> roles[2].fonction
+#   FAUTE 2  l absence d EXACTEMENT UN role de fonction `unite` (il y en a DEUX)
+#            -> roles
+#   FAUTE 3  l absence d EXACTEMENT UN role de fonction `hub` (il n y en a AUCUN)
+#            -> roles
+#   FAUTE 4  un champ conditionnel SANS condition
+#            -> roles[0].champs.conditionnels[0]
+#   FAUTE 5  une version de manifeste inconnue
+#            -> manifeste
+#   FAUTE 6  une valeur d enumeration ABSENTE de la declaration de son axe
+#            -> bandeau.colonnes[0].table.brochure
+#
+# Les cinq premieres sont portees par le JSON Schema. La sixieme est
+# intra-document et n est pas exprimable en JSON Schema : elle est portee par la
+# contrainte de coherence C4 de schema/valider.py. Trois autres fautes tombent
+# en prime — elles ne sont pas mises la expres, elles sont la CONSEQUENCE des
+# six, et c est instructif : un manifeste faux est faux plusieurs fois.
+#
+# Verifier :  uv run schema/valider.py --attendre-echec exemples/invalide.brain.yml
+# ==============================================================================
+
+manifeste: 7                          # FAUTE 5 — le kit ne connait que la version 1
+
+brain:
+  nom: BrainCasse
+  sujet: "Un manifeste faux, pour prouver que le contrat refuse."
+  langue: fr
+  volume_cible: 100
+  usage: perso
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: [aosis.net]
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+
+libelles:
+  unite:         { s: piece,   p: pieces }
+  hub:           { s: hub,     p: hubs }
+  axe_rangement: { s: rayon,   p: rayons }
+  axe_nature:    { s: matiere, p: matieres }
+
+roles:
+
+  # --- 0 : une premiere unite -------------------------------------------------
+  - id: piece
+    fonction: unite                   # FAUTE 2 (1/2) — premiere `unite`
+    libelle: { s: piece, p: pieces }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#412CDD"
+    champs:
+      requis: [role, nom, resume, categorie]
+      autorises: [role, nom, resume, categorie, matiere, epaisseur, tags]
+      conditionnels:
+        - { champ: epaisseur }        # FAUTE 4 — conditionnel SANS `si`
+    corps:
+      - { titre: "<bandeau>", niveau: 0, genre: bandeau }
+      - { titre: "Ce que c'est", niveau: 2, genre: prose }
+
+  # --- 1 : une SECONDE unite, ce qui est interdit -----------------------------
+  - id: piece-bis
+    fonction: unite                   # FAUTE 2 (2/2) — seconde `unite`
+    libelle: { s: piece bis, p: pieces bis }
+    range_par: axe
+    champs:
+      requis: [role, nom]
+      autorises: [role, nom, tags]
+
+  # --- 2 : une fonction qui n existe pas dans le kit --------------------------
+  - id: chronologie
+    fonction: chronologie             # FAUTE 1 — hors de la liste fermee de six.
+                                      # `chronologie` est un `id:` legitime dans
+                                      # HistoBrain ; ce n est PAS une `fonction:`.
+                                      # C est exactement la confusion que le
+                                      # dedoublement id/fonction doit empecher.
+    libelle: { s: chronologie, p: chronologies }
+    range_par: axe
+
+  # --- AUCUN role de fonction `hub` : FAUTE 3 ---------------------------------
+
+axes:
+  rangement:
+    champ: categorie
+    exclusif: true
+    seuil_promotion: 5
+    motif_seuil: "100 pages / 2 rayons -> 50 par rayon. Seuil a 5."
+    plafond_promotion: true
+    prefixes:
+      - cle: bois
+        dossier: "Bois"
+        sous:
+          massif: { libelle: "Massif" }
+          panneau: { libelle: "Panneau" }
+      - cle: metal
+        dossier: "Métal"
+        sous:
+          acier: { libelle: "Acier" }
+    arbre_de_decision:
+      - { n: D1, question: "Est-ce du bois ?",   si_oui: ["bois/*"] }
+      - { n: D2, question: "Est-ce du métal ?",  si_oui: ["metal/*"] }
+      - { n: D3, question: "Aucun des précédents", si_oui: [], arret: true }
+    departages: []
+    frontieres: []
+
+  nature:
+    champ: matiere
+    porte_par: [piece]
+    vide_autorise: true
+    valeurs:
+      - { cle: planche, definition: "Débitée dans l'épaisseur." }
+      - { cle: tube,    definition: "Section creuse." }
+      - { cle: profile, definition: "Section pleine, laminée." }
+    arbre_de_decision:
+      - { n: N1, question: "La section est-elle creuse ?", si_oui: tube }
+      - { n: N2, question: "Aucun des précédents", si_oui: planche, defaut: true }
+    departages: []
+
+  transverses: []
+
+champs:
+  role:      { type: enum, source: "roles[].id", fonction: aucune }
+  nom:       { type: ligne, fonction: identite }
+  resume:    { type: ligne, fonction: resume_court }
+  categorie: { type: enum, source: axes.rangement, fonction: aucune }
+  matiere:   { type: enum, source: axes.nature, fonction: aucune }
+  epaisseur: { type: ligne, fonction: aucune }
+  tags:      { type: liste, fonction: aucune }
+
+bandeau:
+  porte_par: [piece]
+  vide: "—"
+  colonnes:
+    - titre: Matière
+      source: matiere
+      table:
+        planche: Planche
+        tube: Tube
+        brochure: Brochure        # FAUTE 6 — `brochure` n est pas une valeur
+                                  # declaree de `axes.nature`. Le schema ne peut
+                                  # PAS le voir : il faudrait comparer une cle de
+                                  # cette table a une liste ecrite ailleurs dans
+                                  # le meme document. C est la contrainte C4.
+
+regles:
+  - { id: reciprocite,           active: false, severite: a_mesurer }
+  - { id: chemin_categorie,      active: true,  severite: a_mesurer }
+  - { id: completude_du_hub,     active: true,  severite: a_mesurer, roles: [piece] }
+  - { id: voisinage_declare,     active: false, severite: a_mesurer }
+  - { id: redirection_sourcee,   active: false, severite: a_mesurer }
+  - { id: reinjection_du_resume, active: true,  severite: a_mesurer, champ_resume: resume }
+  - { id: etiquettes_fermees,    active: false, severite: a_mesurer }
+  - { id: citation_unique,       active: false, severite: a_mesurer }
+  - { id: bandeau_a_jour,        active: true,  severite: a_mesurer }
+  - { id: anti_repetition,       active: false, severite: a_mesurer,
+      motif: "Non livree, comme partout." }
