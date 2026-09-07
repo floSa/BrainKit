@@ -1,0 +1,63 @@
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["pyyaml>=6"]
+# ///
+"""Le validateur de vault de BrainKit, en ligne de commande.
+
+    uv run brainkit/valider/__main__.py
+    uv run brainkit/valider/__main__.py --manifeste <brain.yml> --vault <dossier>
+    uv run brainkit/valider/__main__.py --regle voisinage_declare
+    uv run brainkit/valider/__main__.py --tout
+
+Sort en 1 si une regle DURE est violee, en 0 sinon. Une regle en
+`avertissement` signale ; une regle en `a_mesurer` compte, sans juger — c est la
+severite par defaut de toute instance neuve.
+
+LECTURE SEULE. Le paquet n a aucun chemin d ecriture :
+`grep -rnE 'write_text|write_bytes|mkdir|unlink|rmtree|rename' brainkit/` ne rend
+que cette phrase.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+RACINE_KIT = Path(__file__).resolve().parents[2]
+if str(RACINE_KIT) not in sys.path:
+    sys.path.insert(0, str(RACINE_KIT))
+
+from brainkit.valider import charge, imprime, valide  # noqa: E402
+
+MANIFESTE_DEFAUT = RACINE_KIT / "exemples" / "devbrain.brain.yml"
+VAULT_DEFAUT = RACINE_KIT.parent / "DevBrain"
+
+
+def main() -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):        # pragma: no cover
+        pass
+    ap = argparse.ArgumentParser(description="Valide un vault contre son manifeste.")
+    ap.add_argument("--manifeste", type=Path, default=MANIFESTE_DEFAUT)
+    ap.add_argument("--vault", type=Path, default=VAULT_DEFAUT)
+    ap.add_argument("--regle", default=None,
+                    help="n'imprimer que les constats d'une règle")
+    ap.add_argument("--tout", action="store_true",
+                    help="imprimer aussi les notes (conditions non évaluables, "
+                         "pages écartées d'une dérivation)")
+    ns = ap.parse_args()
+
+    if not ns.manifeste.exists():
+        return print(f"manifeste introuvable : {ns.manifeste}") or 2
+    if not ns.vault.is_dir():
+        return print(f"vault introuvable : {ns.vault}") or 2
+
+    mo = charge(ns.manifeste)
+    v = valide(mo, ns.vault.resolve())
+    return imprime(v, mo, ns.vault.resolve(), regle=ns.regle, tout=ns.tout)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
