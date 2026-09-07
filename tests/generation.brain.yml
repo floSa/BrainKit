@@ -1,0 +1,381 @@
+# ==============================================================================
+# generation.brain.yml — le manifeste du jeu d epreuve des GENERATEURS (lot 4).
+# ------------------------------------------------------------------------------
+# Distinct de `tests/epreuve.brain.yml`, et il faut dire pourquoi : celui-la
+# eprouve le validateur, et son critere d acceptation est un ensemble EXACT de
+# sept violations. Y ajouter deux axes transverses et un hub de ralliement
+# changerait cet ensemble, donc casserait le critere d un lot deja clos. Un jeu
+# d epreuve ne se modifie pas pour en accueillir un autre : il s en pose un a
+# cote.
+#
+# Ce que ce manifeste eprouve, et rien d autre :
+#
+#   1. DEUX axes transverses (`themes` et `espaces`), la ou le DevBrain n en a
+#      qu un et ou `epreuve.brain.yml` n en a AUCUN. C est la rupture 4 du test
+#      a blanc, et les trois comptes — 0, 1, 2 — sont couverts par les trois
+#      manifestes ensemble.
+#   2. Les TROIS formes de zone AUTO, chacune presente : la forme ARBRE (les
+#      hubs des periodes), la forme TRANSVERSE (les hubs de « Thèmes/ » et de
+#      « Espaces/ »), la forme RALLIEMENT (« Chronologies/ », le hub du role
+#      `fonction: vue`).
+#   3. Un bandeau a DEUX colonnes, dont une avec `qualifie_par:` — pour que le
+#      moteur de bandeau tourne sur un contenu qui n a pas une valeur en commun
+#      avec celui du DevBrain.
+#
+# Les DIX regles sortent en `a_mesurer` : principe 1 du cadrage, aucune severite
+# n est portable. Ce jeu d epreuve n en mesure aucune — c est le lot 3 qui le
+# fait, sur son propre vault.
+#
+# Les accents sont ecrits partout SAUF dans les commentaires et les `motif:`,
+# comme dans les trois autres manifestes du depot.
+# ==============================================================================
+
+manifeste: 1
+
+kit:
+  version: "0.1.0"
+  mode: branche
+
+brain:
+  nom: GenBrain
+  sujet: "Un vault minuscule dont le seul objet est d'éprouver les générateurs."
+  langue: fr
+  volume_cible: 40
+  usage: perso
+  profil: obsidian
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: [aosis.net]
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+
+libelles:
+  unite:         { s: source,      p: sources }
+  notion:        { s: notion,      p: notions }
+  vue:           { s: chronologie, p: chronologies }
+  hub:           { s: hub,         p: hubs }
+  prescription:  { s: méthode,     p: méthodes }
+  axe_rangement: { s: période,     p: périodes }
+  axe_nature:    { s: nature,      p: natures }
+  axe_transverse:
+    themes:  { s: thème,  p: thèmes }
+    espaces: { s: espace, p: espaces }
+
+# ------------------------------------------------------------------------------
+roles:
+
+  - id: source
+    fonction: unite
+    libelle: { s: source, p: sources }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    champs:
+      requis: [role, nom, apport, periode]
+      autorises: [role, nom, alias, apport, periode, nature, auteur,
+                  date_publication, themes, espaces, mots]
+    corps:
+      - { titre: "<bandeau>",    niveau: 0, genre: bandeau }
+      - { titre: "Ce que c'est", niveau: 2, genre: prose }
+      - { titre: "Voir aussi",   niveau: 2, genre: liste_liens, champ: null }
+
+  - id: notion
+    fonction: notion
+    libelle: { s: notion, p: notions }
+    range_par: axe
+    protege: true
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, alias, apport, periode, themes, espaces, mots]
+    corps:
+      - { titre: "Aperçu",     niveau: 2, genre: libre }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
+
+  - id: chronologie
+    fonction: vue
+    libelle: { s: chronologie, p: chronologies }
+    range_par: axe
+    prefixe_nom: "Chronologie - "
+    vue_embarquee: { extension: ".base", moteur: "obsidian-bases" }
+    regle_de_categorie: majorite
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    hub_de_ralliement:
+      dossier: "Chronologies"
+      lien_retour: "Voir aussi"
+      groupe_par: "premier segment du chemin"
+      motif: >
+        C est le lien retour qui fait la grappe. Le dossier ne porte QUE sa page :
+        les chronologies restent dans le dossier des sources qu elles mettent en
+        sequence, et la regle de propagation en depend.
+    champs:
+      requis: [role, nom, periode]
+      autorises: [role, nom, periode, mots]
+    corps:
+      - { titre: "<accroche>", niveau: 0, genre: prose, forme: "> La séquence : …" }
+      - { titre: "<embed>",    niveau: 0, genre: auto }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
+
+  - id: methode
+    fonction: prescription
+    libelle: { s: méthode, p: méthodes }
+    range_par: role
+    dossier: "Méthodes"
+    prefixe_nom: "Méthode - "
+    champs:
+      requis: [role, question]
+      autorises: [role, question, mots]
+
+  - id: hub
+    fonction: hub
+    libelle: { s: hub, p: hubs }
+    range_par: axe
+    porte_categorie: false
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: false
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, apport, themes, espaces]
+    corps:
+      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre,
+          ecrit_a_la_main: true, existe_si: "le hub porte un corps d'aiguillage" }
+      - titre: "<AUTO>"
+        niveau: 0
+        genre: auto
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
+        perimetre: dossier
+        motif: >
+          UN gabarit, celui de la forme ARBRE. Les deux autres formes ne sont pas
+          des gabarits de role : elles se derivent du dossier du hub —
+          `axes.transverses[].dossier` pour la forme transverse,
+          `roles[].hub_de_ralliement.dossier` pour la forme ralliement.
+        sections:
+          - { titre: "Sous-périodes", source: "sous-dossiers portant un hub",
+              depuis: sous_dossiers, separateur: " · " }
+          - { titre: "Notions",       source: "role: notion du dossier",
+              depuis: role, role: notion }
+          - { titre: "Sources",       source: "role: source du dossier",
+              depuis: role, role: source }
+          - { titre: "Méthodes",      source: "role: methode du dossier",
+              depuis: role, role: methode }
+          - { titre: "Chronologies",  source: "fichiers *.base du dossier",
+              depuis: vues }
+
+# ------------------------------------------------------------------------------
+axes:
+
+  rangement:
+    champ: periode
+    exclusif: true
+    seuil_promotion: 2
+    motif_seuil: "volume_cible 40 / 3 prefixes -> un seuil bas, pour que deux pages promeuvent."
+    plafond_promotion: true
+    valeur_courte_autorisee: true
+    prefixes:
+      - cle: antiquite
+        dossier: "Antiquité"
+        sous:
+          rome: { libelle: "Rome" }
+      - cle: xxe
+        dossier: "XXe siècle"
+        sous: {}
+      - cle: transversal
+        dossier: "Transversal"
+        sous: {}
+    rattachements: {}
+    arbre_de_decision:
+      - { n: D1, question: "Porte-t-elle sur plus de deux périodes ?", si_oui: ["transversal"] }
+      - { n: D2, question: "Son objet est-il antérieur à 476 ?", si_oui: ["antiquite/*"] }
+      - { n: D3, question: "Son objet est-il postérieur à 1914 ?", si_oui: ["xxe"] }
+      - { n: D4, question: "Aucun des précédents", si_oui: [], arret: true }
+    departages: []
+    frontieres: []
+
+  nature:
+    champ: nature
+    porte_par: [source]
+    interdit_sur: [notion, hub, chronologie, methode]
+    vide_autorise: true
+    valeurs:
+      - { cle: source-primaire, definition: "Produite par les contemporains du fait." }
+      - { cle: ouvrage,         definition: "Livre d'auteur, appareil critique." }
+    arbre_de_decision:
+      - { n: N1, question: "Son auteur est-il contemporain du fait ?", si_oui: source-primaire }
+      - { n: N2, question: "Aucun des précédents", si_oui: ouvrage, defaut: true }
+    departages: []
+
+  # ---------------------------- DEUX, et c est le point ----------------------
+  transverses:
+    - champ: themes
+      dossier: "Thèmes"
+      multivalue: true
+      hub_par_valeur: true
+      groupe_par: premier_segment_du_chemin
+      motif: >
+        Premier des deux. Le DevBrain n en a qu un et son generateur le codait en
+        dur ; `epreuve.brain.yml` n en a aucun. Les trois comptes — 0, 1, 2 —
+        sont donc couverts par les trois manifestes ensemble.
+      valeurs:
+        - { cle: politique, libelle: "Pouvoir et institutions" }
+        - { cle: guerre,    libelle: "Guerres et armées" }
+        - { cle: religieux, libelle: "Croyances et religions",
+            motif: "DECLAREE et portee par AUCUNE page : aucun hub ne doit naitre pour elle." }
+    - champ: espaces
+      dossier: "Espaces"
+      multivalue: true
+      hub_par_valeur: true
+      groupe_par: premier_segment_du_chemin
+      motif: >
+        Second des deux, et celui que le scenario « un seul axe declare » retire
+        EN MEMOIRE : ses hubs cessent alors d etre poses, ce qui prouve que la
+        boucle porte sur la liste declaree et non sur une constante.
+      valeurs:
+        - { cle: mediterranee, libelle: "Méditerranée" }
+        - { cle: europe,       libelle: "Europe" }
+
+# ------------------------------------------------------------------------------
+champs:
+  role:      { type: enum, source: "roles[].id", fonction: aucune }
+  nom:       { type: ligne, fonction: identite }
+  alias:     { type: liste, fonction: alias }
+  apport:    { type: ligne, fonction: resume_court }
+  question:  { type: ligne, fonction: aucune }
+  periode:   { type: enum, source: axes.rangement, fonction: aucune }
+  nature:    { type: enum, source: axes.nature, fonction: aucune }
+  themes:    { type: liste_enum, source: "axes.transverses[themes]", fonction: aucune }
+  espaces:   { type: liste_enum, source: "axes.transverses[espaces]", fonction: aucune }
+  auteur:    { type: ligne, fonction: aucune }
+  date_publication: { type: date, fonction: aucune }
+  mots:      { type: liste_enum, source: "vocabulaires.mots", fonction: aucune }
+
+# ------------------------------------------------------------------------------
+# bandeau — DEUX colonnes, aucune valeur en commun avec celles du DevBrain.
+# ------------------------------------------------------------------------------
+bandeau:
+  porte_par: [source]
+  vide: "—"
+  balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"]
+  position: "juste sous le titre H1 ; une page sans H1 est SAUTEE et signalee"
+  porte_le_resume: true
+  regle_dure: "Une cellule sans source dans le frontmatter affiche `vide`, JAMAIS une valeur plausible."
+  colonnes:
+    - titre: Nature
+      source: nature
+      table:
+        source-primaire: "Source primaire"
+        ouvrage: Ouvrage
+    - titre: "Auteur et date"
+      source: auteur
+      qualifie_par: date_publication
+
+# ------------------------------------------------------------------------------
+# regles — LES DIX, toutes en `a_mesurer`. Principe 1 : aucune severite n est
+# portable, et ce jeu d epreuve n en mesure aucune.
+# ------------------------------------------------------------------------------
+regles:
+  - { id: reciprocite,           enonce: "Réciprocité des champs de liens.",      active: false, severite: a_mesurer }
+  - { id: chemin_categorie,      enonce: "Le chemin concorde avec la valeur d'axe.", active: true, severite: a_mesurer }
+  - { id: completude_du_hub,     enonce: "Toute page du dossier apparaît dans son hub.", active: true, severite: a_mesurer, roles: [source] }
+  - { id: voisinage_declare,     enonce: "Le voisinage est déclaré.",             active: false, severite: a_mesurer }
+  - { id: redirection_sourcee,   enonce: "Une redirection porte son wikilink.",   active: false, severite: a_mesurer }
+  - { id: reinjection_du_resume, enonce: "Le résumé est recopié, jamais retapé.", active: false, severite: a_mesurer }
+  - { id: etiquettes_fermees,    enonce: "Une section étiquetée a un vocabulaire fermé.", active: false, severite: a_mesurer }
+  - { id: citation_unique,       enonce: "Une cible ne se liste pas deux fois.",  active: false, severite: a_mesurer }
+  - id: bandeau_a_jour
+    enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
+    active: true
+    severite: a_mesurer
+    porte_par: "brainkit generer --quoi bandeau --check"
+    motif_porte_par: >
+      La seule des dix que le validateur delegue, et la declaration le dit. Cf.
+      l arbitrage 2 de `design/04-generation.md`.
+  - { id: anti_repetition,       enonce: "La définition ne redit pas le bandeau.", active: false, severite: a_mesurer }
+
+# ------------------------------------------------------------------------------
+# regles_de_socle — declarees pour que « le vault vert reste vert APRES
+# generation » veuille dire quelque chose. Sans elles, le validateur ne
+# controlerait ni les gabarits, ni les liens, ni l atteignabilite : un vault
+# genere passerait au vert sans avoir ete regarde.
+# ------------------------------------------------------------------------------
+regles_de_socle:
+  - { id: frontmatter_lisible, severite: dure,
+      enonce: "Un frontmatter illisible est une ERREUR, jamais une absence." }
+  - { id: gabarit_par_role, severite: dure,
+      enonce: "`role:` inconnu ou absent refusé ; champs requis non vides ; tout champ hors de `autorises` échoue." }
+  - { id: liens_resolus, severite: dure,
+      enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter." }
+  - { id: nom_egal_fichier, severite: dure,
+      enonce: "`nom:` identique au nom du fichier, sauf caractère illégal en nom de fichier." }
+  - { id: page_atteignable, severite: dure,
+      enonce: "Toute page atteignable depuis un hub." }
+  - { id: hub_par_niveau, severite: dure,
+      enonce: "TOUT niveau du chemin porte son hub, pas seulement la feuille." }
+  - { id: vocabulaire_ferme, severite: dure,
+      enonce: "Toute valeur d'un champ `enum` ou `liste_enum` appartient au vocabulaire déclaré de son axe." }
+  - { id: unicite_du_nom_de_fichier, severite: dure,
+      enonce: "Un nom de fichier est unique dans le vault, à la casse près." }
+
+seuils:
+  vue_min_valeurs_axe: 2
+  vue_min_membres: 2
+
+vocabulaires:
+  mots:
+    fichier: "Documentation/mots.md"
+    mode: ferme
+    lecture: "colonne 1 des tableaux, en backticks"
+    vide: true
+    motif: "Declare et VIDE : aucun mot-cle n est encore pose, et le fichier n existe pas."
+
+# ------------------------------------------------------------------------------
+genere:
+  chemins:
+    - { chemin: "AI/index/", par: build_index }
+    - { chemin: "zones AUTO des hubs", par: build_mocs,
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"] }
+    - { chemin: "Thèmes/", par: build_mocs }
+    - { chemin: "Espaces/", par: build_mocs }
+    - { chemin: "Chronologies/Chronologies.md", par: build_mocs }
+    - { chemin: "AI/index/liens.md", par: build_links }
+    - { chemin: "bandeaux des sources", par: build_bandeau,
+        balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"] }
+  non_pages: [.git, .claude, .obsidian, AI, Documentation, Templates]
+  index:
+    fichiers: ["AI/index/brain-index.json", "AI/index/brain-index.md"]
+    champs: [nom, alias, role, periode, nature, auteur, apport, themes, espaces, mots]
+    plus: [path]
+    tri: stable
+    horodatage: false
+    signature: "brainkit generer --quoi index"
+    groupes:
+      - { role: source,      titre: "Sources — ce sur quoi on appuie une affirmation" }
+      - { role: notion,      titre: "Notions — ce qu'il faut comprendre" }
+      - { role: chronologie, titre: "Chronologies — ce que la séquence montre" }
+      - { role: methode,     titre: "Méthodes — les règles transverses" }
+    motif_pas_de_portee: >
+      AUCUNE `portee:` declaree, et c est le cas qui passe : la cle `scope` du
+      catalogue ne doit alors PAS etre emise. Un brain neuf n a aucune reserve
+      de perimetre a annoncer, et une cle vide en inventerait une.
+  liens:
+    fichier: "AI/index/liens.md"
+    sections: [tags, liens_sortants, backlinks, a_creer]
+    signature: "brainkit generer --quoi liens"
+  motif_pas_de_prose: >
+    AUCUNE surcharge `prose:`, et c est le second cas qui passe : les
+    vingt-quatre gabarits par defaut du kit doivent suffire a un brain neuf.
+    Le DevBrain en surcharge quatre, et les quatre sont de la dette v1 —
+    `design/04-generation.md`, arbitrage 3.
+
+agent:
+  racine: "AI/"
+  sous:
+    - { chemin: "index/", role: "genere, ne pas editer a la main" }

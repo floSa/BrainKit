@@ -135,9 +135,24 @@ roles:
     corps:
       - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre,
           ecrit_a_la_main: true }
-      - { titre: "<AUTO>", niveau: 0, genre: auto,
-          balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"],
-          perimetre: dossier }
+      - titre: "<AUTO>"
+        niveau: 0
+        genre: auto
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
+        perimetre: dossier
+        # AJOUTE AU LOT 4. Le lot 3 declarait la zone sans ses sous-sections,
+        # parce que son validateur ne controle AUCUNE zone AUTO : il verifie
+        # seulement que les pages y FIGURENT. Le generateur, lui, la compose —
+        # sans `sections:` il ecrivait « (dossier vide) » sur les quatre hubs.
+        # Aucun `depuis: vues` : ce manifeste n a pas de role `fonction: vue`,
+        # et declarer une sous-section sans objet serait declarer du vide.
+        sections:
+          - { titre: "Sous-périodes", source: "sous-dossiers portant un hub",
+              depuis: sous_dossiers, separateur: " · " }
+          - { titre: "Notions", source: "role: notion du dossier",
+              depuis: role, role: notion }
+          - { titre: "Sources", source: "role: source du dossier",
+              depuis: role, role: source }
 
 # ------------------------------------------------------------------------------
 axes:

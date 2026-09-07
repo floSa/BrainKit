@@ -1,0 +1,275 @@
+{
+  "generated_by": "brainkit generer --quoi index",
+  "scanned": [
+    "Antiquité",
+    "Chronologies",
+    "Espaces",
+    "Méthodes",
+    "Thèmes",
+    "Transversal",
+    "XXe siècle"
+  ],
+  "count": 18,
+  "tags_index": {},
+  "pages": [
+    {
+      "path": "Antiquité/Antiquité.md",
+      "nom": "Antiquité",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Jusqu'à 476 : ce que les contemporains ont écrit, et ce qu'on en tire.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Antiquité/Herodote - Histoires.md",
+      "nom": "Herodote - Histoires",
+      "alias": null,
+      "role": "source",
+      "periode": "antiquite",
+      "nature": "source-primaire",
+      "auteur": "Hérodote",
+      "apport": "Le premier récit d'enquête sur les guerres médiques.",
+      "themes": [
+        "guerre",
+        "politique"
+      ],
+      "espaces": [
+        "mediterranee"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Antiquité/Rome/Chronologie - Rome.md",
+      "nom": "Chronologie - Rome",
+      "alias": null,
+      "role": "chronologie",
+      "periode": "antiquite/rome",
+      "nature": null,
+      "auteur": null,
+      "apport": null,
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Antiquité/Rome/Empire romain.md",
+      "nom": "Empire romain",
+      "alias": null,
+      "role": "notion",
+      "periode": "antiquite/rome",
+      "nature": null,
+      "auteur": null,
+      "apport": "Un régime qui garde les mots de la république et en change la substance.",
+      "themes": [
+        "politique"
+      ],
+      "espaces": [
+        "mediterranee"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Antiquité/Rome/Rome.md",
+      "nom": "Rome",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "La cité, la république, l'empire — et ce qu'il en reste d'écrit.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Antiquité/Rome/Tacite - Annales.md",
+      "nom": "Tacite - Annales",
+      "alias": null,
+      "role": "source",
+      "periode": "antiquite/rome",
+      "nature": "ouvrage",
+      "auteur": "Tacite",
+      "apport": "Le récit hostile du principat, par un sénateur du siècle suivant.",
+      "themes": [
+        "politique"
+      ],
+      "espaces": [
+        "mediterranee",
+        "europe"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Chronologies/Chronologies.md",
+      "nom": "Chronologies",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Le point de ralliement des chronologies, dispersées dans l'arbre.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Espaces/Europe.md",
+      "nom": "Europe",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Axe espace **Europe** (`europe`) — explorer par sous-période, puis descendre via le graphe local.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Espaces/Méditerranée.md",
+      "nom": "Méditerranée",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Axe espace **Méditerranée** (`mediterranee`) — explorer par sous-période, puis descendre via le graphe local.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Méthodes/Méthode - Citer sa source.md",
+      "nom": "Méthode - Citer sa source",
+      "alias": null,
+      "role": "methode",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": null,
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Méthodes/Méthodes.md",
+      "nom": "Méthodes",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Les règles transverses, groupées par leur rôle et non par une période.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Thèmes/Guerres et armées.md",
+      "nom": "Guerres et armées",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Axe thème **Guerres et armées** (`guerre`) — explorer par sous-période, puis descendre via le graphe local.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Thèmes/Pouvoir et institutions.md",
+      "nom": "Pouvoir et institutions",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Axe thème **Pouvoir et institutions** (`politique`) — explorer par sous-période, puis descendre via le graphe local.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Transversal/Historiographie.md",
+      "nom": "Historiographie",
+      "alias": null,
+      "role": "notion",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "L'histoire de la façon dont l'histoire a été écrite.",
+      "themes": [
+        "politique"
+      ],
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "Transversal/Transversal.md",
+      "nom": "Transversal",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Ce qui n'a aucun centre de gravité chronologique.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    },
+    {
+      "path": "XXe siècle/Guerre froide.md",
+      "nom": "Guerre froide",
+      "alias": null,
+      "role": "notion",
+      "periode": "xxe",
+      "nature": null,
+      "auteur": null,
+      "apport": "Un affrontement qui se tient partout sauf entre ses deux protagonistes.",
+      "themes": [
+        "guerre"
+      ],
+      "espaces": [
+        "europe"
+      ],
+      "mots": null
+    },
+    {
+      "path": "XXe siècle/Kennan - Le long telegramme.md",
+      "nom": "Kennan - Le long telegramme",
+      "alias": null,
+      "role": "source",
+      "periode": "xxe",
+      "nature": "source-primaire",
+      "auteur": "George Kennan",
+      "apport": "La doctrine du containment, écrite avant d'avoir un nom.",
+      "themes": [
+        "politique",
+        "guerre"
+      ],
+      "espaces": [
+        "europe"
+      ],
+      "mots": null
+    },
+    {
+      "path": "XXe siècle/XXe siècle.md",
+      "nom": "XXe siècle",
+      "alias": null,
+      "role": "hub",
+      "periode": null,
+      "nature": null,
+      "auteur": null,
+      "apport": "Après 1914 : les archives s'ouvrent, les récits se disputent.",
+      "themes": null,
+      "espaces": null,
+      "mots": null
+    }
+  ]
+}

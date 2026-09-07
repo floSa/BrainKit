@@ -13,11 +13,9 @@ en garde une au niveau supérieur — les trois conditions de la promotion.
 
 <!-- AUTO:START -->
 ### Notions
-
 - [[Empire romain]] — Ce qui tient l'Empire : l'armée, le droit, la fiscalité.
 
 ### Sources
-
-- [[Tacite - Annales]] — Le récit sénatorial du principat, de Tibère à Néron.
 - [[Suetone - Vies des Cesars]] — Douze biographies impériales, anecdotiques et datées.
+- [[Tacite - Annales]] — Le récit sénatorial du principat, de Tibère à Néron.
 <!-- AUTO:END -->

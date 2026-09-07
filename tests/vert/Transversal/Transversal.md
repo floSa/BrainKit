@@ -14,10 +14,8 @@ période — et il l'emporte sur les valeurs qu'une page traverse.
 
 <!-- AUTO:START -->
 ### Notions
-
 - [[Historiographie]] — Comment l'histoire s'écrit, et pourquoi elle se réécrit.
 
 ### Sources
-
 - [[Histoire de France]] — Une synthèse des origines à nos jours, sans centre de gravité.
 <!-- AUTO:END -->
