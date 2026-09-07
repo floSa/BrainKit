@@ -1463,6 +1463,44 @@ champs:
       manifeste la rend visible pour la premiere fois. Cf. Remontee 7.
   applicable:        { type: ligne, fonction: aucune }
   strictness:        { type: ligne, fonction: aucune }
+  # --- champs SUPPRIMES par la v3, declares pour que R25 soit branchable.
+  # AJOUTE AU LOT 3. `regles_de_socle[champs_supprimes]` branchait une regle
+  # DURE dont le manifeste ne portait pas le parametre : la liste des champs
+  # morts vivait dans check_brain.CHAMPS_MORTS, donc dans le code. Un validateur
+  # pilote par le manifeste ne pouvait pas la lire, et la regle serait nee morte
+  # — le cas exact que « une regle absente ressemble a une regle satisfaite »
+  # decrit. La conjonction qui la branche est `deprecated: true` PLUS « cite par
+  # aucun `autorises` » : c est ce qui distingue un champ SUPPRIME d un vestige
+  # TOLERE (`roles[].champs.deprecies`, ou vivent `os:` et `domaines:`).
+  galaxie:
+    type: ligne
+    deprecated: true
+    motif: >
+      Supprime au lot 2 : ne servait que la couleur du graphe, que `role:` donne
+      mieux. Onze documents de gouvernance le portaient encore deux jours apres,
+      sans qu aucune des quarante conversations de migration ne s en apercoive —
+      parce que le perimetre des deux validateurs etait « les dossiers qui
+      portent des pages », et que la racine n en est pas un.
+  type:
+    type: ligne
+    deprecated: true
+    motif: "Supprime au lot 2 : ne decrivait que le dossier d accueil, que `categorie:` derive."
+  status:
+    type: ligne
+    deprecated: true
+    motif: >
+      Supprime au lot 2 : 272 fiches sur 336 etaient actif + production, et 7 des
+      8 abandonne etaient deprecated. `maturite:` se suffit — c est le seul champ
+      qui dit encore qu une brique est morte, et c est lui qui porte
+      `eliminatoire`.
+  remplace_par:
+    type: liens
+    deprecated: true
+    motif: "Supprime au lot 2 : vide sur 293 des 297 fiches."
+  indexe:
+    type: bool
+    deprecated: true
+    motif: "Supprime au lot 2 : un champ derivable ne se stocke pas."
 
 # ==============================================================================
 # bandeau — le haut de page. Le moteur est generique, le contenu est 100 % dev.
@@ -1711,12 +1749,29 @@ regles:
 
   - id: anti_repetition
     enonce: "La section de définition ne recontient ni la nature, ni la licence, ni la maturité affichées par le bandeau."
-    active: false
+    active: true
     severite: avertissement
     definitif: true
     code: [R26]
     scriptable: false
     mesure: { date: "2026-09-06", population: 337, candidats: 11, vrais: 2 }
+    note_active_corrigee_au_lot_3: >
+      CORRIGE AU LOT 3. Le lot 1 ecrivait `active: false` en transcrivant la
+      RECOMMANDATION du cadrage (« ne pas la livrer »), pas l etat du DevBrain :
+      check_brain.py emet R26 sur les 337 briques a chaque execution, et le
+      manifeste doit redire le vault, pas le conseiller. Un validateur pilote par
+      `active: false` perdait quatre avertissements et echouait le critere du
+      lot. La recommandation reste ecrite dans le `motif:` et dans
+      `histobrain.brain.yml`, qui sort la regle `active: false` — c est la que
+      cette decision appartient : dans un brain neuf, pas dans la description d
+      un brain existant.
+    note_mesure_2026_09_07: >
+      Le vault ne donne plus 11 candidats mais QUATRE, tous sur `licence_type:
+      open-source` — Vanna, Ragas, TruLens, PuLP. Zero sur `maturite:`. La
+      mesure du lot 8 n est pas fausse, elle est datee : sept candidats ont
+      disparu depuis, par reecriture des sections de definition. Le chiffre
+      reproduit par le moteur du lot 3 est 4, et c est une remontee — cf.
+      design/03-validation.md.
     motif: >
       NON SCRIPTABLE, et il ne faut pas la livrer. `production`, `paquet`,
       `modele`, `application` et `open-source` sont des mots francais ordinaires.
@@ -1770,6 +1825,37 @@ regles_de_socle:
     code: [R2]
     severite: dure
     enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter."
+  # Les deux suivantes sont AJOUTEES AU LOT 3. Elles ne sont pas nouvelles : le
+  # validateur du DevBrain les porte en DUR depuis le lot 8, et le lot 1 les a
+  # oubliees en transcrivant « les regles hors des dix que le validateur porte ».
+  # Un moteur pilote par ce manifeste serait donc ne plus faible que le code
+  # qu il remplace, sur deux regles a zero violation — c est-a-dire invisiblement.
+  - id: couverture_de_section
+    code: [R11, R22]
+    severite: dure
+    enonce: "Une section `genre: liste_liens` adossée à un `champ:` liste TOUTES les cibles de ce champ."
+    mesure: { date: "2026-09-07", population: 337, violations: 0 }
+    motif: >
+      Une section qui declare un `champ:` promet de lister ce que ce champ
+      contient. Une cible declaree au frontmatter et absente de la section est un
+      demi-lien : le graphe la porte, la page ne la montre pas. La regle est le
+      pendant exact de `reinjection_du_resume`, qui controle le CONTENU de la
+      puce quand celle-ci existe — sans elle, une cible pouvait n avoir aucune
+      puce du tout.
+  - id: lien_vers_une_page_a_comprendre
+    code: [R15]
+    severite: dure
+    depuis: "2026-09-06"
+    enonce: "Toute page d'un rôle `fonction: unite` porte au moins un lien vers une page à comprendre (`fonction: notion` ou `fonction: hub`)."
+    mesure: { date: "2026-09-07", population: 337, violations: 0 }
+    motif: >
+      Le couple unite <-> notion est impose par le skill de capture, mais rien ne
+      le verifiait : le validateur controlait qu un lien n est pas mort, jamais
+      qu il EXISTE. Souple jusqu au lot 8 — 102 fiches sur 297 ne portaient aucun
+      lien vers un concept — puis DURE, le passif ayant ete resorbe par le
+      gabarit du lot 6 (121 avertissements fermes par construction). La cible
+      attendue est une page dont la fonction est d expliquer : un hub de domaine
+      absorbe volontiers la notion chapeau homonyme, c est la meme page.
   - id: nom_egal_fichier
     code: [R9]
     severite: dure

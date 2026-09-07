@@ -371,7 +371,7 @@
               "uniqueItems": true
             },
             "conditionnels": {
-              "$comment": "REFUS 4 — un champ conditionnel SANS condition. `champ` et `si` sont tous deux requis : un conditionnel sans `si` est un champ autorise qui se croit conditionnel, et le validateur de vault ne saurait jamais quand l exiger.",
+              "$comment": "REFUS 4 — un champ conditionnel SANS condition. `champ` et `si` sont tous deux requis : un conditionnel sans `si` est un champ autorise qui se croit conditionnel, et le validateur de vault ne saurait jamais dans quel cas l appliquer. `sens` est facultatif et vaut `permet` par defaut : AJOUTE AU LOT 3, parce que le sens de la condition etait porte par de la prose et lu a l envers — lu comme une obligation, `si` produisait 42 fausses violations sur un vault vert. Le defaut reproduit donc l unique sens que les deux remplissages emploient, et `exige` rend l autre EXPRIMABLE au lieu d etre suppose. Cf. design/03-validation.md, arbitrage 1.",
               "type": "array",
               "items": {
                 "$comment": "REFUS 4 — un champ conditionnel SANS condition. `champ` et `si` sont tous deux requis.",
@@ -380,7 +380,11 @@
                 "required": ["champ", "si"],
                 "properties": {
                   "champ": { "type": "string", "minLength": 1 },
-                  "si":    { "type": "string", "minLength": 1 }
+                  "si":    { "type": "string", "minLength": 1 },
+                  "sens":  {
+                    "description": "`permet` (defaut) : le champ n existe QUE si la condition tient. `exige` : le champ est REQUIS quand elle tient.",
+                    "enum": ["permet", "exige"]
+                  }
                 }
               }
             }
