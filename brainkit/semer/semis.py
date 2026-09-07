@@ -58,6 +58,7 @@ from ..generer import genere_tout
 from ..generer.sortie import CHECK, ECRIRE, Sortie
 from ..valider.manifeste import Modele
 from . import depot as _depot
+from . import entretien as _entretien
 from . import exigences, gouvernance, pages
 from .plan import Plan
 from .prose import ProseSemis
@@ -88,8 +89,14 @@ class Semis:
 
 
 def seme(mo: Modele, racine: Path, ecrire: bool = False,
-         avec_git: bool = True, message: str | None = None) -> Semis:
-    """De `brain.yml` a un vault vierge. `ecrire=False` n ecrit pas un octet."""
+         avec_git: bool = True, message: str | None = None,
+         brouillon: str | None = None) -> Semis:
+    """De `brain.yml` a un vault vierge. `ecrire=False` n ecrit pas un octet.
+
+    `brouillon` est le texte du brouillon d entretien, quand il y en a un. Le
+    semis le POSE, il ne le fabrique pas : un manifeste ecrit a la main n a pas
+    de trace d entretien, et en inventer une serait la pire des traces.
+    """
     manques = exigences.controle(mo)
     plan = Plan(racine=racine, ecrire=ecrire and not manques,
                 racine_du_kit=RACINE_KIT)
@@ -110,6 +117,7 @@ def seme(mo: Modele, racine: Path, ecrire: bool = False,
     gouvernance.seme_le_routeur(mo, prose, plan)
     gouvernance.seme_l_espace_agent(mo, prose, plan)
     gouvernance.seme_les_skills(mo, plan)
+    _entretien.seme_l_entretien(mo, plan, brouillon)
     _depot.seme_les_hooks(mo, plan)
     _pose_le_manifeste(mo, plan)
 

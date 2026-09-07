@@ -621,8 +621,17 @@ def seme_les_skills(mo: Modele, plan: Plan) -> None:
         L.append(f"| {cle} | `{s['nom']}` | "
                  f"{'oui' if s.get('ecrit_dans_le_brain') else 'non'} |")
         plan.dossier(f".claude/skills/{s['nom']}", garde=True)
-    L += ["", "> **Les dossiers sont posés, les skills ne sont pas écrits.** "
-          "C'est le lot 7 de BrainKit qui les instancie, avec la table de "
-          "propagation **dérivée** du manifeste. Poser un skill à moitié serait "
-          "pire que ne pas en poser : il serait chargé, et il mentirait.", ""]
+    L += ["", "> **Les dossiers de ces trois-là sont posés, les skills ne sont "
+          "pas écrits.** C'est le lot 7 de BrainKit qui les instancie, avec la "
+          "table de propagation **dérivée** du manifeste. Poser un skill à "
+          "moitié serait pire que ne pas en poser : il serait chargé, et il "
+          "mentirait.", "",
+          "## Le quatrième, celui qui est écrit", "",
+          "`reprendre-l-entretien` est **instancié**, lui, et c'est la seule "
+          "exception : tout ce qu'il dit se dérive du manifeste qu'on vient "
+          "d'écrire, donc il est complet ou il n'est pas. Il rouvre une "
+          "question de l'entretien qui a construit ce brain, applique les "
+          "treize refus de deviner, recompose le `brain.yml` — et il annonce le "
+          "PRIX de chaque changement avant de le faire : un `motif:` ne coûte "
+          "rien, un seuil coûte une migration.", ""]
     plan.pose(".claude/skills/README.md", "\n".join(L), "skills")
