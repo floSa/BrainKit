@@ -1348,3 +1348,359 @@ elle n'est pas écrite comme une liste fermée :
 | 11 | **Les règles de départage et les frontières** | Les laisse vides, et dit qu'elles se rempliront page par page. |
 | 12 | **Une colonne de bandeau sans champ source** | Refuse la colonne et redemande d'où vient le fait. |
 | 13 | **Le livrable du skill d'exploitation** | Passe 10.1. Sans réponse, le skill n'est pas généré — mieux vaut deux skills que trois dont un inventé. |
+
+---
+
+# 4. Le test à blanc « histoire »
+
+But du test : **trouver ce qui casse**. Un test à blanc qui conclut « tout passe »
+n'a pas été fait. Douze points sont sortis ; cinq sont de vraies ruptures, quatre
+sont des transpositions propres qui valident un mécanisme, trois sont des
+insuffisances du **code actuel** que le manifeste seul ne répare pas.
+
+## 4.1 L'entretien, déroulé
+
+**Passe 0** — HistoBrain ; « ce que je lis en histoire, les sources qui l'établissent
+et les notions qui l'expliquent » ; `usage: perso` ; identité perso ; domaine pro
+refusé. Rien de neuf : la passe 0 est indifférente au sujet.
+
+**Passe 1** — 1.1 : *« je vais chercher sur quoi appuyer une affirmation »*. L'unité
+est donc la **source**, pas le fait ni le personnage. 1.2 : « source / sources ».
+1.3 : oui — la féodalité, le mercantilisme, l'Anschluss ne sont pas des sources, ce
+sont des choses à comprendre → un rôle `notion`. 1.4 : oui, les notions → `protege: true`.
+
+**Passe 2** — 2.1, vingt titres cités : *Thucydide, La Guerre du Péloponnèse* ·
+*Hérodote, Enquête* · *Duby, Les trois ordres* · *Braudel, La Méditerranée* ·
+*Bloch, La société féodale* · *Le Roy Ladurie, Montaillou* · *Hobsbawm, L'ère des
+révolutions* · *Paxton, La France de Vichy* · *Kershaw, Hitler* · *Cours du Collège
+de France sur les Lumières* · *Édit de Nantes (texte)* · *Cahiers de doléances
+(fonds)* · *Recensement de 1851 (base)* · *Carte des mobilités antiques
+(ORBIS)* · *Actes du concile de Trente* · *Un article de revue sur la peste noire* ·
+*Une thèse sur les ouvriers du textile lyonnais* · *Photographies de la Commune* ·
+*Manuel de paléographie* · *Histoire de la France des origines à nos jours*.
+
+2.2, l'utilisateur range de sa main. Il fait **huit paquets**, et il les nomme par
+**période** : Préhistoire, Antiquité, Moyen Âge, Époque moderne, Révolutions et
+empires, Âge industriel, XXe siècle — et un huitième qu'il crée en cours de route
+pour la vingtième page : *Transversal*.
+
+> **C'est le premier résultat du test, et il tombe à la question 2.2.** L'utilisateur
+> n'a pas rangé par thème ni par espace. Il a rangé par période, spontanément, parce
+> que c'est l'axe qui **exclut** — une source antique n'est pas une source moderne —
+> alors que le thème et l'espace se cumulent. La méthode d'induction a produit le bon
+> axe sans qu'on ait eu à en discuter.
+
+2.3 : non — deux pages débordent (*Braudel* enjambe Antiquité à Moderne, *Histoire de
+la France* couvre tout). 2.4 : Braudel a un centre de gravité (l'époque moderne),
+*Histoire de la France* n'en a pas. → `regle_de_majorite: true` **et**
+`prefixe_transversal: transversal`. 2.5 : « période ». 2.6 : « trois mille pages,
+peut-être ». → seuil dérivé à **12**. 2.7 : l'utilisateur donne un arbre
+chronologique, avec une seule question hors chronologie **en premier** : *« porte-t-elle
+sur plus de trois périodes ? »*.
+
+**Passe 3** — 3.1 : oui, franchement. Un texte de l'Édit de Nantes et un livre de
+Duby sont dans le même paquet et ne se lisent pas du tout pareil. 3.2 : neuf natures.
+3.4 : oui — une cote de fonds n'a de sens que pour une archive ; une langue originale
+et une traduction, que pour une source primaire.
+
+**Passe 4** — 4.1 : deux axes. *Thèmes* (politique, économie, social, religieux,
+guerre, culture, technique) et *Espaces* (France, Europe, Méditerranée, Asie,
+Afrique, Amériques, mondial). Tous deux multivalués.
+
+**Passe 5** — quatre faits : Nature · Auteur et date · Langue · Fiabilité.
+
+**Passe 6** — corps : *Ce que c'est* (prose) · *Ce qu'elle établit / Ce qu'elle ne
+peut pas établir* (décision) · *Comment y accéder* (étiquetée : Édition, Langue,
+Accès, Cote, Coût) · *Autour* avec trois listes de liens · *Voir aussi* · *Notes de
+lecture* (conditionnelle et datée).
+
+**Passe 7** — deux relations, et la seconde casse quelque chose : *contredit* est
+symétrique ; *prolonge* ne l'est pas.
+
+**Passe 8** — 8.1 : **non**, les sources ne sont pas interchangeables. 8.2 : oui, une
+table par période, **triée par date**. → rôle `chronologie`, `hub_de_ralliement`
+`Chronologies/`.
+
+**Passe 9 / 10** — tags fermés ; suppression sur demande ; pas de second mode ;
+livrable : *un plan sourcé — cours, article ou note*.
+
+## 4.2 L'arborescence qui en sort
+
+```
+Préhistoire/
+└── Préhistoire.md                            (hub)
+Antiquité/
+├── Antiquité.md                              (hub)
+├── Proche-Orient ancien/  Monde grec/  Rome/  Hors Méditerranée/
+│   └── <Sous-domaine>.md                     (hub) + sources, notions, chronologies
+└── <sources et notions restées au niveau de la période>
+Moyen Âge/
+├── Moyen Âge.md
+└── Haut Moyen Âge/  Époque féodale/  Bas Moyen Âge/  Mondes de l'Islam/
+Époque moderne/
+├── Époque moderne.md
+└── Renaissance/  Réformes/  Premières colonisations/  Lumières/
+Révolutions et empires/    Âge industriel/
+XXe siècle/
+├── XXe siècle.md
+└── Première Guerre mondiale/  Entre-deux-guerres/  Seconde Guerre mondiale/
+    Guerre froide/  Décolonisations/
+Transversal/
+└── Transversal.md                            (le paquet né à la question 2.4)
+
+Thèmes/     ← 7 hubs générés depuis `themes:`      (axe transverse 1)
+Espaces/    ← 7 hubs générés depuis `espaces:`     (axe transverse 2)
+Chronologies/ ← Chronologies.md et RIEN d'autre    (hub de ralliement du rôle `vue`)
+Controverses/ ← Controverses.md + Controverse - <question>.md
+Méthodes/     ← Méthodes.md + Méthode - <nom>.md
+Documentation/  Templates/  AI/  Home.md  Inbox.md
+```
+
+Vingt-huit dossiers de domaine et de sous-domaine, contre vingt et quatre-vingt-quinze
+dans le DevBrain. Les **rôles** : `source`, `notion`, `hub`, `chronologie`,
+`controverse`, `methode` — six, comme le DevBrain, et **aucun** ne porte le même nom.
+Les **natures** : neuf, comme les familles du DevBrain, par coïncidence.
+
+Un exemple de page pour fixer les idées — `Moyen Âge/Époque féodale/Bloch - La
+société féodale.md` :
+
+```yaml
+role: source
+nom: "Bloch - La société féodale"
+apport: "Fonde la lecture de la féodalité comme rapport social total, pas comme régime juridique."
+categorie: medieval/feodal
+nature: ouvrage
+themes: [social, politique]
+espaces: [france, europe]
+auteur: "Marc Bloch"
+date_publication: 1939
+langue: fr
+fiabilite: etablie
+acces: papier
+contredit: []
+prolonge: []
+prolonge_par: ["[[Duby - Les trois ordres]]"]
+```
+
+`Nature | Auteur et date | Langue | Fiabilité` rendus en bandeau :
+« Ouvrage | Marc Bloch, 1939 | fr | établie ». Trois lignes, comme pour Qdrant.
+
+## 4.3 Ce qui casse — les cinq vraies ruptures
+
+### Rupture 1 — le rôle `comparatif` ne survit pas
+
+**Ce qui casse.** Le comparatif présuppose des objets **interchangeables**, classés
+sur des axes partagés, dont on choisit **un**. Hérodote et Thucydide ne sont pas des
+alternatives : on lit les deux, et le second corrige le premier sans le remplacer.
+La section « Ce qui départage » n'a pas d'objet, et la phrase d'accroche « On tranche
+sur : … » est fausse à l'écrit.
+
+**Ce qui survit, précisément.** La **primitive** : une page `.md` qui embarque une
+vue `.base` filtrée sur une valeur de l'axe de rangement, plus une section écrite à
+la main, plus un hub de ralliement avec lien retour. Cette primitive est excellente
+et elle se réemploie telle quelle. Ce qui ne survit pas, c'est l'**intention**.
+
+**Conséquence.** Le manifeste ne doit pas offrir un rôle « comparatif » : il doit
+offrir la fonction `vue`, avec un `tri_par` et un titre de section libres. Le
+DevBrain instancie « départager » ; HistoBrain instancie « mettre en séquence ». Et
+l'entretien doit poser la question 8.1 avant 8.2, sans quoi il traduira le
+comparatif par réflexe.
+
+**Coût :** faible. C'est une généralisation, pas une perte.
+
+### Rupture 2 — la réciprocité a besoin d'un mode INVERSE, que DevBrain n'a jamais eu
+
+**Ce qui casse.** `alternatives:` et `complements:` sont tous deux **symétriques** :
+si A est une alternative de B, B est une alternative de A. Les deux seuls champs de
+liens réciproques du DevBrain le sont, donc `CHAMPS_ECOSYSTEME` ne connaît qu'un
+mode — le miroir.
+
+En histoire, `contredit:` est symétrique (une contradiction l'est par nature, et
+c'est une jolie confirmation). Mais `prolonge:` **ne l'est pas** : « Duby prolonge
+Bloch » n'implique pas « Bloch prolonge Duby ». Il implique « Bloch **est prolongé
+par** Duby ». La relation demande une **paire** de champs, pas un miroir.
+
+**Conséquence.** `champs[].reciproque` doit prendre trois formes : `null`,
+`{mode: symetrique}`, `{mode: inverse, champ: <l'autre>}`. Le moteur de réciprocité
+change : il vérifie que `A.prolonge ∋ B` **si et seulement si** `B.prolonge_par ∋ A`.
+Le validateur doit aussi refuser une paire mal déclarée (un `inverse` qui pointe vers
+un champ qui ne pointe pas en retour) — sinon on remplace un trou par un autre.
+
+**Coût :** réel mais borné. C'est un mode de plus dans un moteur qui en a un. À
+noter : c'est la **seule** rupture qui exige une ligne de code que le DevBrain
+n'aurait jamais fait écrire. Le test à blanc l'a payée à lui seul.
+
+### Rupture 3 — l'axe de rangement n'est pas exclusif, et le DevBrain n'a jamais eu ce cas
+
+**Ce qui casse.** Une brique a **exactement un** domaine, toujours ; `check_arbo`
+compare un chemin à une valeur unique. Une source d'histoire peut n'avoir aucune
+période dominante : *Histoire de la France des origines à nos jours* ne relève ni de
+l'Antiquité ni du XXe siècle, elle relève des deux et de tout ce qui est entre.
+
+Sans correctif, l'utilisateur mentira dans `categorie:` — ce qui est le pire des
+résultats, parce que le validateur restera vert.
+
+**Ce qui répare, et c'est déjà dans le DevBrain.** Deux mécanismes empruntés :
+
+1. La **règle de majorité**, inventée au lot 5 pour les comparatifs qui enjambent
+   deux valeurs (`Comparatif - Bases NoSQL` réunit trois catégories). Elle se
+   généralise sans effort : *la valeur de l'axe est celle qui rassemble le plus de
+   la page.*
+2. Un **préfixe déclaré** pour ce qui couvre vraiment tout — `transversal/*`. C'est
+   l'exact pendant de `DOM_RATTACHE` : une exception **nommée** dans le manifeste,
+   pas une échappatoire.
+
+**Conséquence.** `axes.rangement.exclusif` devient un champ, et `regle_de_majorite` /
+`prefixe_transversal` deviennent obligatoires quand il vaut `false`. L'entretien pose
+la question 2.3 exactement pour ça, et refuse de passer outre.
+
+**Coût :** faible en code, important en conception — c'est la question qui distingue
+un axe de rangement d'un axe transverse, et un brain qui la rate range mal pour
+toujours.
+
+### Rupture 4 — un seul axe transverse est codé en dur, l'histoire en veut deux
+
+**Ce qui casse.** `build_mocs.py` a **une** constante `METIERS`, **une** table
+`THEME_LABEL`, **une** boucle. HistoBrain a besoin de `Thèmes/` **et** `Espaces/`, et
+un brain de domaine client en voudra sans doute trois (client, service, échéance).
+
+**Conséquence.** La boucle transverse devient une boucle **sur** `axes.transverses`.
+Et une contrainte de nommage devient explicite : aucun dossier d'axe transverse ne
+peut porter le nom de l'axe de rangement au pluriel — le DevBrain a nommé `Métiers/`
+plutôt que `Domaines/` pour cette raison précise, et la note est dans le code.
+
+**Coût :** faible. C'est une extraction de constante en liste, mais elle touche le
+générateur le plus intriqué des quatre.
+
+### Rupture 5 — le seuil de 5 est faux, et le changer est une migration
+
+**Ce qui casse.** `SEUIL = 5` est calibré sur ~700 pages en 20 domaines, soit ~35
+pages par domaine : à 5, un domaine se coupe en une poignée de sous-dossiers. Sur
+3 000 pages en 8 périodes — ~375 par période — le même seuil produirait **quarante
+sous-dossiers par période**, ce qui n'est plus un arbre mais une liste. À l'inverse,
+un brain de domaine client de 40 pages en 6 paquets ne promouvrait jamais rien.
+
+**Conséquence, en deux temps.** D'abord le seuil se **dérive** du volume cible, avec
+le calcul écrit dans `motif_seuil` (HistoBrain : 12). Ensuite — et c'est la partie
+que le DevBrain n'a jamais eu à faire — **changer le seuil reforme l'arbre**. Un brain
+qui grandit plus que prévu devra re-seuiller, c'est-à-dire déplacer des pages. Il faut
+donc une opération `re-seuiller` qui émet des `git mv`, refuse de tourner sur un arbre
+sale, et qui n'existe nulle part aujourd'hui. Le DevBrain s'en est passé parce qu'il
+a fixé son seuil une fois, avec 700 pages déjà écrites sous les yeux.
+
+**Coût :** modéré, mais c'est une **fonctionnalité nouvelle**, pas une extraction.
+
+## 4.4 Ce qui transpose proprement — et qui valide le mécanisme
+
+### `famille:` → `nature:` : le slot survit, le contenu non, et le conditionnel brille
+
+Les 9 valeurs et l'arbre F1→F9 sont à jeter. Mais le **mécanisme du champ
+conditionnel** (R16) se réemploie au premier essai : `cote:` n'a de sens que pour une
+archive, `langue_originale:` et `traduction:` que pour une source primaire —
+exactement comme `hosted:` n'avait de sens que pour une plateforme. Le raisonnement
+d'origine (« 177 fiches `paquet` portaient une valeur d'hébergement ; deux champs qui
+décrivent 100 % des fiches ne discriminent rien ») se transpose mot pour mot.
+
+`vide_autorise: true` transpose aussi, et il est **plus** utile en histoire : une
+source hybride (un manuel de paléographie est-il un `cours` ou un `ouvrage` ?) doit
+pouvoir rester sans nature en attendant l'arbitrage.
+
+### Le bandeau : transposition totale, et c'est la meilleure preuve de l'inventaire
+
+`Nature | Licence | Exécution | Maturité` devient `Nature | Auteur et date | Langue |
+Fiabilité`. Quatre colonnes, chacune dérivée d'un champ, chacune avec sa table de
+rendu, un tiret cadratin quand la source manque. **Le moteur ne change pas d'une
+ligne.** C'est la démonstration la plus nette que I4 (générique) et I5 (à réécrire)
+sont bien deux briques distinctes.
+
+### La règle 5 transpose, et elle transpose bien
+
+`## Prendre si / Écarter si` devient `## Ce qu'elle établit / Ce qu'elle ne peut pas
+établir`, et la colonne négative se remplit exactement de la même façon : des bornes
+qui ne pointent vers personne (« l'auteur n'a pas eu accès aux archives soviétiques »)
+et des **redirections** vers une autre source (« pour la démographie → [[Recensement
+de 1851]] »). La conjonction *flèche × cible fichée* garde son sens intégral.
+
+Une réserve, et elle est de méthode : que la règle donne 1 violation sur 1 388
+cellules est vrai **du corpus dev**. Sur HistoBrain elle sort en `a_mesurer`, comme
+les neuf autres.
+
+### `role: notion` protégé : survit tel quel, et devient central
+
+Dans le DevBrain, les notions sont 299 pages sur 738 — importantes mais pas
+majoritaires. Dans un brain d'histoire, **ce que l'utilisateur a compris et écrit est
+l'essentiel de la valeur** : les sources, on peut les relister ; la synthèse
+personnelle, non. La frontière « création libre, modification sur demande explicite »
+devient la règle la plus sensible du vault, et le drapeau `protege: true` la porte
+intégralement.
+
+Conséquence à écrire dans le `CLAUDE.md` généré, mot pour mot comme dans le DevBrain :
+*la frontière est portée par le champ, pas par le chemin ; donc lire le frontmatter
+avant d'écrire.*
+
+## 4.5 Les trois insuffisances du code actuel que le manifeste ne répare pas
+
+### `maturite:` transpose ; sa sémantique d'élimination, non
+
+`fiabilite: [etablie, discutee, contestee, obsolete]` est une transposition parfaite
+de `maturite: [production, beta, experimental, deprecated]` — même forme, même
+gradation, même utilité au bandeau.
+
+Mais dans le DevBrain, `deprecated` est **éliminatoire** : `planifier-projet` filtre
+sur l'index sans ouvrir les fiches, et proposerait sinon une brique abandonnée. En
+histoire, `contestee` n'élimine rien — c'est souvent la source la plus intéressante,
+et une source `obsolete` reste un objet d'historiographie.
+
+**Ce qu'il faut en tirer :** `eliminatoire:` doit être un champ **explicite et vide
+par défaut**. Le kit ne doit avoir aucune intuition sur « quelle valeur d'énumération
+disqualifie ». Le DevBrain, lui, a cette règle écrite dans `planifier-projet`, où
+elle est invisible depuis le manifeste.
+
+### Les 47 `.base` ne se génèrent pas, et ils sont un tiers du travail réel
+
+Chaque `.base` porte un filtre réglé à la main et souvent une seconde vue métier. Un
+générateur peut poser le premier ; il ne peut pas poser les quarante-sept. En histoire
+c'est identique : une chronologie du XXe siècle voudra une vue « sources primaires
+seulement », une autre « ce que j'ai lu ».
+
+**Ce qu'il faut en tirer :** les vues sont du **contenu**, et le manifeste doit dire
+qu'elles le sont. Le générateur en amorce une par dossier promu, avec le filtre
+évident et l'ordre de colonnes par défaut, et s'arrête là.
+
+### `## Retours` / `## Notes de lecture` : la place existe, le contenu n'est jamais venu
+
+Le DevBrain a une convention d'entrée datée (`- YYYY-MM-DD — <symptôme> :
+<correctif>.`) et une section conditionnelle pour l'accueillir. Mesure du lot 6 :
+sur 337 fiches, **aucune** entrée datée, aucune section créée.
+
+Ce n'est pas un défaut de format, c'est un fait sur l'usage : la section n'a pas été
+alimentée en dix-huit mois. En histoire, les *notes de lecture* datées sont bien plus
+probables — c'est même l'usage principal d'un tel brain.
+
+**Ce qu'il faut en tirer :** `genre: conditionnelle` est le bon mécanisme, et il faut
+le garder. Mais il faut aussi que le kit **mesure l'usage** de ce qu'il génère : une
+section qui n'existe sur aucune page au bout de N pages est une section à supprimer du
+gabarit, pas à laisser en place « au cas où ». Cela relève du lot 8 (mesure).
+
+## 4.6 Verdict du test
+
+| Mécanisme | Verdict |
+|---|---|
+| L'arbre dérivé de l'axe de rangement | **passe**, et l'induction par échantillon produit le bon axe |
+| Le seuil de promotion et son plafond | **passe le plafond**, **casse la valeur** (rupture 5) |
+| `role:` et le moteur de schéma par rôle | **passe** intégralement |
+| Les hubs et leurs zones AUTO | **passe** |
+| Le bandeau | **passe** — moteur inchangé, contenu entièrement réécrit |
+| Les champs conditionnels | **passe**, et se réemploie au premier essai |
+| La réciprocité | **casse** — il manque le mode inverse (rupture 2) |
+| Le rôle `comparatif` | **casse** — la primitive survit, l'intention non (rupture 1) |
+| L'exclusivité de l'axe de rangement | **casse** — réparable par deux mécanismes déjà présents (rupture 3) |
+| Un seul axe transverse | **casse** — l'histoire en veut deux (rupture 4) |
+| `famille:` | **survit comme slot**, contenu à réécrire |
+| Les 6 axes `Métiers/` | **survivent comme mécanisme**, valeurs à réécrire, **et se multiplient** |
+| La règle de propagation P1→P6 | **passe** sans une retouche |
+| La règle 5 (exclusion sourcée) | **passe**, sévérité à re-mesurer |
+| La règle 10 (anti-répétition) | **ne passe pas et ne doit pas être livrée** |
+| `protege:` sur un rôle | **passe**, et devient le mécanisme le plus important |
+| Les hooks git | **passent**, avec une polarité à inverser selon `usage:` |
+| La triade de skills | **passe**, le troisième entièrement réécrit |
