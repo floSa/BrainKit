@@ -13,9 +13,15 @@ Sort en 1 si une regle DURE est violee, en 0 sinon. Une regle en
 `avertissement` signale ; une regle en `a_mesurer` compte, sans juger — c est la
 severite par defaut de toute instance neuve.
 
-LECTURE SEULE. Le paquet n a aucun chemin d ecriture :
-`grep -rnE 'write_text|write_bytes|mkdir|unlink|rmtree|rename' brainkit/` ne rend
-que cette phrase.
+LECTURE SEULE. Le validateur n a aucun chemin d ecriture :
+
+    grep -rnE 'write_text|write_bytes|mkdir|unlink|rmtree|rename' brainkit/valider/
+    # -> une seule ligne : cette phrase
+
+Le perimetre de la promesse a ete RESTREINT au lot 4, et il faut le dire :
+`brainkit/generer/` ecrit, par construction, et son unique chemin d ecriture vit
+dans `brainkit/generer/sortie.py`. Une promesse « le paquet n ecrit nulle part »
+serait devenue fausse en silence le jour ou le generateur est arrive.
 """
 
 from __future__ import annotations
