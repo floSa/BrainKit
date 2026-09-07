@@ -147,6 +147,24 @@ CONTROLES: dict[str, str] = {
 M = "manifeste"
 V = "vault"
 
+# --------------------------------------------------------------------------- #
+# BACKLOG — les codes qui ne decrivent pas un ecart a corriger mais un TRAVAIL a
+# faire, ou un etat VOULU. Ils sortent du corps du rapport et vont dans une
+# section a eux, en fin de sortie.
+#
+# Recommandation du lot 2, arbitrage 3 du lot 3, execute au lot 8. Sept groupes
+# permanents — les cinq `skill/*` sans page et les deux libelles gardes apres un
+# plafond de promotion — repetes a chaque execution au milieu des vraies
+# divergences : *« un outil qui repete sept avertissements permanents a chaque
+# execution finit ignore »*. Ils ne sont PAS supprimes : ils sont ranges. Un
+# etat voulu qu on cesserait d imprimer redeviendrait un oubli.
+#
+# Le kit porte desormais le meme backlog, calcule sur les memes donnees, dans
+# `brainkit mesurer` — c est la sortie dont le lot 3 disait qu elle serait « le
+# seul outil du kit dont la sortie soit une liste de travail et non un verdict ».
+# --------------------------------------------------------------------------- #
+CODES_BACKLOG = ("A1", "A3")
+
 VERDICTS: dict[str, tuple[str, str]] = {
 
     # ------------------------------------------------ boite 1 : le manifeste
@@ -1302,10 +1320,15 @@ def imprime(mo: Modele, pages: list[Page], r: Rapport, ns) -> int:
 
     inexpliquees = [g for g in groupes if g.cle not in VERDICTS]
     par_boite = collections.Counter(VERDICTS[g.cle][0] for g in groupes if g.cle in VERDICTS)
+    backlog = [g for g in groupes if g.code in CODES_BACKLOG]
+    groupes = [g for g in groupes if g.code not in CODES_BACKLOG]
 
     print("-" * 78)
     print(f"{len(groupes)} groupe(s) de divergences, "
-          f"{sum(g.poids for g in groupes)} occurrence(s)")
+          f"{sum(g.poids for g in groupes)} occurrence(s)"
+          + (f" — plus {len(backlog)} groupe(s) sortis en BACKLOG "
+             f"({', '.join(CODES_BACKLOG)}), en fin de rapport"
+             if backlog else ""))
     print(f"  boite 1 — erreur du manifeste : {par_boite.get('manifeste', 0)} groupe(s)")
     print(f"  boite 2 — fait connu du vault : {par_boite.get('vault', 0)} groupe(s)")
     print(f"  INEXPLIQUEE                   : {len(inexpliquees)} groupe(s)")
@@ -1328,6 +1351,27 @@ def imprime(mo: Modele, pages: list[Page], r: Rapport, ns) -> int:
             print(f"             · {x}")
         if len(lignes) > cap:
             print(f"             · … + {len(lignes) - cap} autre(s)")
+
+    if backlog:
+        print()
+        print("-" * 78)
+        print(f"BACKLOG — {len(backlog)} groupe(s) qui ne sont pas des ecarts a "
+              f"corriger")
+        print("  Un etat VOULU ou un travail a faire, pas une faute. Sorti du corps")
+        print("  du rapport pour que sept lignes permanentes cessent de noyer les")
+        print("  vraies divergences. Le kit en tient la version complete :")
+        print("      uv run brainkit mesurer --vault <vault> --manifeste <brain.yml>")
+        code_courant = None
+        for g in backlog:
+            if g.code != code_courant:
+                code_courant = g.code
+                print()
+                print(f"  ### {g.code} — {CONTROLES.get(g.code, '')}")
+            _boite, motif = VERDICTS.get(g.cle, ("INEXPLIQUEE", ""))
+            print(f"    {g.sujet} — {g.libelle}  ({g.poids})")
+            if motif:
+                print(f"        verdict : {motif}")
+        print("-" * 78)
 
     ecarts = [m for m in r.mesures if not m[4]]
     print()
