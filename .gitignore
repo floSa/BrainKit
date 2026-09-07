@@ -1,8 +1,19 @@
 # Bytecode Python. Le jeu d'epreuve importe `schema/valider.py` comme un module
 # pour rejouer les dix contraintes de coherence sur son propre manifeste : c'est
 # ce qui fait naitre un `schema/__pycache__/`. Rien de tout ca n'est un livrable.
+#
+# Le lot 3 a pose cette regle mais les treize `.pyc` deja SUIVIS le restaient :
+# une regle d'ignorance ne desuit pas ce qui l'est deja. Ils sont sortis de
+# l'index au lot 4, faute de quoi chaque execution du kit salissait `git status`
+# et chaque commit du lot portait du binaire.
 __pycache__/
 *.py[cod]
 
-# Environnements virtuels, si l'on en pose un a cote d'`uv run`.
+# Environnements virtuels. `uv run` en pose un des que le projet est declare
+# par `pyproject.toml` — c'est-a-dire depuis le lot 4.
 .venv/
+
+# Arbres de travail des generateurs. `--sortie` ecrit les artefacts regeneres
+# HORS du vault, et ce n'est pas un livrable : c'est la piece a conviction d'une
+# execution.
+travail/
