@@ -1,0 +1,46 @@
+# ==============================================================================
+# pyproject.toml — BrainKit, le noyau generique d un second brain.
+# ------------------------------------------------------------------------------
+# Pose au lot 4 pour une raison mesuree : avant lui, `uv run -m brainkit.valider`
+# echouait faute de dependance declaree, et SEUL le lancement en script direct
+# (`uv run brainkit/valider/__main__.py`, en-tete PEP 723) fonctionnait. Un kit
+# est une base qu on CLONE : il doit se lancer proprement, et de la meme facon
+# chez tout le monde.
+#
+# Les deux chemins de lancement restent valides, et c est voulu :
+#
+#   uv run brainkit/valider/__main__.py     # script autonome (en-tete PEP 723)
+#   uv run -m brainkit.valider              # module du projet (ce fichier)
+#   uv run brainkit                         # la commande, une fois installee
+#
+# Le second est celui d une instance `kit.mode: branche` ; le premier est celui
+# d une instance `kit.mode: fige`, ou les scripts ont ete copies dans
+# AI/scripts/ et ou aucun paquet n est installable (§5.1 du cadrage : la
+# specialite de floSa est l on-prem, et un vault livre chez un industriel ne
+# pourra pas installer un outil depuis internet). Le lot 10 fera tourner les
+# deux chemins sur la meme instance ; ce fichier est ce qui rend le second
+# possible.
+# ==============================================================================
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "brainkit"
+version = "0.1.0"                 # doit concorder avec `kit.version` d un manifeste
+description = "Le noyau generique d un second brain Obsidian, pilote par un manifeste brain.yml."
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6"]
+
+[project.optional-dependencies]
+# Le jeu d epreuve rejoue le schema du lot 1 sur son propre manifeste : c est la
+# seule chose du depot qui ait besoin de jsonschema, et elle n a pas a peser sur
+# une instance qui ne fait que valider et generer.
+epreuve = ["jsonschema>=4"]
+
+[project.scripts]
+brainkit = "brainkit.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["brainkit"]
