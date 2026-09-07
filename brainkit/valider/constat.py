@@ -31,7 +31,7 @@ Trois idees, et une seule est evidente.
    d une regle a zero sur trois cents si le seul chiffre imprime est zero. Le
    denominateur est donc DECLARE PAR LA REGLE ELLE-MEME, au moment ou elle
    tourne — jamais recalcule ailleurs, sans quoi la mesure et le controle
-   diveregeraient en silence, ce qui est exactement le constat E4.
+   divergeraient en silence, ce qui est exactement le constat E4.
 
    Une regle qui ne compte pas des pages (les cellules d une colonne, les noms
    de fichier, les champs d un manifeste) declare EN PLUS son objet et son

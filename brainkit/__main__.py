@@ -5,6 +5,7 @@
 """brainkit — la porte d entree unique du kit.
 
     brainkit valider [...]
+    brainkit mesurer [...]
     brainkit generer [...]
     brainkit semer [...]
     brainkit re-seuiller [...]
@@ -37,6 +38,8 @@ SOUS_COMMANDES = {
                   "mène l'entretien qui produit un `brain.yml`, puis sème"),
     "valider": ("brainkit.valider.__main__", "main",
                 "valide un vault contre son manifeste"),
+    "mesurer": ("brainkit.mesurer.__main__", "main",
+                "mesure ce qu'une règle coûte, AVANT de la durcir"),
     "generer": ("brainkit.generer.__main__", "main",
                 "régénère les artefacts dérivés (mode `--check` par défaut)"),
     "semer": ("brainkit.semer.__main__", "main",

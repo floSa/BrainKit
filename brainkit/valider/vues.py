@@ -152,6 +152,8 @@ def couverture_des_vues(ctx: Contexte, r: Rapport) -> None:
     # Les quatre sous-constats n ont PAS le meme denominateur, et les melanger
     # rendrait chacun illisible : (a) se mesure en valeurs d axe assez peuplees,
     # (b) et (d) en fichiers de vue, (e) en pages de l unite.
+    r.population(rid, len(ctx.pages_du_role(rid_unite)),
+                 objets=len(membres), objet="fichier de vue")
     r.population(rid, len(ctx.pages_du_role(rid_unite)), cle="e")
     r.population(rid, len(membres), cle="b", objets=len(membres),
                  objet="fichier de vue")
