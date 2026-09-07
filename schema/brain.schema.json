@@ -265,16 +265,20 @@
         "perimetre":    { "enum": ["dossier", "champ", "role"] },
         "groupe_par":   { "type": "string" },
         "sous_titres_depuis": { "type": "string" },
+        "tranche_au_lot_4": { "type": "string" },
         "sections": {
           "type": "array",
           "items": {
             "type": "object",
             "required": ["titre", "source"],
             "unevaluatedProperties": false,
+            "$comment": "`depuis` est la lecture MACHINE de `source`, ajoutee au lot 4 : `source` reste de la prose, et un generateur ne remplit pas une sous-section sur une phrase. Vocabulaire FERME par le kit — un perimetre est du code, pas une donnee.",
             "allOf": [{ "$ref": "#/$defs/annotations" }],
             "properties": {
               "titre":  { "type": "string", "minLength": 1 },
               "source": { "type": "string", "minLength": 1 },
+              "depuis": { "enum": ["sous_dossiers", "role", "vues"] },
+              "role":   { "$ref": "#/$defs/identifiant" },
               "separateur": { "type": "string" },
               "mesure": { "type": "integer", "minimum": 0 }
             }
@@ -600,6 +604,10 @@
         "multivalue": { "type": "boolean" },
         "hub_par_valeur": { "type": "boolean" },
         "pointe_vers": { "type": "string" },
+        "groupe_par": {
+          "description": "Comment un hub transverse groupe ce qu il liste. Vocabulaire FERME par le kit. AJOUTE AU LOT 4 — `pointe_vers` disait la meme chose en prose, et une prose ne se lit pas par une machine.",
+          "enum": ["premier_segment_du_chemin"]
+        },
         "valeurs": {
           "type": "array",
           "minItems": 1,
@@ -793,6 +801,10 @@
           "scriptable": { "type": "boolean" },
           "structurellement_dure": { "type": "boolean" },
           "code":     { "type": "array", "items": { "type": "string" } },
+          "porte_par": {
+            "description": "L outil qui TIENT la regle, quand le validateur la delegue. Distinct de `code`, qui ne porte que la PROVENANCE (identifiants de l ancien validateur, nom du script d origine). AJOUTE AU LOT 4, remontee 10 du lot 3 : `code` melangeait un identifiant de regle, un nom de script et une COMMANDE — les deux premiers sont de la provenance, le troisieme une delegation, et le moteur devait la deviner par convention.",
+            "type": "string", "minLength": 1
+          },
           "champ":    { "type": "string" },
           "champs":   { "type": "array", "items": { "type": "string" } },
           "modes":    { "type": "object", "additionalProperties": { "enum": ["symetrique", "inverse"] } },
@@ -830,6 +842,7 @@
         "severite": { "$ref": "#/$defs/severite" },
         "enonce":   { "type": "string", "minLength": 1 },
         "code":     { "type": "array", "items": { "type": "string" } },
+        "porte_par": { "type": "string", "minLength": 1 },
         "depuis":   { "type": "string" },
         "mesure":   { "type": "object" },
         "quatre_motifs_distingues": { "type": "array", "items": { "type": "string" } }
@@ -924,7 +937,41 @@
             "champs":   { "type": "array", "items": { "type": "string" } },
             "plus":     { "type": "array", "items": { "type": "string" } },
             "tri":      { "enum": ["stable"] },
-            "horodatage": { "const": false }
+            "horodatage": { "const": false },
+            "signature": {
+              "description": "Ce que l artefact ANNONCE comme son producteur, dans son en-tete et dans la cle `generated_by` du catalogue. Valeur d INSTANCE : une instance `kit.mode: branche` annonce la commande du kit, une instance `kit.mode: fige` le chemin de ses scripts copies. AJOUTE AU LOT 4.",
+              "type": "string", "minLength": 1
+            },
+            "portee": {
+              "description": "Une reserve de perimetre que l artefact annonce (cle `scope` du catalogue). Emise SEULEMENT si declaree : un brain neuf n en a aucune, et une cle vide en inventerait une. AJOUTE AU LOT 4.",
+              "type": "string", "minLength": 1
+            },
+            "groupes": {
+              "description": "L ORDRE des groupes du document humain et le titre de chacun. Un role absent de cette liste sort APRES les declares, sous son propre identifiant — une page hors des groupes prevus doit se voir. AJOUTE AU LOT 4.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["role", "titre"],
+                "unevaluatedProperties": false,
+                "allOf": [{ "$ref": "#/$defs/annotations" }],
+                "properties": {
+                  "role":  { "$ref": "#/$defs/identifiant" },
+                  "titre": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        },
+        "prose": {
+          "description": "Surcharge des gabarits de phrase des documents generes. Le kit en porte un jeu par DEFAUT (langue `fr`, aucune valeur d instance) ; ce bloc en remplace un par un, et n existe que pour la prose qu une instance porte deja et que le kit n a aucune raison d heriter. Une cle est `<artefact>.<slot>` ; la valeur est une chaine, ou une liste de chaines pour un slot multi-lignes. AJOUTE AU LOT 4.",
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z_]+\\.[a-z_]+$" },
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
           }
         },
         "liens": {
@@ -934,7 +981,8 @@
           "properties": {
             "fichier":  { "type": "string" },
             "sections": { "type": "array", "items": { "type": "string" } },
-            "masque_du_graphe": { "type": "boolean" }
+            "masque_du_graphe": { "type": "boolean" },
+            "signature": { "type": "string", "minLength": 1 }
           }
         }
       }

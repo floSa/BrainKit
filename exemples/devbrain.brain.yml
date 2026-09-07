@@ -83,7 +83,13 @@ libelles:
   axe_rangement: { s: domaine,    p: domaines }
   axe_nature:    { s: famille,    p: familles }
   axe_transverse:
-    domaines:    { s: metier,     p: metiers }
+    # CORRIGE AU LOT 4 : « metier » -> « metier » accentue. L en-tete de ce
+    # fichier ecrit les accents PARTOUT sauf dans les commentaires et les
+    # `motif:` ; ce libelle y echappait, et il est le seul des huit. Le
+    # generateur de hubs transverses l interpole dans la phrase d intro des
+    # 6 pages de « Metiers/ » (« Axe metier **Data Science** … ») : sans
+    # l accent, le critere du `diff` vide tombait sur six pages.
+    domaines:    { s: métier,     p: métiers }
 
 # ------------------------------------------------------------------------------
 # roles — SIX entrees. `id` est le mot que floSa lit dans son vault ; `fonction`
@@ -395,15 +401,37 @@ roles:
           un rôle porte plusieurs gabarits de zone AUTO ou si la forme se derive
           de `hub_par_valeur` et de `hub_de_ralliement`. Le lot 4 le decide, pas
           celui-ci — cf. rapport du lot 2, remontee 1.
+        tranche_au_lot_4: >
+          LA FORME SE DERIVE DU PERIMETRE, ET LE PERIMETRE SE LIT SUR LE DOSSIER
+          DU HUB. Un role ne porte donc qu UN gabarit de zone AUTO — celui-ci,
+          la forme `perimetre: dossier` — et les deux autres formes ne sont pas
+          des gabarits de role : ce sont les formes d un hub dont le dossier est
+          declare AILLEURS, par l axe ou par le role qui le peuple
+          (`axes.transverses[].dossier` -> forme `champ` ;
+          `roles[].hub_de_ralliement.dossier` -> forme `role`). Rien de neuf
+          n est declare pour la forme, et les 74 pages gardent le meme `role:` :
+          trois gabarits sur le role auraient mis la meme information a deux
+          endroits, defaut que le manifeste existe pour supprimer (constat E4).
+          Cf. `design/04-generation.md`, arbitrage 1.
         sections:
+          # `depuis:` est la lecture MACHINE de `source:`, ajoutee au lot 4 :
+          # `source:` restait de la prose, et un generateur ne remplit pas une
+          # sous-section sur une phrase. Vocabulaire ferme par le kit :
+          # `sous_dossiers`, `role`, `vues`. L ORDRE de cette liste est l ordre
+          # des sous-sections dans la page.
           - { titre: "Sous-domaines", source: "sous-dossiers portant un hub",
-              separateur: " · ", mesure: 10 }
-          - { titre: "Notions",     source: "role: notion du dossier",  mesure: 39 }
-          - { titre: "Briques",     source: "role: brique du dossier",  mesure: 58 }
-          - { titre: "Patterns",    source: "role: pattern du dossier", mesure: 1 }
-          - { titre: "Rules",       source: "role: rule du dossier",    mesure: 1 }
+              depuis: sous_dossiers, separateur: " · ", mesure: 10 }
+          - { titre: "Notions",     source: "role: notion du dossier",
+              depuis: role, role: notion,     mesure: 39 }
+          - { titre: "Briques",     source: "role: brique du dossier",
+              depuis: role, role: brique,     mesure: 58 }
+          - { titre: "Patterns",    source: "role: pattern du dossier",
+              depuis: role, role: pattern,    mesure: 1 }
+          - { titre: "Rules",       source: "role: rule du dossier",
+              depuis: role, role: rule,       mesure: 1 }
           - titre: "Comparatifs"
             source: "fichiers *.base du dossier"
+            depuis: vues
             mesure: 37
             motif: >
               La seule section qui ne lit PAS `role:` mais l extension des
@@ -1321,6 +1349,12 @@ axes:
       multivalue: true
       hub_par_valeur: true
       pointe_vers: "les sous-hubs, jamais les feuilles"
+      groupe_par: premier_segment_du_chemin
+      motif_groupe_par: >
+        AJOUTE AU LOT 4. `pointe_vers:` disait la meme chose en prose ; il
+        fallait une valeur qu une machine lise. Le groupe est le PREMIER SEGMENT
+        du chemin, jamais le sous-dossier : sinon ce hub redoublerait l arbre au
+        lieu de le traverser. Vocabulaire ferme par le kit.
       motif_du_nom: >
         « Domaines » designe deja les 20 dossiers de l arbre — l homonymie serait
         un piege. Aucun dossier d axe transverse ne peut porter le nom de l axe de
@@ -1742,7 +1776,17 @@ regles:
     enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
     active: true
     severite: dure
-    code: [build_bandeau --check]
+    code: [build_bandeau]
+    porte_par: "brainkit generer --quoi bandeau --check"
+    motif_porte_par: >
+      AJOUTE AU LOT 4, remontee 10 du lot 3 : `code:` melangeait trois choses —
+      un identifiant de regle de l ancien validateur (R21, R8e), un nom de
+      script (check_arbo) et une COMMANDE (build_bandeau --check). Les deux
+      premiers sont de la PROVENANCE, le troisieme est une DELEGATION. Tranche :
+      `code:` ne porte plus que la provenance, `porte_par:` nomme l outil qui
+      TIENT la regle aujourd hui. Seule regle du DevBrain a en porter un — les
+      deux `code: [check_arbo]` sont de la provenance, le moteur les tient
+      lui-meme depuis le lot 3. Cf. `design/04-generation.md`, arbitrage 2.
     structurellement_dure: true
     motif_structurelle: "§5.6, comme `chemin_categorie` : regenerer et comparer les octets ne juge aucune redaction."
     mesure: { date: "2026-09-06", population: 337, violations: 0 }
@@ -2016,11 +2060,62 @@ genere:
       Ordre stable et aucun horodatage : deux regenerations d un vault inchange
       produisent le meme octet, sans quoi le `diff` vide du critere d acceptation
       des generateurs serait impossible.
+    # --- AJOUTE AU LOT 4 -----------------------------------------------------
+    signature: "AI/scripts/build_index.py"
+    motif_signature: >
+      Ce que l artefact ANNONCE comme son producteur, dans son en-tete et dans la
+      cle `generated_by` du JSON. C est une valeur d instance, pas de kit : une
+      instance `kit.mode: branche` annonce `brainkit generer`, une instance
+      `kit.mode: fige` annonce le chemin ou ses scripts ont ete copies. Le
+      DevBrain annonce encore les siens, et c est exact tant que le lot 9 n a pas
+      remplace son outillage.
+    portee: "v2-only (réservoir v1 exclu)"
+    motif_portee: >
+      DETTE V1, declaree parce qu elle est dans le fichier du vault. La cle
+      `scope` du JSON annonce un « reservoir v1 » qui vivait sous un dossier
+      `Wiki/` supprime au lot 4 de la migration. Le kit ne porte PAS le code qui
+      l alimentait (`V1_MARKERS`, `is_active_v2()`) : il porte la declaration
+      qu un artefact du DevBrain la contient. Un brain neuf ne declare pas
+      `portee:`, et la cle n est alors pas emise.
+    groupes:
+      # L ORDRE du document humain, et le titre de chaque groupe. Un role absent
+      # de cette liste sort APRES les declares, sous son propre identifiant :
+      # c est ce qui fait apparaitre les 74 hubs sous un `## hub` sans titre
+      # redige, fait du vault et non oubli du generateur.
+      - { role: brique,     titre: "Briques — ce qu'on déploie ou importe" }
+      - { role: notion,     titre: "Notions — ce qu'il faut comprendre" }
+      - { role: comparatif, titre: "Comparatifs — ce qui départage plusieurs briques" }
+      - { role: pattern,    titre: "Patterns — architectures éprouvées" }
+      - { role: rule,       titre: "Rules — règles transverses" }
   liens:
     fichier: "AI/index/liens.md"
     sections: [tags, liens_sortants, backlinks, a_creer]
     motif_a_creer: "Les liens NON RESOLUS sont un mecanisme de backlog qui vaut pour tout sujet."
     masque_du_graphe: true
+    signature: "AI/scripts/build_links.py"     # AJOUTE AU LOT 4, cf. index.signature
+
+  # --- AJOUTE AU LOT 4 -------------------------------------------------------
+  # Les gabarits de phrase des documents generes. Le kit en porte un jeu par
+  # defaut (`brainkit/generer/prose.py`, langue `fr`, aucune valeur d instance) ;
+  # ce bloc en SURCHARGE quatre, et les quatre sont de la dette du DevBrain que
+  # le kit n a aucune raison d heriter. Sans la surcharge, le critere du `diff`
+  # vide tombait sur quatre lignes de dette ; en la portant dans le kit, toutes
+  # les instances l heriteraient (§5.10).
+  prose:
+    index.entete:
+      - "Document généré par `{signature}`. Ne pas éditer à la main."
+      - "{pages} pages actives. Réservoir v1 (0 pages Wiki) : référence, non indexé."
+    index.sans_valeur: "(sans catégorie)"
+    liens.sans_page: "  — pas de page concept dédiée"
+    liens.tags_sans_page: "**Tags sans page concept dédiée** (sujets candidats à créer) :"
+  motif_prose: >
+    Pourquoi ces quatre exactement. `index.entete` annonce un reservoir v1
+    disparu, et dit « Document genere » la ou la carte des liens dit « Genere ».
+    `index.sans_valeur` nomme le CHAMP accentue (« sans categorie ») que la
+    derivation depuis `categorie` ne sait pas produire ; le defaut du kit rend
+    « (sans domaine) », le libelle de l axe. Les deux dernieres disent « page
+    concept », mot de la v2 pour ce que le vault appelle desormais une notion —
+    le defaut du kit interpole le libelle du role `fonction: notion`.
 
 propagation:
   enonce: >
