@@ -1,0 +1,1121 @@
+# ==============================================================================
+# histobrain.brain.yml — le manifeste d un brain d HISTOIRE, remplissage COMPLET
+# ------------------------------------------------------------------------------
+# Ce fichier n est PAS une thematique a livrer. C est le banc d essai du kit : le
+# sujet le plus eloigne du dev qui reste credible (des sources plutot que des
+# logiciels, des dates plutot que des versions, des controverses plutot que des
+# alternatives). S il passe, un domaine client passe.
+#
+# Il porte les CINQ mecanismes que le test a blanc de 00-cadrage.md §4 a exiges,
+# et qu on ne peut pas exercer sur DevBrain parce que DevBrain ne les a jamais eus.
+# Chacun est marque en ligne par un commentaire `# EXIGENCE n` :
+#
+#   1  mode `reciproque: inverse`               -> champs.prolonge / prolonge_par
+#   2  axe de rangement NON EXCLUSIF, avec sa
+#      regle de majorite et son prefixe transversal -> axes.rangement
+#   3  DEUX axes transverses                    -> axes.transverses
+#   4  seuil DERIVE du volume cible             -> axes.rangement.seuil_promotion
+#   5  role PROTEGE                             -> roles[notion].protege
+#
+# Le remplissage est celui de 00-cadrage.md §2.4, porte au niveau de completude du
+# remplissage DevBrain : les deux arbres de decision sont ECRITS EN ENTIER (§2.4
+# les tronquait a D3 et N2), et les blocs que §2.4 declarait « identiques en
+# forme » sont ecrits.
+#
+# Etat des dix regles : TOUTES en `a_mesurer`, sans exception — principe 1. Aucune
+# severite du DevBrain n est heritee, y compris celles qui « paraissent
+# evidentes ». Porter une severite, c est porter une mesure qu on n a pas faite.
+# ==============================================================================
+
+manifeste: 1
+
+kit:
+  version: "0.1.0"
+  mode: branche
+
+brain:
+  nom: HistoBrain
+  sujet: "Ce que je lis en histoire, les sources qui l'établissent et les notions qui l'expliquent."
+  langue: fr
+  volume_cible: 3000
+  usage: perso
+  profil: obsidian
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: [aosis.net]
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+  motif: >
+    `usage: perso`, donc meme polarite que DevBrain : c est le domaine PRO qui est
+    refuse. Sur un brain `usage: client`, vendu chez un employeur, la polarite s
+    inverse — c est l adresse perso qu il faut refuser, et c est pour ca que le
+    hook lit « identite attendue » dans la config plutot que de coder un domaine.
+    L identite ne se devine JAMAIS : l entretien s arrete si la reponse ne vient
+    pas, et il ne lit jamais l adresse annoncee par le harnais.
+
+libelles:
+  unite:         { s: source,      p: sources }
+  notion:        { s: notion,      p: notions }
+  vue:           { s: chronologie, p: chronologies }
+  hub:           { s: hub,         p: hubs }
+  prescription:  { s: prescription, p: prescriptions }
+  axe_rangement: { s: période,     p: périodes }
+  axe_nature:    { s: nature,      p: natures }
+  axe_transverse:
+    themes:  { s: thème,  p: thèmes }
+    espaces: { s: espace, p: espaces }
+  motif: >
+    « comparatif » n apparait NULLE PART, et c est le premier resultat du test :
+    les sources ne sont pas interchangeables. Herodote et Thucydide ne sont pas
+    des alternatives — on lit les deux, et le second corrige le premier sans le
+    remplacer. La primitive du comparatif survit, son intention non.
+
+# ==============================================================================
+# roles — SIX, comme DevBrain, et AUCUN ne porte le meme nom. La coincidence du
+# nombre est rassurante et trompeuse (§5.12) : le plafond souple est a six, et
+# avant d en accepter un septieme l entretien demande « cette page se range-t-elle
+# sur le meme axe que les autres, et y a-t-il une regle qui ne s applique qu a
+# elle ? ». Si non aux deux, ce n est pas un role : c est une valeur de l axe de
+# nature, ou un tag. Les personnages et les lieux sont, presque toujours, des
+# notions.
+# ==============================================================================
+roles:
+
+  # --- 1/6 -------------------------------------------------------------------
+  - id: source
+    fonction: unite
+    libelle: { s: source, p: sources }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#412CDD"
+    taille_avertissement: 120
+    champs:
+      requis: [role, nom, apport, categorie]
+      autorises: [role, nom, alias, apport, categorie, nature, themes, espaces,
+                  auteur, date_publication, langue, langue_originale, traduction,
+                  fiabilite, acces, cote,
+                  contredit, prolonge, prolonge_par, tags, url]
+      conditionnels:
+        - { champ: langue_originale, si: "nature == source-primaire" }
+        - { champ: traduction,       si: "nature == source-primaire" }
+        - { champ: cote,             si: "nature in [archive, source-primaire]" }
+      motif_conditionnels: >
+        Reemploi DIRECT du mecanisme R16 du DevBrain, au premier essai : une cote
+        de fonds n a de sens que pour un document d archive, une langue originale
+        et une traduction que pour une source primaire — exactement comme
+        `hosted:` n avait de sens que pour une plateforme. Le raisonnement d
+        origine se transpose mot pour mot : deux champs qui decrivent 100 % des
+        fiches ne discriminent rien.
+    corps:
+      - { titre: "<bandeau>", niveau: 0, genre: bandeau }
+      - { titre: "Ce que c'est", niveau: 2, genre: prose,
+          doctrine: "La SEULE section ou la prose est permise." }
+      - titre: "Ce qu'elle établit / Ce qu'elle ne peut pas établir"
+        niveau: 2
+        genre: decision
+        colonne_positive: "Établit"
+        colonne_negative: "N'établit pas"
+        motif: >
+          La regle 5 transpose, et bien : la colonne negative se remplit
+          exactement de la meme facon — des BORNES qui ne pointent vers personne
+          (« l auteur n a pas eu acces aux archives sovietiques ») et des
+          REDIRECTIONS vers une autre source (« pour la demographie ->
+          [[Recensement de 1851]] »). La conjonction fleche x cible fichee garde
+          son sens integral.
+      - { titre: "Comment y accéder", niveau: 2, genre: etiquetee,
+          obligatoires: [Édition, Langue, Accès, Cote, Coût],
+          permises:     [Édition, Langue, Accès, Cote, Coût] }
+      - { titre: "Autour", niveau: 2, genre: libre }
+      - { titre: "Contredit par", niveau: 3, genre: liste_liens, champ: contredit }
+      - { titre: "Prolonge",      niveau: 3, genre: liste_liens, champ: prolonge }
+      - { titre: "Prolongée par", niveau: 3, genre: liste_liens, champ: prolonge_par }
+      - { titre: "Voir aussi",    niveau: 2, genre: liste_liens, champ: null }
+      - titre: "Notes de lecture"
+        niveau: 2
+        genre: conditionnelle
+        existe_si: "au moins une entrée datée"
+        forme: "- YYYY-MM-DD — <ce que j'y ai trouvé>."
+        motif: >
+          Meme mecanisme que la section `Retours` du DevBrain, ou la mesure a
+          donne ZERO entree sur 337 en dix-huit mois. Ici les notes de lecture
+          datees sont bien plus probables — c est meme l usage principal d un
+          tel brain. Le kit doit MESURER l usage de ce qu il genere : une
+          section qui n existe sur aucune page au bout de N pages est une
+          section a supprimer du gabarit, pas a laisser « au cas ou ».
+    motif: >
+      L unite sort de la question 1.1 : « je vais chercher sur quoi appuyer une
+      affirmation ». L unite est donc la SOURCE, pas le fait, pas le personnage,
+      pas l evenement — et l entretien ne l a pas nommee, il l a induite.
+
+  # --- 2/6 -------------------------------------------------------------------
+  - id: notion
+    fonction: notion
+    libelle: { s: notion, p: notions }
+    range_par: axe
+    protege: true                   # EXIGENCE 5 — role protege
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#7AB800"
+    taille_avertissement: 200
+    champs:
+      requis: [role, nom, categorie, themes]
+      autorises: [role, nom, alias, categorie, themes, espaces, tags]
+    corps:
+      - { titre: "Aperçu",            niveau: 2, genre: libre }
+      - { titre: "Concepts clés",     niveau: 2, genre: libre }
+      - titre: "Ce qui fait débat"
+        niveau: 2
+        genre: conditionnelle
+        existe_si: "la notion porte une controverse historiographique"
+        motif: >
+          Occupe la place de « Les maths, simplement » : c est la chose
+          technique du sujet, expliquee. Le genre est `conditionnelle` pour la
+          meme raison que l original — la mesure du DevBrain donne 282 sections
+          sur 297, et une section qu on ne peut pas remplir ne se pose pas vide.
+      - { titre: "En pratique",       niveau: 2, genre: libre }
+      - { titre: "Notions voisines",  niveau: 2, genre: liste_liens, champ: null }
+      - { titre: "Pour aller plus loin", niveau: 2, genre: libre }
+    motif: >
+      `protege: true` est INCHANGE, et c est ici que ca compte le plus. Dans le
+      DevBrain, les notions sont 297 pages sur 765 — importantes mais pas
+      majoritaires. Dans un brain d histoire, CE QUE L UTILISATEUR A COMPRIS ET
+      ECRIT EST L ESSENTIEL DE LA VALEUR : les sources, on peut les relister ; la
+      synthese personnelle, non. La frontiere « creation libre, modification sur
+      demande explicite » devient la regle la plus sensible du vault. A ecrire mot
+      pour mot dans le CLAUDE.md genere : la frontiere est portee par le CHAMP,
+      pas par le chemin ; donc lire le frontmatter avant d ecrire.
+
+  # --- 3/6 -------------------------------------------------------------------
+  - id: chronologie
+    fonction: vue
+    libelle: { s: chronologie, p: chronologies }
+    range_par: axe
+    prefixe_nom: "Chronologie - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#EF4444"
+    vue_embarquee:
+      extension: ".base"
+      moteur: "obsidian-bases"
+      embed: "![[<même nom>.base]]"
+      tri_par: date_publication
+      direction: asc
+      genere: false
+      motif_non_genere: >
+        Identique au DevBrain, et pour la meme raison : une chronologie du XXe
+        siecle voudra une vue « sources primaires seulement », une autre « ce que
+        j ai lu ». Les vues sont du CONTENU. Le generateur en amorce une par
+        dossier promu, avec le filtre evident et l ordre de colonnes par defaut.
+      colonnes_par_defaut: [nom, apport, nature, auteur, date_publication, fiabilite]
+    regle_de_categorie: majorite
+    motif_regle_de_categorie: >
+      Reemploi de la regle inventee au lot 5 du DevBrain pour les comparatifs qui
+      enjambent deux valeurs. Ici elle sert DEUX FOIS : pour la vue, et — c est
+      nouveau — comme regle GENERALE de l axe de rangement (EXIGENCE 2).
+    hub_de_ralliement:
+      dossier: "Chronologies"
+      lien_retour: "Voir aussi"
+      groupe_par: "premier segment du chemin (la période, jamais la sous-période)"
+      motif: "C est le lien retour qui fait la grappe. Rappele par l entretien, question 8.3."
+    champs:
+      requis: [role, nom, categorie]
+      autorises: [role, nom, categorie, tags]
+    corps:
+      - { titre: "<accroche>", niveau: 0, genre: prose, forme: "> La séquence : …" }
+      - { titre: "<embed>",    niveau: 0, genre: auto }
+      - { titre: "Ce que la séquence montre", niveau: 2, genre: liste_liens, champ: null }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      Ce role N EST PAS un comparatif traduit. Ce qui survit du comparatif est la
+      PRIMITIVE — une page qui embarque une vue filtree sur une valeur de l axe de
+      rangement, plus une section ecrite a la main, plus un hub de ralliement avec
+      lien retour. L intention « departager des interchangeables » ne survit pas,
+      et la section « Ce qui departage » n aurait pas d objet : la phrase d
+      accroche « On tranche sur : … » serait fausse a l ecrit. C est pourquoi le
+      manifeste offre la FONCTION `vue` et non un role « comparatif », et pourquoi
+      l entretien pose 8.1 (« tes unites sont-elles interchangeables ? ») AVANT
+      8.2 — sans quoi il traduirait le comparatif par reflexe.
+
+  # --- 4/6 -------------------------------------------------------------------
+  - id: hub
+    fonction: hub
+    libelle: { s: hub, p: hubs }
+    range_par: axe
+    porte_categorie: false
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: false
+    couleur: "#FF922B"
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, alias, apport, themes, espaces, tags]
+    corps:
+      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre, ecrit_a_la_main: true }
+      - { titre: "Choisir",                  niveau: 2, genre: libre, ecrit_a_la_main: true }
+      - titre: "<AUTO>"
+        niveau: 0
+        genre: auto
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
+        perimetre: dossier
+        sections:
+          - { titre: "Sous-périodes",  source: "sous-dossiers portant un hub", separateur: " · " }
+          - { titre: "Notions",        source: "role: notion du dossier" }
+          - { titre: "Sources",        source: "role: source du dossier" }
+          - { titre: "Controverses",   source: "role: controverse du dossier" }
+          - { titre: "Méthodes",       source: "role: methode du dossier" }
+          - { titre: "Chronologies",   source: "role: chronologie du dossier" }
+    motif: >
+      Les sous-titres de la zone AUTO SE DERIVENT du manifeste : ils sont la liste
+      des roles au pluriel. Rien a ecrire — c est exactement ce que B2 de l
+      inventaire annoncait. Une seule exception au calque : « Sous-domaines »
+      devient « Sous-periodes », parce que le sous-titre reprend le libelle de l
+      axe de rangement, pas un mot du kit.
+
+  # --- 5/6 -------------------------------------------------------------------
+  - id: controverse
+    fonction: prescription
+    libelle: { s: controverse, p: controverses }
+    range_par: role
+    dossier: Controverses
+    prefixe_nom: "Controverse - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    champs:
+      requis: [role, question, positions]
+      autorises: [role, tags, question, positions, sources_cles, etat]
+    corps:
+      - { titre: "La question",        niveau: 2, genre: prose }
+      - { titre: "Les positions",      niveau: 2, genre: libre }
+      - { titre: "Ce qui les sépare",  niveau: 2, genre: libre }
+      - { titre: "Où en est le débat", niveau: 2, genre: libre }
+      - { titre: "Sources clés",       niveau: 2, genre: liste_liens, champ: sources_cles }
+      - { titre: "Voir aussi",         niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      Occupe la place de `pattern` (mecanisme D1 de l inventaire) : une
+      controverse enjambe les periodes PAR CONSTRUCTION, donc elle n a pas de
+      valeur de l axe de rangement a porter, donc son chemin se lit sur son role.
+      La PLACE est generique ; le contenu de `pattern` (« architecture eprouvee »,
+      `services_cles`, `projets_appliques`) ne survit pas.
+
+  # --- 6/6 -------------------------------------------------------------------
+  - id: methode
+    fonction: prescription
+    libelle: { s: méthode, p: méthodes }
+    range_par: role
+    dossier: Méthodes
+    prefixe_nom: "Méthode - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    champs:
+      requis: [role, domaine, applicable, strictness]
+      autorises: [role, tags, domaine, applicable, strictness]
+    corps:
+      - { titre: "Principe",      niveau: 2, genre: prose }
+      - { titre: "MUST",          niveau: 2, genre: libre }
+      - { titre: "SHOULD",        niveau: 2, genre: libre }
+      - { titre: "NICE-TO-HAVE",  niveau: 2, genre: libre }
+      - { titre: "Exemples",      niveau: 2, genre: libre }
+      - { titre: "Bon",           niveau: 3, genre: libre }
+      - { titre: "Mauvais",       niveau: 3, genre: libre }
+      - { titre: "Exceptions",    niveau: 2, genre: libre }
+      - { titre: "Voir aussi",    niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      Occupe la place de `rule`, et c est la transposition la plus DIRECTE du
+      DevBrain : « toute affirmation chiffree porte sa source primaire ou dit que
+      c est une estimation » est une prescription transverse avec un degre de
+      fermete, exactement comme une Rule. Les trois champs sont repris tels quels
+      parce qu ils se disent dans tous les sujets — mais aucun n est herite : ils
+      sont redemandes a l entretien.
+
+# ==============================================================================
+# axes
+# ==============================================================================
+axes:
+
+  rangement:
+    champ: categorie
+    # ------------------------- EXIGENCE 2 -------------------------------------
+    exclusif: false
+    motif_non_exclusif: >
+      Une synthese « Histoire de la France des origines a nos jours » ne tombe
+      dans aucune periode unique. Le DevBrain n a JAMAIS eu ce cas : une brique a
+      exactement un domaine, toujours, et check_arbo compare un chemin a une
+      valeur unique. Sans correctif l utilisateur MENTIRAIT dans le champ — ce qui
+      est le pire des resultats, parce que le validateur resterait vert. Deux
+      mecanismes empruntes au DevBrain le reparent, et aucun n est nouveau : la
+      regle de MAJORITE (inventee au lot 5 pour les comparatifs qui enjambent deux
+      valeurs) devient la regle GENERALE de l axe, et un PREFIXE DECLARE accueille
+      ce qui couvre vraiment tout — l exact pendant des rattachements du DevBrain,
+      une exception NOMMEE dans le manifeste, pas une echappatoire.
+      L entretien pose la question 2.3 exactement pour ca, et refuse de passer
+      outre : c est la question qui distingue un axe de rangement d un axe
+      transverse, et un brain qui la rate range mal pour toujours.
+    regle_de_majorite: true
+    definition_de_la_majorite: "la valeur de l'axe est celle qui rassemble le plus de la page"
+    prefixe_transversal: transversal
+    motif_prefixe_transversal: >
+      Reserve aux syntheses de longue duree, celles qui n ont AUCUN centre de
+      gravite. Braudel enjambe l Antiquite a l Epoque moderne mais a un centre
+      (l epoque moderne) : la regle de majorite suffit, le prefixe transversal ne
+      s applique pas. « Histoire de la France des origines a nos jours » n en a
+      pas : le prefixe s applique. La distinction est exactement la question 2.4.
+    # ------------------------- EXIGENCE 4 -------------------------------------
+    seuil_promotion: 12
+    motif_seuil: >
+      DERIVE du volume cible, jamais tape a la main : volume_cible 3000 / 8
+      prefixes -> ~375 pages par periode. A 5 — le seuil du DevBrain, calibre sur
+      ~700 pages en 20 domaines, soit ~35 par domaine — chaque periode
+      exploserait en QUARANTE sous-dossiers, ce qui n est plus un arbre mais une
+      liste. A l inverse, un brain client de 40 pages en 6 paquets ne promouvrait
+      jamais rien. Le kit ne CALCULE pas ce nombre : l entretien demande le volume
+      (question 2.6, jamais le seuil, que l utilisateur n a aucun moyen de
+      connaitre) et ECRIT le calcul ici.
+    consequence_du_seuil: >
+      Changer le seuil REFORME l arbre. Un brain qui grandit plus que prevu devra
+      re-seuiller, c est-a-dire deplacer des pages. Il faut donc une operation
+      `re-seuiller` qui emet des `git mv`, refuse de tourner sur un arbre sale, et
+      qui n existe nulle part aujourd hui — le DevBrain s en est passe parce qu il
+      a fixe son seuil UNE FOIS, avec 700 pages deja ecrites sous les yeux. C est
+      une fonctionnalite nouvelle, pas une extraction.
+    plafond_promotion: true
+    motif_plafond: >
+      Repris tel quel, et il transpose sans discussion : un sous-dossier qui ne
+      laisse aucune page au niveau de la periode redouble son parent. C est le
+      seul des deux mecanismes de seuil que le test a blanc n a pas casse.
+    niveaux: 2
+    valeur_courte_autorisee: true
+    motif_valeur_courte: >
+      Le schema a force a preciser ce que ni 00-cadrage.md §2.2 ni §2.4 ne
+      disaient : dans le DevBrain, `categorie:` est TOUJOURS `prefixe/sous`, et
+      aucune valeur nue n est legale — le chargeur de vocabulaire ne construit que
+      des paires. Ici quatre periodes sur huit n ont pour l instant AUCUNE
+      division interne : une source de la Prehistoire porte `categorie: prehistoire`,
+      tout court. Le champ rend la difference explicite plutot que de forcer une
+      sous-valeur inventee pour satisfaire un format — ce qui serait exactement le
+      refus n° 3 de l entretien. Cf. Remontee 9.
+
+    prefixes:
+
+      - cle: prehistoire
+        dossier: "Préhistoire"
+        portee: "avant l'écriture"
+        sous: {}
+
+      - cle: antiquite
+        dossier: "Antiquité"
+        portee: "jusqu'à 476"
+        sous:
+          proche-orient: { libelle: "Proche-Orient ancien" }
+          grece:         { libelle: "Monde grec" }
+          rome:          { libelle: "Rome" }
+          hors-mediterranee: { libelle: "Hors Méditerranée" }
+
+      - cle: medieval
+        dossier: "Moyen Âge"
+        portee: "476 à 1492"
+        sous:
+          haut:   { libelle: "Haut Moyen Âge" }
+          feodal: { libelle: "Époque féodale" }
+          bas:    { libelle: "Bas Moyen Âge" }
+          islam:  { libelle: "Mondes de l'Islam" }
+
+      - cle: moderne
+        dossier: "Époque moderne"
+        portee: "1492 à 1789"
+        sous:
+          renaissance: { libelle: "Renaissance" }
+          reformes:    { libelle: "Réformes" }
+          colonial:    { libelle: "Premières colonisations" }
+          lumieres:    { libelle: "Lumières" }
+
+      - cle: revolutions
+        dossier: "Révolutions et empires"
+        portee: "1789 à 1815"
+        sous: {}
+
+      - cle: industriel
+        dossier: "Âge industriel"
+        portee: "1815 à 1914"
+        sous: {}
+
+      - cle: xxe
+        dossier: "XXe siècle"
+        portee: "après 1914"
+        sous:
+          gm1:            { libelle: "Première Guerre mondiale" }
+          entre-deux:     { libelle: "Entre-deux-guerres" }
+          gm2:            { libelle: "Seconde Guerre mondiale" }
+          guerre-froide:  { libelle: "Guerre froide" }
+          decolonisation: { libelle: "Décolonisations" }
+
+      - cle: transversal
+        dossier: "Transversal"
+        portee: "les synthèses de longue durée, sans centre de gravité"
+        sous: {}
+        motif: >
+          Le prefixe qui repare la non-exclusivite. Ne au cours de la question
+          2.2, pour la vingtieme page citee, et NON propose par l entretien — il
+          est sorti de la main de l utilisateur pendant qu il rangeait ses paquets.
+
+    rattachements: {}
+    motif_rattachements_vides: >
+      Aucun. Le rattachement du DevBrain (`skill/*` -> « Outils de developpement »)
+      est une exception NOMMEE ET DATEE, sediment d une decision de 2026-09-04. Un
+      brain neuf n en a aucune, et c est normal : le mecanisme a transposer est la
+      PLACE ou elles s ecrivent, pas leur contenu.
+
+    # HUIT questions de tri plus l arret, D1 -> D9. L ordre est chronologique
+    # SAUF la premiere, qui est hors chronologie et passe volontairement devant :
+    # c est le seul arbitrage de l arbre, et il est de l utilisateur.
+    arbre_de_decision:
+      - { n: D1, question: "La source porte-t-elle sur plus de trois des périodes ci-dessous ?", si_oui: ["transversal"],
+          motif: "Hors chronologie, et EN PREMIER : sans elle, une synthèse de longue durée tomberait dans la première période qu'elle touche." }
+      - { n: D2, question: "Son objet est-il antérieur à l'écriture ?",   si_oui: ["prehistoire"] }
+      - { n: D3, question: "Son objet est-il antérieur à 476 ?",          si_oui: ["antiquite/*"] }
+      - { n: D4, question: "Son objet est-il compris entre 476 et 1492 ?", si_oui: ["medieval/*"] }
+      - { n: D5, question: "Son objet est-il compris entre 1492 et 1789 ?", si_oui: ["moderne/*"] }
+      - { n: D6, question: "Son objet est-il compris entre 1789 et 1815 ?", si_oui: ["revolutions"] }
+      - { n: D7, question: "Son objet est-il compris entre 1815 et 1914 ?", si_oui: ["industriel"] }
+      - { n: D8, question: "Son objet est-il postérieur à 1914 ?",        si_oui: ["xxe/*"] }
+      - { n: D9, question: "Aucun des précédents", si_oui: [], arret: true,
+          motif: "ARRET — demander. Une periode manquante ne s invente jamais." }
+    motif_arbre: >
+      L ordre est LA decision de conception, et il reste a l utilisateur : l IA
+      peut proposer les questions, jamais leur rang. C est ce que le DevBrain
+      demontre — D1 avant D3 range WrenAI en `llm/*` plutot qu en `database/*`, et
+      ce n est pas un arbitrage, c est l ordre.
+
+    departages: []
+    frontieres: []
+    motif_listes_vides: >
+      NAISSENT VIDES, et l entretien le dit a haute voix : « ces deux listes se
+      rempliront page par page, quand un arbitrage se repetera. Les remplir
+      maintenant serait inventer des problemes qu on n a pas. » Les 7 departages
+      et 8 frontieres du DevBrain sont le sediment de 337 pages ; le mecanisme a
+      transposer est la PLACE ou elles s ecrivent (principe 2).
+
+  nature:
+    champ: nature
+    porte_par: [source]
+    interdit_sur: [notion, chronologie, hub, controverse, methode]
+    vide_autorise: true
+    motif_vide: >
+      Transpose, et PLUS utile qu en dev : une source hybride — un manuel de
+      paleographie est-il un `cours` ou un `ouvrage` ? — doit pouvoir rester sans
+      nature en attendant l arbitrage. Un champ vide est le SEUL signal prevu pour
+      « l arbre n a pas tranche » ; une valeur inventee est une faute, un champ
+      vide est une question ouverte.
+    valeurs:
+      - cle: source-primaire
+        definition: "Produite par les contemporains du fait."
+        frontiere: "Distincte d'archive parce qu'elle est publiée ou éditée ; distincte d'ouvrage parce que son auteur n'a pas de recul sur le fait."
+      - cle: archive
+        definition: "Document non publié, conservé en fonds, avec une cote."
+        frontiere: "Distincte de source-primaire par la non-publication : c'est la cote de fonds, et non la date, qui la caractérise."
+      - cle: ouvrage
+        definition: "Livre d'auteur, appareil critique."
+        frontiere: "Distinct d'article par le format éditorial, de these par l'absence de soutenance, de cours par l'absence d'intention pédagogique structurée."
+      - cle: article
+        definition: "Publié dans une revue à comité."
+        frontiere: "Distinct d'ouvrage par le format ; le comité de lecture est le fait vérifiable qui tranche."
+      - cle: these
+        definition: "Travail universitaire soutenu."
+        frontiere: "Distincte d'ouvrage par la soutenance, fait vérifiable. Une thèse remaniée et publiée est un ouvrage."
+      - cle: cours
+        definition: "Enseignement structuré (MOOC, séminaire, manuel)."
+        frontiere: "Distinct d'ouvrage par l'intention pédagogique structurée. C'est la frontière la plus fine de l'axe — cf. le cas du manuel de paléographie, qui reste sans nature."
+      - cle: carte
+        definition: "Représentation spatiale."
+        frontiere: "Distincte d'iconographie parce que son objet est l'espace, pas l'image."
+      - cle: iconographie
+        definition: "Image, photo, film comme document."
+        frontiere: "Distincte de carte et de source-primaire : ce qui la définit est que l'image EST le document, non son support."
+      - cle: base-de-donnees
+        definition: "Corpus interrogeable (recensements, prosopographie)."
+        frontiere: "Distincte d'archive parce qu'elle s'interroge plutôt qu'elle ne se consulte pièce à pièce."
+    # NEUF questions, N1 -> N9. Meme forme que l arbre des familles du DevBrain :
+    # ordre strict, premiere reponse positive gagne, aucun jugement de valeur.
+    arbre_de_decision:
+      - { n: N1, question: "Le document est-il contemporain du fait qu'il rapporte ?",  si_oui: source-primaire }
+      - { n: N2, question: "Est-il conservé en fonds sans avoir été publié ?",          si_oui: archive }
+      - { n: N3, question: "Est-ce un corpus qu'on interroge plutôt qu'on ne lit ?",    si_oui: base-de-donnees }
+      - { n: N4, question: "Son objet est-il la représentation d'un espace ?",          si_oui: carte }
+      - { n: N5, question: "Est-ce une image, une photographie ou un film pris comme document ?", si_oui: iconographie }
+      - { n: N6, question: "A-t-il été soutenu devant un jury universitaire ?",         si_oui: these }
+      - { n: N7, question: "A-t-il paru dans une revue à comité de lecture ?",          si_oui: article }
+      - { n: N8, question: "Son intention est-elle d'enseigner, dans une progression structurée ?", si_oui: cours }
+      - { n: N9, question: "Aucun des précédents", si_oui: ouvrage, defaut: true }
+    departages: []
+    frontieres: []
+    motif_listes_vides: "Naissent vides, comme celles de l'axe de rangement (principe 2)."
+
+  # ------------------------- EXIGENCE 3 ---------------------------------------
+  # DEUX axes transverses, la ou DevBrain n en a qu UN — et un brain de domaine
+  # client en voudra sans doute trois (client, service, echeance). La boucle
+  # transverse du generateur devient donc une boucle SUR cette liste. La liste
+  # peut aussi etre VIDE : un brain sans axe transverse est legal, et le
+  # generateur ne doit alors creer aucun dossier.
+  transverses:
+
+    - champ: themes
+      dossier: "Thèmes"
+      multivalue: true
+      hub_par_valeur: true
+      pointe_vers: "les sous-hubs, jamais les feuilles"
+      motif_du_nom: >
+        Ne redouble ni « periodes » (l axe de rangement au pluriel) ni « espaces »
+        (l autre axe transverse). La contrainte de nommage devient explicite avec
+        deux axes : aucun dossier d axe transverse ne peut porter le nom de l axe
+        de rangement au pluriel, ni celui d un autre axe transverse.
+      valeurs:
+        - { cle: politique, libelle: "Pouvoir et institutions" }
+        - { cle: economie,  libelle: "Économies et échanges" }
+        - { cle: social,    libelle: "Sociétés et travail" }
+        - { cle: religieux, libelle: "Croyances et religions" }
+        - { cle: guerre,    libelle: "Guerres et armées" }
+        - { cle: culture,   libelle: "Cultures et savoirs" }
+        - { cle: technique, libelle: "Techniques et environnement" }
+
+    - champ: espaces
+      dossier: "Espaces"
+      multivalue: true
+      hub_par_valeur: true
+      pointe_vers: "les sous-hubs, jamais les feuilles"
+      motif: >
+        Le second axe transverse, et la raison pour laquelle l entretien pose la
+        question 4.1 sans en proposer aucun : l utilisateur en a nomme deux
+        spontanement, parce que ce sont les deux questions qu il posera au brain et
+        qui traversent toutes les periodes. Le theme et l espace SE CUMULENT — c
+        est ce qui les distingue de la periode, qui EXCLUT, et c est pour ca que
+        la periode est l axe de rangement.
+      valeurs:
+        - { cle: france,       libelle: "France" }
+        - { cle: europe,       libelle: "Europe" }
+        - { cle: mediterranee, libelle: "Méditerranée" }
+        - { cle: asie,         libelle: "Asie" }
+        - { cle: afrique,      libelle: "Afrique" }
+        - { cle: ameriques,    libelle: "Amériques" }
+        - { cle: mondial,      libelle: "Échelle mondiale" }
+
+# ==============================================================================
+# champs
+# ==============================================================================
+champs:
+  role:
+    type: enum
+    source: "roles[].id"
+    fonction: aucune
+  nom:
+    type: ligne
+    fonction: identite
+    exemption: 'un `nom:` portant / \ : * ? " < > | ne peut pas etre un nom de fichier'
+  alias:
+    type: liste
+    fonction: alias
+    unicite: souple
+  apport:
+    type: ligne
+    fonction: resume_court
+    section: null
+    reinjecte_dans: ["Contredit par", "Prolonge", "Prolongée par"]
+    motif: >
+      Remplace `pitch:`. Un champ designe comme resume d une ligne est RECOPIE,
+      jamais retape, chez tous ses citeurs — le mecanisme est generique, le nom
+      `pitch` etait dev. Si l entretien n avait identifie aucun champ de ce type,
+      la regle 6 se serait DESACTIVEE : on n en invente pas un.
+  categorie:
+    type: enum
+    source: axes.rangement
+    fonction: aucune
+  nature:
+    type: enum
+    source: axes.nature
+    fonction: aucune
+  themes:
+    type: liste_enum
+    source: "axes.transverses[themes]"
+    fonction: aucune
+  espaces:
+    type: liste_enum
+    source: "axes.transverses[espaces]"
+    fonction: aucune
+  auteur:           { type: ligne, fonction: aucune }
+  date_publication: { type: date,  fonction: aucune }
+  langue:           { type: ligne, fonction: aucune }
+  langue_originale:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : n a de sens que pour une source primaire."
+  traduction:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : idem."
+  fiabilite:
+    type: enum
+    valeurs: [etablie, discutee, contestee, obsolete]
+    eliminatoire: []
+    fonction: aucune
+    motif: >
+      Transposition EXACTE de `maturite:` — meme forme, meme gradation, meme
+      utilite au bandeau — MAIS SANS VALEUR ELIMINATOIRE, et c est tout le point.
+      Dans le DevBrain, `deprecated` elimine : le skill d exploitation filtre sur
+      l index sans ouvrir les fiches, et proposerait sinon une brique abandonnee.
+      En histoire, `contestee` n elimine RIEN — c est souvent la source la plus
+      interessante — et une source `obsolete` reste un objet d historiographie. Le
+      kit ne doit avoir AUCUNE intuition sur « quelle valeur d enumeration
+      disqualifie » : le champ est explicite et VIDE PAR DEFAUT. Dans le DevBrain
+      cette regle etait ecrite dans le skill, ou elle etait invisible depuis le
+      manifeste.
+  acces:
+    type: enum
+    valeurs: [libre, abonnement, papier, sur-place]
+    fonction: aucune
+  cote:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : une cote de fonds n a de sens que pour une archive ou une source primaire."
+  contredit:
+    type: liens
+    reciproque: { mode: symetrique }
+    section: "Contredit par"
+    fonction: aucune
+    motif: >
+      SYMETRIQUE, et c est une jolie confirmation : une contradiction l est par
+      nature. Reciprocite au meme titre qu `alternatives:` dans le DevBrain.
+  # ------------------------- EXIGENCE 1 ---------------------------------------
+  prolonge:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge_par }
+    section: "Prolonge"
+    fonction: aucune
+    motif: >
+      MODE INVERSE, ABSENT DU DEVBRAIN. « Duby prolonge Bloch » n implique pas
+      « Bloch prolonge Duby » : il implique « Bloch EST PROLONGE PAR Duby ». La
+      relation demande une PAIRE de champs, pas un miroir. Les deux seuls champs
+      de liens reciproques du DevBrain sont symetriques, donc son moteur ne
+      connait qu un mode. Le nouveau verifie que A.prolonge contient B SI ET
+      SEULEMENT SI B.prolonge_par contient A, et le validateur doit refuser une
+      paire MAL DECLAREE — un `inverse` qui pointe vers un champ qui ne pointe pas
+      en retour — sinon on remplace un trou par un autre. C est la SEULE rupture
+      du test a blanc qui exige une ligne de code que le DevBrain n aurait jamais
+      fait ecrire : le test l a payee a lui seul.
+  prolonge_par:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge }
+    section: "Prolongée par"
+    fonction: aucune
+  tags:
+    type: liste_enum
+    source: "vocabulaires.tags"
+    fonction: aucune
+  url: { type: url, fonction: aucune }
+  # --- champs des roles `prescription`
+  question:     { type: ligne, fonction: aucune }
+  positions:    { type: liste, fonction: aucune }
+  sources_cles: { type: liens, fonction: aucune }
+  etat:         { type: ligne, fonction: aucune }
+  domaine:      { type: ligne, fonction: aucune }
+  applicable:   { type: ligne, fonction: aucune }
+  strictness:   { type: ligne, fonction: aucune }
+
+# ==============================================================================
+# bandeau — QUATRE colonnes, chacune derivee d un champ, chacune avec sa table de
+# rendu, un tiret cadratin quand la source manque. LE MOTEUR NE CHANGE PAS D UNE
+# LIGNE : c est la demonstration la plus nette que le moteur du bandeau
+# (generique) et son contenu (a reecrire) sont bien deux briques distinctes.
+# ==============================================================================
+bandeau:
+  porte_par: [source]
+  vide: "—"
+  balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"]
+  position: "juste sous le titre H1 ; une page sans H1 est SAUTÉE et signalée, jamais devinée"
+  porte_le_resume: true
+  regle_dure: >
+    Une cellule sans source dans le frontmatter affiche `vide`, JAMAIS une valeur
+    plausible. Une fiche vide honnetement vaut mieux qu une fiche remplie au juge.
+  echappement: "`|` est echappe dans une cellule."
+  motif: >
+    Quatre faits, pas plus : le bandeau existe PARCE QUE dix-huit proprietes
+    poussaient le texte sous la ligne de flottaison. L entretien redemande
+    au-dela de cinq, et REFUSE une colonne sans champ source — une colonne derivee
+    d un jugement n entre pas dans le bandeau. Rendu pour l exemple de §4.2
+    (Bloch, La societe feodale) : « Ouvrage | Marc Bloch, 1939 | fr | etablie ».
+  colonnes:
+    - titre: Nature
+      source: nature
+      table:
+        source-primaire: "Source primaire"
+        archive: Archive
+        ouvrage: Ouvrage
+        article: Article
+        these: Thèse
+        cours: Cours
+        carte: Carte
+        iconographie: Iconographie
+        base-de-donnees: "Base de données"
+    - titre: "Auteur et date"
+      source: auteur
+      qualifie_par: date_publication
+      motif: "Deux champs dans une cellule, comme `famille` qualifiee par `langage` dans le DevBrain."
+    - titre: Langue
+      source: langue
+    - titre: Fiabilité
+      source: fiabilite
+      table:
+        etablie: "établie"
+        discutee: "discutée"
+        contestee: "contestée"
+        obsolete: "obsolète"
+
+# ==============================================================================
+# regles — LES DIX, TOUTES en `a_mesurer`. Sans exception, y compris celles qui
+# « paraissent evidentes ». Une regle ne se durcira qu apres un comptage ECRIT,
+# et pas sous 30 pages de l unite : en dessous, zero violation ne prouve rien.
+# Une regle qui reste en avertissement doit porter un motif ECRIT — le kit refuse
+# un `severite: avertissement` sans motif.
+# ==============================================================================
+regles:
+
+  - id: reciprocite
+    enonce: "Si A cite B dans un champ à réciprocité, B cite A — ou son inverse déclaré."
+    active: true
+    severite: a_mesurer
+    champs: [contredit, prolonge, prolonge_par]
+    modes: { contredit: symetrique, prolonge: inverse, prolonge_par: inverse }
+    motif: >
+      Deux modes a verifier, la ou le DevBrain n en avait qu un. Le mode inverse
+      exige en plus que la PAIRE soit bien declaree dans les deux sens.
+
+  - id: chemin_categorie
+    enonce: "Le dossier d'une page correspond à sa valeur de l'axe de rangement."
+    active: true
+    severite: a_mesurer
+    structurellement_dure: false
+    motif: >
+      §5.6 recommande de la livrer DURE des le depart, avec `bandeau_a_jour`,
+      parce qu une violation y est une incoherence de STRUCTURE et non un defaut
+      de redaction — et de l ecrire comme une exception assumee au principe 1. Le
+      point n est PAS tranche : elle sort donc en `a_mesurer`, comme les neuf
+      autres, et le manifeste porte la recommandation sans l appliquer.
+    complication: >
+      Sur un axe NON EXCLUSIF, cette regle ne compare plus un chemin a une valeur
+      unique : elle doit appliquer la regle de majorite, et accepter le prefixe
+      transversal. C est la rupture 3, et elle touche cette regle en premier.
+
+  - id: completude_du_hub
+    enonce: "Toute page d'un rôle `apparait_dans_le_hub` présente dans le dossier apparaît dans le hub du dossier."
+    active: true
+    severite: a_mesurer
+    roles: [source, notion, chronologie, controverse, methode]
+    motif: >
+      Le DevBrain ne la branche que sur `brique`. Ici les cinq roles rangeables y
+      entrent, parce que le manifeste declare quels roles doivent apparaitre dans
+      le hub de leur dossier — et c est ce qui rend la regle generique.
+
+  - id: voisinage_declare
+    enonce: "Une page dont le dossier porte d'autres pages du même rôle et dont le champ de voisinage est vide est signalée."
+    active: false
+    severite: a_mesurer
+    motif: >
+      DESACTIVEE AU DEMARRAGE, et le motif est ecrit comme le kit l exige : dans
+      un brain de sources, l absence de voisin est la NORME, pas l exception. Deux
+      sources d une meme periode ne se contredisent ni ne se prolongent la plupart
+      du temps. Le motif du DevBrain — « une page peut legitimement n avoir aucun
+      voisin ; la signaler aide, l interdire mentirait » — vaut ici a plus forte
+      raison, au point que meme signaler serait du bruit.
+
+  - id: redirection_sourcee
+    enonce: >
+      Une cellule de la colonne négative qui REDIRIGE — c'est-à-dire qui porte une
+      flèche — et dont la cible est une page fichée dans le brain, porte le
+      wikilink de cette page.
+    active: true
+    severite: a_mesurer
+    sections: ["Ce qu'elle établit / Ce qu'elle ne peut pas établir"]
+    colonne: "N'établit pas"
+    marqueur: "→|->"
+    condition: "la cible est une page fichée"
+    motif: >
+      La regle transpose INTEGRALEMENT : la colonne negative se remplit de bornes
+      qui ne pointent vers personne et de redirections vers une autre source. La
+      conjonction position x condition garde son sens. Ce qui NE se porte pas est
+      le chiffre : que la regle donne 1 violation sur 1 388 cellules est vrai DU
+      CORPUS DEV. Ici elle sort en `a_mesurer`, comme les neuf autres.
+
+  - id: reinjection_du_resume
+    enonce: "Chaque puce d'une section de liste de liens adossée à un champ commence par le résumé COURANT de sa cible."
+    active: true
+    severite: a_mesurer
+    champ_resume: apport
+    sections: ["Contredit par", "Prolonge", "Prolongée par"]
+
+  - id: etiquettes_fermees
+    enonce: "Une section déclarée `genre: etiquetee` a un vocabulaire FERMÉ."
+    active: true
+    severite: a_mesurer
+    sections: ["Comment y accéder"]
+    motif: >
+      Cinq etiquettes nommees par l utilisateur : Edition, Langue, Acces, Cote,
+      Cout. L entretien REFUSE de completer le vocabulaire — cinq etiquettes
+      nommees valent mieux que sept dont deux inventees. Une seule section
+      etiquetee ici, contre deux dans le DevBrain : la severite ne peut donc pas
+      etre une table par section, elle sera un scalaire apres mesure.
+
+  - id: citation_unique
+    enonce: "Une même cible ne se LISTE pas dans deux sections de liste de liens."
+    active: true
+    severite: a_mesurer
+    sections: ["Contredit par", "Prolonge", "Prolongée par", "Voir aussi"]
+    definition_de_liste: "entrée de puce, pas lien cité dans une phrase"
+    motif: >
+      La distinction « entree de puce » contre « lien cite dans une phrase » est
+      une trouvaille generique et non evidente : sans elle, la regle punit la
+      forme qu on recommande. Elle se transpose telle quelle, avec un risque de
+      plus — « Prolonge » et « Prolongee par » sont deux sections dont le mode
+      inverse garantit qu une meme cible n apparait pas dans les deux, ce que la
+      regle doit savoir pour ne pas signaler une paire correcte.
+
+  - id: bandeau_a_jour
+    enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
+    active: true
+    severite: a_mesurer
+    structurellement_dure: false
+    motif: "Meme situation que `chemin_categorie` : §5.6 la recommande dure d emblee, le point n est pas tranche."
+
+  - id: anti_repetition
+    enonce: "La section de définition ne recontient pas les valeurs affichées par le bandeau."
+    active: false
+    severite: avertissement
+    definitif: true
+    scriptable: false
+    motif: >
+      NON LIVREE. En dev elle etait deja non scriptable (11 candidats, 2 vrais).
+      Ici c est PIRE : « ouvrage », « article », « source » sont les mots les plus
+      frequents du corpus, et ce sont trois valeurs de l axe de nature.
+      Recommandation du cadrage, appliquee : ne pas la livrer, la proposer comme
+      relecture assistee optionnelle, et rien de plus.
+
+regles_de_socle:
+  - id: frontmatter_lisible
+    severite: dure
+    enonce: "Un frontmatter illisible est une ERREUR, jamais une absence."
+    motif: >
+      La SEULE regle de socle qu une instance neuve recoit dure sans mesure, et
+      ce n est pas une exception au principe 1 : ce n est pas une regle a
+      durcir, c est l absence de regle qu on comble. Une page qui ne parse pas
+      sortait du total, de toutes les autres regles, et ses liens n etaient pas
+      resolus — le vault restait vert. Durcir n a rien coute au DevBrain : zero
+      page dans ce cas.
+  - { id: gabarit_par_role,   severite: dure,
+      enonce: "`role:` inconnu ou absent refusé ; champs requis non vides ; tout champ hors de `autorises` échoue." }
+  - { id: liens_resolus,      severite: a_mesurer, enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter." }
+  - { id: nom_egal_fichier,   severite: a_mesurer, enonce: "`nom:` identique au nom du fichier, sauf caractère illégal en nom de fichier." }
+  - { id: page_atteignable,   severite: a_mesurer, enonce: "Toute page atteignable depuis un hub." }
+  - { id: hub_par_niveau,     severite: dure,      enonce: "TOUT niveau du chemin porte son hub, pas seulement la feuille." }
+  - { id: vocabulaire_ferme,  severite: dure,      enonce: "Toute valeur d'un champ `enum` ou `liste_enum` appartient au vocabulaire déclaré de son axe." }
+  - id: unicite_du_nom_de_fichier
+    severite: dure
+    enonce: "Un nom de fichier est unique dans le vault, à la casse près."
+    motif: >
+      La seule contrainte que le wikilink nu impose, et elle mord davantage ici :
+      « Rome » sera a la fois un dossier, son hub, et probablement une notion. A
+      verifier AVANT de creer chaque page et chaque hub.
+  - { id: taille_avertissement, severite: a_mesurer, enonce: "Une page au-delà de `roles[].taille_avertissement` lignes suggère une scission." }
+  - { id: collision_alias,      severite: a_mesurer, enonce: "Doublon interne d'alias, ou alias qui est le `nom:` d'une autre page du MÊME rôle." }
+  - { id: couverture_des_vues,  severite: a_mesurer, enonce: "Une valeur de l'axe de rangement assez peuplée sans vue." }
+  - id: paire_inverse_bien_declaree
+    severite: dure
+    enonce: "Un champ `reciproque: {mode: inverse, champ: Y}` exige que Y déclare `reciproque: {mode: inverse, champ: X}`."
+    motif: >
+      Regle NOUVELLE, qui n existe pas dans le DevBrain parce que le mode
+      inverse n y existe pas. Dure d emblee, et pour la meme raison que
+      `frontmatter_lisible` : ce n est pas une regle a durcir, c est un trou a
+      ne pas ouvrir. Un `inverse` qui pointe vers un champ qui ne pointe pas en
+      retour remplacerait un trou par un autre. Elle est verifiable sur le
+      MANIFESTE, sans lire une seule page.
+
+seuils:
+  vue_min_valeurs_axe: 3
+  vue_min_membres: 2
+  motif: "Repris tels quels : ce sont des seuils de sens, pas des mesures de corpus."
+
+vocabulaires:
+  tags:
+    fichier: "Documentation/general/tags.md"
+    mode: ferme
+    regle: >
+      Le skill pioche, il n invente JAMAIS. Un tag manquant se propose, s ajoute
+      ici, puis s utilise.
+    vide: true
+    motif_vide: >
+      L entretien LAISSE LE FICHIER VIDE avec sa regle. Les ~200 tags du DevBrain
+      sont dev ; la regle est parfaite et generique. `ferme` est recommande et
+      explique, mais `libre` est accepte si l utilisateur le veut.
+  taxonomie:
+    fichier: "Documentation/periodes/taxonomie.md"
+    mode: ferme
+    genere: true
+    motif: "Genere depuis `axes`, avec les places VIDES pour les departages et les frontieres."
+
+graphe:
+  cible: ".obsidian/graph.json, clé `colorGroups`"
+  versionne: false
+  motif_non_versionne: "Gitignoré : cette table est la seule source, à réappliquer par poste. C'est une étape d'installation, pas un fichier."
+  motif_de_l_ordre: "Une requête `path:` passe AVANT une requête `role:`, sinon un hub spécial prend la couleur des hubs ordinaires."
+  ordre:
+    - { requete: "path:Chronologies/", couleur: "#EF4444", rgb: 15680580 }
+    - { requete: "path:Thèmes/",       couleur: "#FFD43B", rgb: 16766011 }
+    - { requete: "path:Espaces/",      couleur: "#FFD43B", rgb: 16766011 }
+    - { requete: '["role":"hub"]',          couleur: "#FF922B", rgb: 16749099 }
+    - { requete: '["role":"source"]',       couleur: "#412CDD", rgb: 4271325 }
+    - { requete: '["role":"notion"]',       couleur: "#7AB800", rgb: 8042496 }
+    - { requete: '["role":"chronologie"]',  couleur: "#EF4444", rgb: 15680580 }
+    - { requete: '["role":"controverse"] OR ["role":"methode"]', couleur: "#94A3B8", rgb: 9741240 }
+  note_base: >
+    Un `.base` NE SE COLORE PAS : il n a pas de frontmatter, donc pas de `role:`.
+    Trois faits sur Obsidian, aucun sur le sujet — ils transposent tels quels.
+  note_deux_axes_transverses: >
+    Les DEUX axes transverses prennent la MEME couleur or. C est un choix, pas une
+    contrainte : une couleur par role suffit a lire le graphe, et distinguer les
+    deux grappes transverses ajouterait une teinte sans repondre a une question.
+    A rouvrir si l usage montre qu on les confond.
+
+genere:
+  chemins:
+    - { chemin: "AI/index/", par: build_index }
+    - { chemin: "zones AUTO des hubs", par: build_mocs }
+    - { chemin: "Thèmes/",  par: build_mocs, depuis: "axes.transverses[themes]" }
+    - { chemin: "Espaces/", par: build_mocs, depuis: "axes.transverses[espaces]" }
+    - { chemin: "Chronologies/Chronologies.md", par: build_mocs }
+    - { chemin: "AI/index/liens.md", par: build_links }
+    - { chemin: "bandeaux des sources", par: build_bandeau }
+    - { chemin: "Documentation/periodes/taxonomie.md", par: kit, depuis: axes }
+    - { chemin: "Templates/", par: kit, depuis: "roles[].champs et roles[].corps" }
+    - { chemin: "docs/", par: kit, depuis: "tout le manifeste" }
+  contrat: >
+    Zone a balises dediees, remplacement en bloc, idempotence, `--check` en code
+    2, preservation de la zone manuelle. Ce qui est genere n est jamais edite a
+    la main.
+  non_pages: [.git, .claude, .obsidian, AI, Documentation, Templates, Projects, docs]
+  index:
+    fichiers: ["AI/index/brain-index.json", "AI/index/brain-index.md"]
+    champs: [nom, alias, role, categorie, nature, auteur, date_publication,
+             themes, espaces, apport, tags, contredit, prolonge, prolonge_par,
+             fiabilite, acces]
+    plus: [path]
+    tri: stable
+    horodatage: false
+  liens:
+    fichier: "AI/index/liens.md"
+    sections: [tags, liens_sortants, backlinks, a_creer]
+    masque_du_graphe: true
+
+propagation:
+  enonce: >
+    Le rayon de propagation d une insertion est le DOSSIER D ACCUEIL, plus ses
+    HUBS PARENTS. Le voisinage d une page est `ls` de son dossier.
+  clause: "Une ligne sans objet se DECLARE sans objet, elle ne se tait pas."
+  derivee: true
+  motif: >
+    Passe SANS UNE RETOUCHE. Elle ne depend que d un fait structurel — le dossier
+    porte la valeur de l axe de rangement — donc tout brain construit sur l arbre
+    l obtient gratuitement.
+  table:
+    - { n: P1, cible: "le hub du dossier", trouve_par: "c'est le dossier d'accueil", par: genere }
+    - { n: P2, cible: "les hubs parents",  trouve_par: "remontée de chemin",        par: genere }
+    - { n: P3, cible: "la chronologie du dossier", trouve_par: "le fichier `role: chronologie` du dossier",
+        par: "vue embarquée : automatique ; « Ce que la séquence montre » : à écrire" }
+    - { n: P4, cible: "la notion du dossier", trouve_par: "le fichier `role: notion` du dossier",
+        par: "à écrire — et c'est un rôle PROTÉGÉ : on y ajoute, on n'y réécrit pas" }
+    - { n: P5, cible: "les pairs", trouve_par: "les autres `role: source` du dossier",
+        par: "à écrire, réciprocité obligatoire — dont une paire `prolonge` / `prolonge_par`" }
+    - { n: P6, cible: "les résumés réinjectés", trouve_par: "les champs à réciprocité des pairs", par: "script de resynchronisation" }
+  hubs_transverses:
+    - { n: P7, cible: "les hubs de `themes:` et de `espaces:`", trouve_par: "les valeurs portées par la page", par: genere }
+  motif_p7: >
+    Une ligne de plus que le DevBrain, et elle est DERIVEE elle aussi : un axe
+    transverse -> une ligne generee. Avec deux axes, deux jeux de hubs a
+    regenerer, et la boucle du generateur porte sur la liste.
+
+skills:
+  capture:
+    nom: enrichir-histobrain
+    ecrit_dans_le_brain: true
+    mode_lot: true
+    motif_mode_lot: >
+      §5.9, recommandation ecrite, point NON tranche. Un brain neuf a besoin de ce
+      mode alors que le DevBrain s en est passe : sans lui, l amorcage coute une
+      conversation par page et personne ne le fera. Les vingt titres cites en
+      passe 2.1 partent dans `Inbox.md` comme premier backlog — ce n est pas du
+      remplissage, c est du travail deja identifie, et pas une page n a ete ecrite.
+    porte:
+      - "la règle de propagation P1->P7, dérivée"
+      - "le mode mise à jour et sa table des effets de bord"
+      - "la vérification de la réinjection du résumé"
+      - "la vérification de la PAIRE `prolonge` / `prolonge_par`"
+  cloture:
+    nom: cloturer-histobrain
+    ecrit_dans_le_brain: false
+    etapes:
+      - "régénérer les artefacts dérivés"
+      - "passer les DEUX validateurs au vert"
+      - "vérifier la divergence avec la branche distante AVANT tout commit"
+      - "committer et intégrer en fast-forward"
+  exploitation:
+    nom: preparer-un-propos
+    ecrit_dans_le_brain: false
+    livrable: "un plan sourcé — cours, article ou note — où chaque affirmation porte sa source"
+    archetypes: "Documentation/perso/usages.md"
+    filtre_eliminatoire: null
+    motif_filtre_nul: >
+      `champs.fiabilite.eliminatoire` est VIDE : rien ne disqualifie une source.
+      C est la difference la plus instructive avec `planifier-projet`, qui filtre
+      sur `maturite: deprecated` sans ouvrir les fiches.
+    forme: >
+      Identifier l usage -> poser SEULEMENT les questions pertinentes ->
+      interroger l index -> produire un livrable SOURCE qui contraint l aval.
+      Seule cette forme est heritee ; le contenu est entierement reecrit.
+
+agent:
+  racine: "AI/"
+  sous:
+    - { chemin: "design/",   role: "les specs de reference" }
+    - { chemin: "migration/", role: "un fichier par lot, avec ses *Remontees* — le premier est ecrit VIDE par le generateur" }
+    - { chemin: "index/",    role: "genere, ne pas editer a la main" }
+    - { chemin: "sessions/", role: "resumes automatiques par le hook Stop" }
+    - { chemin: "scripts/",  role: "vide sur une instance `kit.mode: branche`" }
+    - { chemin: "backlog.md", role: "ce qui reste a faire" }
+  hook_stop: "écrit un résumé de session dans AI/sessions/"
+
+frontieres_d_ecriture:
+  libre:
+    - "AI/ hors index/"
+    - "Inbox.md"
+  sur_confirmation:
+    - "toute page d'un rôle non protégé"
+    - "Documentation/"
+  sur_demande_explicite:
+    - "toute page d'un rôle `protege: true` — ici les notions, et c'est la frontière la plus sensible du vault"
+  jamais_a_la_main:
+    - "les chemins de `genere`"
+  jamais_sans_accord:
+    - "une suppression de page"
+  deplacement: "par `git mv`, JAMAIS par suppression + création"
+  second_mode: false
+  motif_second_mode: >
+    Reponse « non » a la question 9.3, et elle est legale : le DevBrain a un
+    second mode parce que son consommateur est un depot de code. Un brain d
+    histoire n a pas de « projet » au meme sens, donc aucun
+    CLAUDE-consommation.md n est genere.

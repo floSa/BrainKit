@@ -1,0 +1,1950 @@
+# ==============================================================================
+# devbrain.brain.yml — le manifeste du DevBrain, remplissage COMPLET
+# ------------------------------------------------------------------------------
+# Test de fidelite du lot 1 : si le manifeste ne sait pas redire DevBrain, il est
+# faux. Ce fichier ne contient AUCUNE troncature — ni « … », ni « 17 autres sur le
+# meme modele ». Chaque valeur est transcrite depuis le vault, en lecture seule,
+# le 2026-09-07. Les six points que le manifeste ne sait pas redire sont en
+# design/01-manifeste.md, section « Ce qui ne rentre pas ».
+#
+# Sources de chaque bloc, pour que la transcription soit verifiable :
+#   roles[].champs        -> AI/scripts/check_brain.py  (REQUIRED, ALLOWED)
+#   roles[].corps         -> MESURE sur les 765 pages du vault, PAS Templates/
+#                            ni brain-v3.md §6-§9 (constat E4 : les deux sont
+#                            en retard sur les pages qu ils decrivent)
+#   axes.rangement        -> AI/scripts/arbo.py (DOM_LABEL, DOM_RATTACHE,
+#                            SUB_LABEL, SEUIL) + Documentation/general/taxonomie.md
+#   axes.nature           -> taxonomie.md, bloc ```famille + arbre F1->F9
+#   axes.transverses      -> Documentation/general/themes.md
+#   bandeau               -> AI/scripts/build_bandeau.py
+#   regles                -> AI/design/brain-v3.md §10 + AI/migration/lot-8-durcissement.md
+#   graphe                -> Documentation/perso/obsidian-graph.md (seule source :
+#                            .obsidian/graph.json est gitignore)
+#
+# Les accents sont ecrits partout SAUF dans les commentaires YAML et les champs
+# `motif:`, ou ils sont omis : le meme choix que design/00-cadrage.md, pour que le
+# fichier traverse sans dommage un pipeline qui ne serait pas en UTF-8.
+# ==============================================================================
+
+manifeste: 1
+
+# §5.1 — recommandation ecrite, point NON tranche : BrainKit est un generateur, et
+# une instance porte la version du kit qui l a produite plus son mode. `branche` =
+# le code vit dans le kit ; `fige` = le code a ete copie dans AI/scripts/ et
+# l instance ne recevra plus de correctif.
+kit:
+  version: "0.1.0"
+  mode: branche
+
+brain:
+  nom: DevBrain
+  sujet: "Les briques et les notions du developpement data, ML et IA, rangees par domaine."
+  langue: fr
+  # §5.4 — `fr` est la SEULE valeur legale en v1. C est une limite ecrite, pas un
+  # oubli : la prose generee sort de gabarits, et un gabarit se duplique par langue
+  # le jour ou deux instances francaises tournent.
+  volume_cible: 800
+  # 337 briques + 297 notions + 47 comparatifs + 74 hubs + 5 patterns + 5 regles
+  # = 765 pages mesurees le 2026-09-07, plus la marge. Cf. Remontee 1 du lot 1 :
+  # 00-cadrage.md annonce 338/299/75/6/6, qui compte les 6 gabarits de Templates/.
+  usage: perso
+  profil: obsidian        # §5.5, recommandation : `obsidian` (tout) ou `nu` (sans .base)
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: [aosis.net]
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+  motif: >
+    Depot PERSO. Cinq commits ont deja ete signes avec l adresse pro et sont
+    entres dans les contributeurs GitHub, d ou ils ne sortent pas sans reecriture
+    d historique. La regle est ecrite dans CLAUDE.md parce que c est le seul
+    fichier charge a CHAQUE conversation, au meme endroit et au meme moment que
+    l annonce du harnais — une contre-instruction qui arrive apres coup arrive
+    trop tard. Trois hooks la doublent mecaniquement : pre-commit et pre-push
+    refusent un domaine interdit, commit-msg refuse un trailer, et pre-commit
+    refuse de tourner si commit-msg n est pas installe sous le core.hooksPath
+    EFFECTIF (le garde-fou du garde-fou).
+
+# ------------------------------------------------------------------------------
+# libelles — le vocabulaire visible. Seul endroit de BrainKit ou le mot « brique »
+# existe. La prose generee (guides, skills, manuel) n emploie que ces mots.
+# ------------------------------------------------------------------------------
+libelles:
+  unite:         { s: brique,     p: briques }
+  notion:        { s: notion,     p: notions }
+  vue:           { s: comparatif, p: comparatifs }
+  hub:           { s: hub,        p: hubs }
+  prescription:  { s: prescription, p: prescriptions }
+  axe_rangement: { s: domaine,    p: domaines }
+  axe_nature:    { s: famille,    p: familles }
+  axe_transverse:
+    domaines:    { s: metier,     p: metiers }
+
+# ------------------------------------------------------------------------------
+# roles — SIX entrees. `id` est le mot que floSa lit dans son vault ; `fonction`
+# est ce sur quoi le kit raisonne. §5.3 : `fonction:` n est PAS indexee dans le
+# frontmatter des pages (un champ derivable ne se stocke pas).
+# ------------------------------------------------------------------------------
+roles:
+
+  # --- 1/6 -------------------------------------------------------------------
+  - id: brique
+    fonction: unite
+    libelle: { s: brique, p: briques }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#412CDD"
+    taille_avertissement: 90        # check_brain.SIZE_WARN["brique"]
+    population: 337
+    champs:
+      requis: [role, nom, pitch, categorie]
+      autorises: [role, nom, alias, pitch, categorie, famille, domaines,
+                  licence_type, langage, os, hosted, scaling, maturite,
+                  alternatives, complements, tags, url_docs, url_repo]
+      conditionnels:
+        - { champ: hosted,  si: "famille in [plateforme, saas, application]" }
+        - { champ: scaling, si: "famille in [plateforme, saas, application]" }
+      # §5.11 — recommandation ecrite, point NON tranche. Le vestige est porte par
+      # le ROLE et non par le champ : `domaines:` est REQUIS sur une notion, il n
+      # est un vestige que sur une brique. D ou `deprecies` ici, et non un
+      # `deprecated: true` dans le dictionnaire `champs:`. Cf. Remontee 8.
+      deprecies: [os, domaines]
+      motif_deprecies: >
+        Les gabarits `service` et `outil` ont fusionne au lot 2 : l union de leurs
+        champs est la liste de la brique. `os` et `domaines` viennent d `outil`.
+        Leur presence est un vestige, pas une intention. Autorises, absents du
+        gabarit genere, comptes par la passe de mesure.
+      motif_conditionnels: >
+        R16. Mesure v2 : 177 fiches famille:paquet portaient une valeur d
+        hebergement, et scaling:single-node etait pose sur 212 fiches — la valeur
+        par defaut de tout ce qui n est pas distribue. Deux champs qui decrivent
+        100 % des fiches ne discriminent rien. Une bibliotheque ne s heberge pas
+        et ne scale pas.
+    corps:
+      - { titre: "<bandeau>", niveau: 0, genre: bandeau, mesure: 337 }
+      - { titre: "Definition", titre_rendu: "Définition", niveau: 2, genre: prose,
+          mesure: 337,
+          doctrine: "Quatre a six lignes. La SEULE section ou la prose est permise." }
+      - { titre: "Prendre si / Ecarter si", titre_rendu: "Prendre si / Écarter si",
+          niveau: 2, genre: decision, mesure: 337,
+          colonne_positive: "Prendre si", colonne_negative: "Écarter si" }
+      - { titre: "Mise en oeuvre", titre_rendu: "Mise en œuvre",
+          niveau: 2, genre: etiquetee, mesure: 337,
+          obligatoires: [Installation, "Point d'entrée", Prérequis, Exécution, Coût],
+          permises:     [Installation, "Point d'entrée", Prérequis, Exécution, Coût],
+          mesure_etiquettes: "les 5 etiquettes sur 337/337 pages" }
+      - titre: "Ecosysteme"
+        titre_rendu: "Écosystème"
+        niveau: 2
+        genre: libre
+        mesure: 333
+        motif: >
+          333 et non 337 : quatre briques ne portent AUCUNE section Ecosysteme,
+          donc ni Alternatives ni Complements — imbalanced-learn, Obsidian,
+          Ruff, Quarto. C est le seul titre de corps de brique qui ne soit pas a
+          337/337. Fait du vault, rapporte, non corrige (interdiction du lot 1).
+          Cf. Remontee 4.
+      - { titre: "Alternatives", niveau: 3, genre: liste_liens, champ: alternatives,
+          mesure: 324 }
+      - { titre: "Complements", titre_rendu: "Compléments", niveau: 3,
+          genre: liste_liens, champ: complements, mesure: 103 }
+      - { titre: "Ressources", niveau: 2, genre: etiquetee, mesure: 337,
+          obligatoires: [],
+          permises: [Documentation, Dépôt, Tutoriel, Article, Papier, Cours, Vidéo],
+          mesure_etiquettes: "Documentation 329 · Dépôt 309 · Papier 3 · Article 1 ·
+                              hors vocabulaire : Site 4, Poids 1 (= les 5 violations
+                              de la regle 7, moitie Ressources)" }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null,
+          mesure: 337 }
+      - titre: "Retours"
+        niveau: 2
+        genre: conditionnelle
+        mesure: 0
+        existe_si: "au moins une entree datee"
+        forme: "- YYYY-MM-DD — <symptôme> : <correctif>."
+        motif: >
+          Mesure du lot 6, reverifiee le 2026-09-07 : ZERO entree datee sur 337,
+          zero section creee. Ce n est pas un defaut de format, c est un fait
+          sur l usage — la place a existe dix-huit mois sans etre alimentee. La
+          garder est la bonne decision (genre conditionnelle), la MESURER est
+          le travail du lot 8 du kit.
+    motif: >
+      Ce qu on deploie ou importe : service, outil, librairie. Fusion des gabarits
+      `service` et `outil` de la v2 au lot 2 — l audit avait montre qu ils ne se
+      distinguaient par rien (57 fiches de nature identique reparties 34/23 sans
+      discriminant : Marimo, notebook a interface, etait `type: service` ; DBeaver,
+      client a interface, `type: outil`).
+
+  # --- 2/6 -------------------------------------------------------------------
+  - id: notion
+    fonction: notion
+    libelle: { s: notion, p: notions }
+    range_par: axe
+    protege: true                   # <- la frontiere « memoire perso » (O4)
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#7AB800"
+    taille_avertissement: 200       # check_brain.SIZE_WARN["notion"]
+    population: 297
+    champs:
+      requis: [role, nom, categorie, domaines]
+      autorises: [role, nom, alias, categorie, domaines, tags]
+    corps:
+      - { titre: "Apercu", titre_rendu: "Aperçu", niveau: 2, genre: libre, mesure: 297 }
+      - { titre: "Concepts cles", titre_rendu: "Concepts clés", niveau: 2,
+          genre: libre, mesure: 297 }
+      - titre: "Les maths, simplement"
+        niveau: 2
+        genre: conditionnelle
+        mesure: 282
+        existe_si: "la notion porte une formule a expliquer"
+        motif: >
+          282 sur 297, et le genre est donc `conditionnelle` et non `libre` :
+          quinze notions n ont pas de maths a expliquer, et la section n a pas
+          ete posee vide. C est le comportement voulu, mais brain-v3.md §7 la
+          declare inconditionnelle — cf. Remontee 3.
+      - { titre: "En pratique", niveau: 2, genre: libre, mesure: 297 }
+      - titre: "Approches voisines & alternatives"
+        niveau: 2
+        genre: liste_liens
+        champ: null
+        mesure: 297
+        motif: >
+          Le titre REEL des 297 pages. brain-v3.md §7 et 00-cadrage.md §2.2
+          ecrivent tous deux « Approches voisines » — le gabarit de la spec est
+          en retard sur les pages, exactement le constat E4. Cf. Remontee 2.
+      - { titre: "Pour aller plus loin", niveau: 2, genre: libre, mesure: 297 }
+    motif: >
+      Ce que floSa a compris et ecrit pour lui-meme. On y ajoute volontiers ; on
+      n y reecrit pas sans qu il l ait demande. La frontiere est portee par le
+      CHAMP `role:` et par lui seul — aucun dossier ne rassemble les notions
+      depuis la cloture du lot 4 : elles sont melees aux briques, dans le dossier
+      de leur domaine. Donc lire le frontmatter avant d ecrire.
+
+  # --- 3/6 -------------------------------------------------------------------
+  - id: comparatif
+    fonction: vue
+    libelle: { s: comparatif, p: comparatifs }
+    range_par: axe
+    prefixe_nom: "Comparatif - "
+    protege: false
+    pese_sur_le_seuil: false        # arbo.ROLES_HORS_SEUIL
+    apparait_dans_le_hub: true
+    couleur: "#EF4444"
+    population: 47
+    vue_embarquee:
+      extension: ".base"
+      moteur: "obsidian-bases"
+      embed: "![[<meme nom>.base]]"
+      genere: false
+      motif_non_genere: >
+        Les 47 filtres sont du CONTENU, pas un derive. Chacun porte une requete
+        reglee a la main (role == "brique" ET categorie == …) et souvent une
+        seconde vue metier (« Self-hostable », sur hosted.contains("self")). Le
+        generateur en amorce un par dossier promu, avec le filtre evident et l
+        ordre de colonnes par defaut, et s arrete la.
+      colonnes_par_defaut: [nom, pitch, famille, licence_type, hosted, scaling, maturite]
+    regle_de_categorie: majorite
+    motif_regle_de_categorie: >
+      Celle qui rassemble le plus de ses membres. Necessaire parce qu un
+      comparatif enjambe volontiers deux valeurs — « Comparatif - Bases NoSQL »
+      reunit MongoDB (database/document), Redis et Cassandra (database/cle-valeur),
+      et il n existe pas de valeur « NoSQL » : le vocabulaire range par modele de
+      donnees, pas par famille marketing. Repli quand les deux candidates menent
+      a des dossiers dont l un est promu et l autre non : au niveau du domaine.
+    hub_de_ralliement:
+      dossier: "Comparatifs"
+      lien_retour: "Voir aussi"
+      groupe_par: "premier segment du chemin (le domaine, jamais le sous-domaine)"
+      motif: >
+        C est le lien retour qui fait la grappe. Un hub qui cite 47 pages sans qu
+        aucune le cite ajoute un noeud et ne rassemble rien : la dispersion des
+        rouges resterait entiere, avec une page de plus. Le dossier ne porte QUE
+        sa page — les 47 restent dans le dossier des briques qu ils departagent,
+        c est ce qui les rend trouvables par `ls` et la regle de propagation en
+        depend.
+    champs:
+      requis: [role, nom, categorie]
+      autorises: [role, nom, categorie, tags]
+      motif: >
+        Quatre champs, et pas un de plus. Ni famille: ni licence_type: — un
+        comparatif ne se deploie pas. Pas de pitch: non plus : la ligne « On
+        tranche sur : … » du corps le remplace, et elle n a pas a etre indexee.
+    corps:
+      - { titre: "<accroche>", niveau: 0, genre: prose,
+          forme: "> On tranche sur : …" }
+      - { titre: "<embed>", niveau: 0, genre: auto }
+      - { titre: "Ce qui departage", titre_rendu: "Ce qui départage", niveau: 2,
+          genre: liste_liens, champ: null, mesure: 47 }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null,
+          mesure: 47,
+          motif: "Porte l unique lien retour vers le hub Comparatifs. Arrivee le 2026-09-06." }
+    motif: >
+      Departager des objets INTERCHANGEABLES, dont on choisit un. C est l intention
+      qui ne se transpose pas hors du dev (rupture 1) ; la primitive — une page qui
+      embarque une vue filtree sur l axe de rangement, plus une section ecrite a la
+      main, plus un hub de ralliement avec lien retour — se transpose telle quelle.
+
+  # --- 4/6 -------------------------------------------------------------------
+  - id: hub
+    fonction: hub
+    libelle: { s: hub, p: hubs }
+    range_par: axe
+    porte_categorie: false
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: false      # un hub ne se liste pas dans son propre hub
+    couleur: "#FF922B"
+    population: 74
+    repartition: "6 Métiers/ · 20 domaines · Patterns/ · Rules/ · Comparatifs/ · 45 sous-domaines promus"
+    champs:
+      requis: [role, nom, pitch]
+      autorises: [role, nom, alias, pitch, domaines, tags]
+      motif: >
+        Pas de categorie: — un hub ne se range pas, il EST le rangement : son
+        domaine est son chemin. Le hub de domaine herite du frontmatter de la
+        notion chapeau qu il absorbe (alias, domaines, tags), d ou ces trois
+        champs facultatifs. C est cette fusion qui a supprime la seule collision
+        de nom du vault, « Bases de donnees ».
+    corps:
+      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre, mesure: 71,
+          ecrit_a_la_main: true }
+      - { titre: "Choisir", niveau: 2, genre: libre, mesure: 71,
+          ecrit_a_la_main: true }
+      - titre: "<AUTO>"
+        niveau: 0
+        genre: auto
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
+        perimetre: dossier
+        sections:
+          - { titre: "Sous-domaines", source: "sous-dossiers portant un hub",
+              separateur: " · ", mesure: 10 }
+          - { titre: "Notions",     source: "role: notion du dossier",  mesure: 39 }
+          - { titre: "Briques",     source: "role: brique du dossier",  mesure: 58 }
+          - { titre: "Patterns",    source: "role: pattern du dossier", mesure: 1 }
+          - { titre: "Rules",       source: "role: rule du dossier",    mesure: 1 }
+          - titre: "Comparatifs"
+            source: "fichiers *.base du dossier"
+            mesure: 37
+            motif: >
+              La seule section qui ne lit PAS `role:` mais l extension des
+              fichiers. Anomalie du code actuel, rapportee sans etre corrigee :
+              depuis le lot 5 la page `role: comparatif` existe a cote du .base,
+              et c est elle qui devrait etre listee. Cf. Remontee 5.
+      - { titre: "Notes", niveau: 2, genre: libre, mesure: 13,
+          ecrit_a_la_main: true, hors_zone_auto: true,
+          motif: "Section manuelle preservee par le generateur, presente sur 13 hubs." }
+    motif: >
+      La page d un dossier, l aiguillage. 71 des 74 portent le corps ci-dessus :
+      les trois qui ne le portent pas sont les hubs de ralliement, dont le corps
+      est une phrase et une zone AUTO propre (Comparatifs) ou deux notions
+      chapeaux absorbees qui gardent le corps de notion (mesure : 2 hubs portent
+      `## Apercu` / `## Concepts cles`). Fait du vault, rapporte, non corrige.
+
+  # --- 5/6 -------------------------------------------------------------------
+  - id: pattern
+    fonction: prescription
+    libelle: { s: pattern, p: patterns }
+    range_par: role
+    dossier: Patterns
+    prefixe_nom: "Pattern - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    population: 5
+    champs:
+      requis: [role, contexte, services_cles]
+      autorises: [role, tags, contexte, services_cles, projets_appliques]
+    corps:
+      - { titre: "Contexte",     niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Stack",        niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Decisions cles", titre_rendu: "Décisions clés", niveau: 2,
+          genre: libre, mesure: 5 }
+      - { titre: "Pieges", titre_rendu: "Pièges", niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Voir aussi",   niveau: 2, genre: liste_liens, champ: null, mesure: 5 }
+    motif: >
+      Une architecture eprouvee. Pas de categorie: par construction — un pattern
+      enjambe plusieurs domaines. C est `role:` qui le groupe, dans Patterns/ a la
+      racine. Le corps mesure ci-dessus n est PAS celui de Templates/Pattern.md :
+      constat E4, la source de verite est la page, pas le gabarit.
+
+  # --- 6/6 -------------------------------------------------------------------
+  - id: rule
+    fonction: prescription
+    libelle: { s: règle, p: règles }
+    range_par: role
+    dossier: Rules
+    prefixe_nom: "Rule - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    population: 5
+    champs:
+      requis: [role, domaine, applicable, strictness]
+      autorises: [role, tags, domaine, applicable, strictness]
+    corps:
+      - { titre: "Principe",        niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "MUST",            niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "SHOULD",          niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "NICE-TO-HAVE",    niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Exemples",        niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Bon",             niveau: 3, genre: libre, mesure: 5 }
+      - { titre: "Mauvais",         niveau: 3, genre: libre, mesure: 5 }
+      - { titre: "Exceptions",      niveau: 2, genre: libre, mesure: 5 }
+      - { titre: "Voir aussi",      niveau: 2, genre: liste_liens, champ: null, mesure: 5 }
+    motif: >
+      Une regle transverse, avec un degre de fermete (`strictness`). Transverse par
+      definition, donc sans categorie: — meme mecanisme que `pattern`. Le champ
+      `domaine:` de son frontmatter n est PAS l axe de rangement : c est une chaine
+      libre, homonyme malheureuse. Cf. Remontee 7.
+
+# ==============================================================================
+# axes — EXACTEMENT UN rangement, ZERO OU UN nature, ZERO OU PLUSIEURS transverses
+# ==============================================================================
+axes:
+
+  # ----------------------------------------------------------------------------
+  # L axe qui RANGE : il donne le chemin. arbo.py porte la derivation,
+  # check_arbo.py la verifie, et depuis le 2026-09-05 aucune page n y echappe
+  # (arbo.LEGACY est vide).
+  # ----------------------------------------------------------------------------
+  rangement:
+    champ: categorie
+    exclusif: true
+    motif_exclusif: >
+      Une brique a EXACTEMENT un domaine, toujours. check_arbo compare un chemin
+      a une valeur unique. DevBrain n a jamais eu le cas contraire — c est
+      HistoBrain qui le decouvre (rupture 3), et c est pour ca que le champ existe.
+    seuil_promotion: 5
+    motif_seuil: >
+      Calibre sur ~700 pages en 20 domaines, soit ~35 pages par domaine : a 5, un
+      domaine se coupe en une poignee de sous-dossiers. Le seuil NE SE CALCULE PAS
+      par le kit — il se derive du volume cible et le calcul s ecrit ici (rupture 5).
+      DevBrain l a fixe une fois, avec 700 pages deja ecrites sous les yeux.
+    plafond_promotion: true
+    motif_plafond: >
+      Un sous-domaine ne se promeut PAS s il ne laisse AUCUNE page au niveau du
+      domaine : un dossier fils qui redouble son parent n apporte aucune
+      information et ajoute un niveau. La condition est `n == total du domaine`,
+      pas « fils unique » : deux sous-domaines de 5 pages qui se partagent un
+      domaine de 10 se promeuvent tous les deux, ils separent quelque chose.
+      Mesure sur « Stockage » (6 pages, toutes storage/objet) et « Automatisation
+      no-code » (5, toutes automation/no-code) — les deux defaits le 2026-09-04.
+      Les libelles restent declares : la promotion reprendra d elle-meme le jour
+      ou le domaine gagne une seconde population.
+    mesure:
+      valeurs_declarees: 109
+      valeurs_declarees_detail: "103 sous le bloc ```domaine (20 prefixes) + 6 sous le fence nu skill/* (1 prefixe rattache)"
+      valeurs_portees: 104
+      prefixes: 20
+      sous_libelles_declares: 47
+      sous_domaines_promus: 45
+      motif_ecart_promus: "storage/objet et automation/no-code sont bloques par le plafond"
+      date: "2026-09-07"
+
+    # ------------------------------------------------------------------------
+    # LES 20 PREFIXES, dans l ordre du bloc ```domaine de taxonomie.md.
+    # `sous:` porte TOUTES les valeurs du prefixe, pas seulement les promues.
+    # `libelle:` n existe que sur une valeur declaree dans arbo.SUB_LABEL — 47 —
+    # et son absence est ce qui fait echouer `promotions()` plutot qu inventer un
+    # nom de dossier le jour ou la valeur franchit le seuil.
+    # `motif:` transcrit le commentaire d arbitrage d arbo.py (propriete 2 du
+    # manifeste). `frontiere:` transcrit la frontiere ecrite une fois dans
+    # taxonomie.md, section « Sous-domaines qui pretent a confusion ».
+    # ------------------------------------------------------------------------
+    prefixes:
+
+      - cle: ml
+        dossier: "Machine Learning"
+        portee: "entrainer, servir, suivre, expliquer un modele"
+        sous:
+          socle:
+            libelle: "Socle"
+            motif: >
+              Reprend le mot du corps du hub de domaine, qui appelle cette
+              population « le socle generaliste » depuis le lot 3.
+            frontiere: >
+              Ce qui ne suppose RIEN de la nature des donnees : regimes d
+              apprentissage, cadrage d un probleme, formes de probleme, et la
+              boite classique (lineaires, GLM, GAM, quantile, regularisation,
+              Naive Bayes, k-NN, discriminante, SVM, processus gaussiens,
+              perceptron et MLP). Elargie au lot 4 : elle ne portait que les
+              bibliotheques generalistes. Distincte de ml/tabulaire (specialise
+              donnees en colonnes) et de ml/apprentissage-profond (le reseau
+              comme objet).
+          tabulaire:
+            libelle: "Tabulaire"
+            frontiere: >
+              Specialise donnees en colonnes : un arbre de decision et l encodage
+              d une categorielle supposent des colonnes, une regression logistique
+              non. scikit-learn ne suppose rien du type de donnees, XGBoost si.
+          apprentissage-profond:
+            libelle: "Apprentissage profond"
+          vision:
+            libelle: "Vision"
+          nlp:
+            libelle: "NLP"
+            frontiere: >
+              Le NLP commence la ou il y a un modele de langue. Un classement
+              lexical (BM25, TF-IDF) est du stockage-interrogation :
+              database/recherche (D-R3).
+          series-temporelles:
+            libelle: "Séries temporelles"
+          rl:
+            libelle: "Apprentissage par renforcement"
+          non-supervise:
+            libelle: "Non supervisé"
+            motif: >
+              Et non « Apprentissage non supervise », qui est le nom d une NOTION
+              vivant dans le dossier (ensemble n° 4 de la remontee 26) — un lien
+              nu ne resoudrait plus de facon deterministe.
+            frontiere: >
+              L apprentissage SANS cible, et ses trois usages ensemble : regrouper
+              (clustering, densite, hierarchie, melanges), representer (t-SNE/UMAP,
+              manifold learning, ICA, NMF), reperer l anormal (outliers,
+              isolement, densite locale, enveloppe). Un seul dossier plutot que
+              trois valeurs : les separer aurait recategorise des briques sans
+              rien gagner en navigation. Ce qui definit la valeur n est pas une
+              technique, c est l absence de cible. Distincte de stats/exploratoire
+              (interpreter des axes).
+          graphe: {}
+          embeddings: {}
+          interpretabilite:
+            libelle: "Interprétabilité"
+          eval:
+            libelle: "Évaluation de modèles"
+            motif: >
+              Et non « Evaluation » : c est le nom de fichier du hub
+              « LLM & IA generative/Evaluation/ » (ensemble n° 3) — un lien nu ne
+              resoudrait plus de facon deterministe.
+            frontiere: >
+              Mesurer ce que vaut un modele : le PROTOCOLE qui rend le chiffre
+              honnete (validation croisee, fuite de donnees, biais-variance) et
+              les METRIQUES qui disent ce qu il decrit (ROC, PR, calibration,
+              BLEU, ROUGE), bibliotheques comprises. Elargie au lot 4. Distincte
+              de llm/eval (on juge une reponse, on ne compte pas des vrais
+              positifs) et de math/theorie-apprentissage (qui BORNE a priori la
+              ou ces pages MESURENT sur un modele donne).
+          hyperopt:
+            frontiere: >
+              Chercher des hyperparametres, meme si le moteur d execution est
+              distribue : le distribue est le moyen, pas le sujet (D-R5, Ray Tune).
+              Distinct de math/optimisation, qui minimise une fonction connue.
+              Sous le seuil : 4 pages, pas de dossier, donc pas de libelle.
+          orchestration: {}
+          tracking:
+            libelle: "Suivi d'expériences"
+          serving:
+            libelle: "Serving"
+            motif: >
+              Et non « Inference », qui est deja un alias du hub Serving (meme
+              role -> avertissement R5) et redoublerait le nom du domaine parent.
+          monitoring:
+            frontiere: "Derive de modele. Distinct d observability/supervision (logiciel deploye). Sous le seuil : 3 pages."
+          feature-store:
+            frontiere: "Sous le seuil : 2 pages, pas de dossier, donc pas de libelle."
+          hub: {}
+
+      - cle: llm
+        dossier: "LLM & IA générative"
+        portee: "tout ce qui a besoin d'un LLM pour fonctionner"
+        sous:
+          socle:
+            frontiere: >
+              LangChain, DSPy — on ASSEMBLE. Distinct de llm/agents (on orchestre
+              une boucle d outils) et de llm/rag (on indexe et on recupere).
+          modele:
+            libelle: "Modèles de langage"
+            motif: "Ouvert au lot 4."
+            frontiere: >
+              Ce qu EST un modele de langage, avant toute application : ce qu il
+              ingere (Tokenization), comment il choisit (Decoding strategies), ce
+              qui se mesure sans tache applicative (Perplexity), ce que sa taille
+              achete (Scaling laws), et les deux classes nees de ce compromis
+              (Small Language Models, Reasoning models). Distinct de llm/runtime
+              (qui le SERT), de llm/finetuning (qui l AJUSTE) et de llm/eval (qui
+              mesure une APPLICATION).
+          prompt:
+            motif: "Ouvert au lot 4."
+            frontiere: >
+              Ce qu on met dans la fenetre de contexte et comment on le formule :
+              Prompt engineering, Context engineering, Chain-of-Thought. Distinct
+              de llm/socle (les frameworks qui assemblent — DSPy optimise des
+              prompts, il n en ecrit pas la theorie), de llm/memoire (ce qui
+              survit a la session) et de llm/rag (ce qui va chercher le contenu).
+          agents:
+            libelle: "Agents"
+          agent-de-code:
+            libelle: "Agents de code"
+            frontiere: >
+              Assistants et agents de CODAGE, quelle que soit leur famille
+              (extension d IDE, CLI, application, plateforme de memoire d agent).
+              Distinct de llm/agents (briques generiques d orchestration, sans
+              specialisation code) et de llm/assistant (application LLM prete a
+              deployer pour un utilisateur final non developpeur).
+          assistant:
+            libelle: "Assistants"
+          rag:
+            libelle: "RAG & retrieval"
+            motif: >
+              « RAG » est le nom de fichier d une NOTION qui vit dans le dossier —
+              le cas exact de signal/traitement au lot 4 : un lien nu ne
+              resoudrait plus de facon deterministe. Le libelle nomme donc la
+              population, retrieval compris.
+          memoire:
+            frontiere: >
+              Memoire et contexte PERSISTANTS d un agent : compression du contexte,
+              elagage, reinjection a la demande, base de faits qui survit a la
+              session. Distinct de llm/observabilite (mesurer ce qui est envoye)
+              et de database/vecteur (l index qui la stocke eventuellement).
+          sortie-structuree:
+            libelle: "Sortie typée"
+            motif: >
+              « Sortie structuree » et « Sorties structurees » sont des alias de
+              `Structured outputs`, « Generation contrainte » et « Decodage
+              contraint » des alias de `Constrained decoding` — les quatre vivent
+              dans le dossier. Le libelle doit s ecarter des quatre.
+          text-to-sql:
+            libelle: "Text-to-SQL"
+          low-code: {}
+          protocole:
+            motif: >
+              Ouvert au lot 4, en remplacement de llm/mcp. `llm/mcp` nommait UN
+              protocole et ne pouvait pas accueillir le second sans mentir : la
+              valeur est retiree du bloc et ses deux briques recategorisees.
+            frontiere: >
+              Les protocoles par lesquels un modele ou un agent parle au dehors :
+              vers des outils et des donnees (mcp-protocol, fastmcp, mcpjam), vers
+              d autres agents construits separement (a2a-protocol). Distinct de
+              llm/agents : ici on decrit un format d echange, pas du code qui tourne.
+          passerelle:
+            libelle: "Passerelles"
+            motif: "Le singulier lirait comme la notion, pas comme le dossier."
+            frontiere: "ROUTER vers des fournisseurs. Distinct de llm/runtime (SERVIR le modele) et de llm/outillage (DECIDER quel modele, sans le servir)."
+          runtime:
+            libelle: "Runtimes"
+            frontiere: "SERVIR le modele."
+          finetuning:
+            libelle: "Fine-tuning"
+          eval:
+            libelle: "Évaluation"
+            frontiere: >
+              Evaluation d une APPLICATION LLM/RAG/agent — faithfulness, scoring
+              par juge. Distinct de ml/eval : on juge une reponse, on ne compte
+              pas des vrais positifs.
+          observabilite:
+            libelle: "Observabilité des LLM"
+            motif: >
+              « Observabilite » est le hub du DOMAINE homonyme, et « Observabilite
+              LLM » est un alias de la notion qui vit dans le dossier — les deux
+              sont pris.
+          outillage:
+            frontiere: "DECIDER quel modele, sans le servir."
+
+      - cle: database
+        dossier: "Bases de données"
+        portee: "stocker et interroger de façon persistante"
+        sous:
+          relationnel: { libelle: "Relationnel" }
+          document: {}
+          cle-valeur: {}
+          vecteur:
+            libelle: "Vectoriel"
+            frontiere: >
+              Reserve aux moteurs dont l UNIQUE index est vectoriel — Qdrant,
+              Milvus, Weaviate (D-R4).
+          series-temporelles: {}
+          graphe: {}
+          analytique: {}
+          recherche:
+            libelle: "Recherche"
+            frontiere: >
+              Un moteur qui INDEXE ET INTERROGE, meme s il embarque des embeddings
+              ou un pipeline RAG : c est le stockage qui est son point d entree —
+              Marqo, txtai, Vespa, Elasticsearch (D-R4). Porte aussi le classement
+              lexical, BM25 et TF-IDF, qui n est pas du NLP (D-R3).
+          driver:
+            frontiere: >
+              Pilote / adaptateur bas niveau d acces a une base (DB-API 2.0,
+              wrapper libpq) : psycopg2, ADBC. Distinct de database/orm (mapping
+              objet) : le driver transporte le SQL, il n abstrait pas le schema.
+              Distinct de data/ingestion par D-R6.
+          orm: {}
+          migration: {}
+          admin:
+            libelle: "Administration"
+            frontiere: >
+              Clients et consoles d administration de bases. Distinct de
+              devtools/* : le sujet est la base, pas la fabrication de logiciel.
+
+      - cle: data
+        dossier: "Data & pipelines"
+        portee: "déplacer et transformer de la donnée pour une machine"
+        sous:
+          ingestion:
+            frontiere: >
+              Connecteurs vers des sources structurees ou des API. Un connecteur
+              qui RAPATRIE des lignes vers un DataFrame est ici — connectorx ;
+              un database/driver transporte du SQL sans construire de table en
+              memoire (D-R6).
+          parsing:
+            libelle: "Parsing"
+            frontiere: >
+              Extraire du contenu STRUCTURE POUR UNE MACHINE d un document,
+              typiquement pour du RAG — docTR, PyMuPDF. Distinct de docs/pdf
+              (manipuler un document pour un humain : fusion, decoupe, rotation,
+              signature) par D-R2.
+          scraping:
+            libelle: "Scraping"
+            frontiere: >
+              Recuperation de donnees depuis des PAGES WEB : clients HTTP furtifs
+              (empreinte TLS), navigateurs headless, contournement d anti-bot,
+              parsing HTML. Distinct de data/ingestion.
+          tableau:
+            libelle: "DataFrames"
+          format:
+            frontiere: "Le rangement physique sur disque, qui decide de la vitesse de lecture et non de la confiance."
+          orchestration:
+            libelle: "Orchestration"
+            frontiere: >
+              Orchestration de pipelines de DONNEES en code (DAG, dependances,
+              backfills) : Airflow, Dagster, Prefect. Distinct de
+              automation/no-code, qui connecte des APPLICATIONS par declencheurs
+              et actions dans un editeur visuel de noeuds. Et de data/fiabilite,
+              qui decrit ce qu un pipeline doit garantir la ou l orchestrateur l
+              execute.
+          streaming: {}
+          synthetique: {}
+          eda:
+            frontiere: "Profiling automatique d un jeu de donnees. Distinct de stats/exploratoire (interpreter des axes)."
+          viz:
+            libelle: "Visualisation"
+            frontiere: "Graphiques de donnees. Distinct de design/diagramme (schemas techniques) et de design/ui (interfaces produit)."
+          fiabilite:
+            motif: "Ouvert au lot 4."
+            frontiere: >
+              Ce qui rend une donnee digne de confiance, quel que soit l outil qui
+              la deplace : ordre d assemblage et rejouabilite (ETL/ELT,
+              idempotence, backfill sans doublon), couches de raffinage (bronze /
+              silver / gold), contrats passes au consommateur et leur verification
+              continue, versionnage des jeux. Distinct de data/orchestration
+              (Airflow ne dit pas si le sink est idempotent), de
+              devtools/validation (valider des objets dans du code Python, pas des
+              jeux de donnees livres) et de data/format.
+
+      - cle: devtools
+        dossier: "Outils de développement"
+        portee: "fabriquer du logiciel : écrire, tester, configurer, packager"
+        rattachement_de: [skill]
+        sous:
+          notebook: { libelle: "Notebooks" }
+          config: {}
+          cli: {}
+          client-api:
+            frontiere: >
+              Clients d API : composer, envoyer et tester des requetes
+              HTTP/REST/GraphQL/gRPC, gerer collections et environnements.
+              Distinct de devtools/test (frameworks de test de code, type pytest).
+          paquet: {}
+          test: {}
+          qualite: {}
+          validation:
+            frontiere: "Valider des objets dans du code Python, pas des jeux de donnees livres."
+
+      - cle: stats
+        dossier: "Statistiques & inférence"
+        portee: "inférence, bayésien, exploratoire, causal, probabilité, expérimentation"
+        sous:
+          inference:
+            libelle: "Tests & estimation"
+            motif: >
+              Et non « Inference » : la valeur est deja un alias du hub Serving
+              (meme role -> avertissement R5) et redoublerait le nom du domaine
+              parent — defaut ecarte a la remontee 8.
+            frontiere: >
+              Teste une hypothese sur un echantillon DEJA COLLECTE. Le
+              dimensionnement d un test (« analyse de puissance ») reste ici :
+              c est une propriete du test. Distinct de stats/probabilite (le TCL
+              justifie un intervalle de confiance, il n en calcule pas), de
+              stats/experimentation (le protocole de collecte) et de
+              math/information (qui DEFINIT un ecart entre lois plutot que de le
+              tester sur un echantillon).
+          bayesien: { libelle: "Bayésien" }
+          exploratoire:
+            libelle: "Analyse factorielle"
+            motif: >
+              Nomme la population reelle du sous-domaine (Prince, Fanalysis,
+              PCA/CA/MCA/FAMD/MFA/GPA) la ou « Exploratoire » se confondrait avec
+              data/eda.
+            frontiere: >
+              Analyse factorielle et descriptive multivariee, tradition « analyse
+              de donnees » (Benzecri, Escofier, Pages) : PCA, CA, MCA, FAMD, MFA,
+              GPA, PGA, HCPC. Le but est d INTERPRETER DES AXES, pas d alimenter
+              un modele en aval. `Manifold learning` en est partie au lot 4 vers
+              ml/non-supervise ; `PGA` reste ici parce que sa variete est CONNUE D
+              AVANCE la ou le manifold learning l APPREND. Les deux familles
+              partagent le tag `dimensionality-reduction`.
+          causal:
+            frontiere: "Sous le seuil : 3 pages, pas de dossier, donc pas de libelle."
+          probabilite:
+            libelle: "Probabilités"
+            motif: >
+              Ouvert au lot 4. Range sous stats/ et non sous math/ parce que ces
+              pages se justifient toutes par l inference — et parce que les quatre
+              piliers de « Mathematiques » sont l algebre lineaire, l optimisation,
+              la theorie de l information et la theorie de l apprentissage, pas la
+              probabilite.
+            frontiere: >
+              Theorie des probabilites et processus aleatoires : theoremes de
+              convergence (loi des grands nombres, TCL, inegalites de
+              concentration) et processus (chaines de Markov, Poisson, mouvement
+              brownien).
+          experimentation:
+            motif: "Ouvert au lot 4. Sous le seuil : 4 pages, pas de dossier, donc pas de libelle."
+            frontiere: >
+              Concevoir une experience controlee et decider quand l arreter :
+              randomisation, reduction de variance, arret sequentiel, allocation
+              dynamique. Ici la question porte sur le protocole de collecte, pas
+              sur le calcul.
+
+      - cle: signal
+        dossier: "Signal & audio"
+        portee: "traitement du signal, audio"
+        sous:
+          traitement:
+            libelle: "Traitement"
+            motif: >
+              Et non « Traitement du signal » : ce dernier est le `nom:` d une
+              notion QUI VIT DANS LE DOSSIER — un lien nu ne resoudrait plus de
+              facon deterministe (remontee 8).
+            frontiere: "Le traitement du signal comme OBJET D ETUDE. Distinct de media/ingestion (donner un input multimodal a un assistant)."
+          audio: {}
+
+      - cle: math
+        dossier: "Mathématiques"
+        portee: "les quatre socles : algèbre linéaire, optimisation, théorie de l'information, théorie de l'apprentissage"
+        sous:
+          optimisation:
+            libelle: "Optimisation"
+            motif: "Elargi au lot 4 : la valeur ne portait que la recherche operationnelle tant qu elle n avait qu une brique."
+            frontiere: >
+              MINIMISER UNE FONCTION : le mecanisme, ses garanties et ses cas
+              discrets. Descente de gradient et ses reglages, convexite, courbure,
+              paysage de perte, plus la branche discrete (programmation lineaire,
+              MIP, optimisation sous contrainte) et les modeleurs et solveurs.
+              Distinct de ml/hyperopt (chercher des hyperparametres, pas minimiser
+              une fonction connue), de ml/* (les modeles qui EMPLOIENT la descente
+              — la mecanique est ici, l architecture est la-bas) et de stats/*.
+          algebre-lineaire:
+            libelle: "Algèbre linéaire"
+            motif: "Ouvert au lot 4."
+            frontiere: >
+              Le langage dans lequel donnees et modeles sont ecrits : normes,
+              produits matriciels, projections, decompositions (SVD, valeurs
+              propres). Les objets et leurs proprietes, pas les methodes qui s en
+              servent. Distinct de stats/exploratoire : `SVD` est la factorisation,
+              `PCA` la methode qui l emploie — les deux pages existent, et pas
+              dans le meme dossier.
+          information:
+            libelle: "Théorie de l'information"
+            motif: >
+              Ouvert au lot 4. Range ici et non en math/optimisation alors que le
+              transport optimal EST un programme lineaire : ce que ces pages
+              produisent est une MESURE D ECART ENTRE DISTRIBUTIONS, et c est par
+              la qu on les cherche.
+            frontiere: >
+              Mesurer l incertitude d une loi et l ecart entre deux lois :
+              entropie, entropie croisee, divergences (KL, Jensen-Shannon),
+              information mutuelle, transport optimal et distance de Wasserstein.
+          theorie-apprentissage:
+            libelle: "Théorie de l'apprentissage"
+            motif: >
+              Ouvert au lot 4. Le libelle GARDE « Theorie de » que la categorie
+              porte deja : « Apprentissage » seul, a cote de « Machine
+              Learning/Apprentissage profond/ », se lirait comme apprentissage
+              automatique.
+            frontiere: >
+              Pourquoi la generalisation est possible, et de quoi elle depend :
+              PAC learning, dimension de VC, complexite de Rademacher, bornes de
+              generalisation, No Free Lunch. Distinct de ml/eval, qui MESURE l
+              erreur d un modele donne la ou ces pages la BORNENT a priori — et
+              ces bornes sont trop laches pour dimensionner quoi que ce soit.
+
+      - cle: compute
+        dossier: "Calcul distribué"
+        portee: "capacité de calcul : distribué, GPU, à la demande"
+        sous:
+          distribue:
+            frontiere: "Calcul reparti sur plusieurs noeuds."
+          gpu: {}
+          a-la-demande:
+            frontiere: >
+              Capacite de calcul creee et detruite a la demande, facturee a l
+              usage : bacs a sable d execution de code NON FIABLE (typiquement
+              genere par un LLM, isolation microVM) et plateformes scale-to-zero.
+              Distinct de devops/conteneur (packaging et deploiement d
+              applications DE CONFIANCE) et de compute/distribue.
+
+      - cle: storage
+        dossier: "Stockage"
+        portee: "stockage brut d'objets"
+        sous:
+          objet:
+            libelle: "Stockage objet"
+            motif: >
+              Declare mais NON promu : les 6 pages du domaine portent toutes cette
+              valeur, le plafond de promotion s applique. « Stockage/Stockage
+              objet/ » serait le seul fils de son parent. Defait le 2026-09-04.
+
+      - cle: web
+        dossier: "Web & API"
+        portee: "exposer une application par HTTP"
+        sous:
+          backend: {}
+          frontend: {}
+          api:
+            frontiere: "Accueille un annuaire multi-domaines dont l intention de recherche est l API — public-apis (D-R7)."
+
+      - cle: ui
+        dossier: "Interfaces & apps data"
+        portee: "interfaces data et démos de modèle"
+        sous:
+          data-app: {}
+
+      - cle: network
+        dossier: "Réseau"
+        portee: "ce qui circule entre machines"
+        sous:
+          analyse:
+            frontiere: >
+              Observation et analyse du TRAFIC (qui parle a qui, ports,
+              protocoles, volumes, alertes). Distinct d observability/supervision,
+              qui instrumente des machines et des applications DEPUIS L INTERIEUR.
+          transfert:
+            frontiere: "Transfert de fichiers de machine a machine (chiffrement, relais, reprise)."
+
+      - cle: security
+        dossier: "Sécurité"
+        portee: "sécurité et renseignement, y compris la surface d'attaque des systèmes IA"
+        sous:
+          recon:
+            frontiere: >
+              Reconnaissance d une cible DEPUIS L EXTERIEUR, sans acces privilegie
+              (DNS, TLS, en-tetes, technologies detectees), et renseignement en
+              sources ouvertes : l ancienne distinction recon / osint ne portait
+              aucune consequence, les deux valeurs sont fusionnees.
+          auth: {}
+          ia:
+            libelle: "Systèmes IA"
+            motif: >
+              Et NON « Securite des systemes IA » : il redoublerait le nom du
+              domaine parent, defaut deja ecarte pour « Inference » sous
+              « Statistiques & inference » (remontee 8). Arbitrage de floSa du
+              2026-09-05. La 5e page (`Sandboxing de code genere`) arrive du lot 4
+              et fait franchir le seuil.
+            frontiere: >
+              Surface d attaque des systemes qui embarquent un modele, et
+              defenses : injection de prompt directe et indirecte, contournement
+              de l alignement, garde-fous d entree et de sortie, agence excessive
+              des outils. Range sous security/ et non sous llm/ bien que D1 semble
+              l appeler : ces pages portaient concept/ai et non concept/llm, et LA
+              SECURITE EST UNE PRATIQUE QUI TRAVERSE LES MODELES, pas un
+              sous-sujet de l IA generative. Distinct de llm/observabilite
+              (mesurer ce qui est envoye, sans jugement de securite).
+
+      - cle: devops
+        dossier: "DevOps"
+        portee: "déployer du logiciel en production"
+        sous:
+          ci: {}
+          conteneur:
+            frontiere: "Packaging et deploiement d applications DE CONFIANCE. Distinct de compute/a-la-demande."
+
+      - cle: observability
+        dossier: "Observabilité"
+        portee: "surveiller du logiciel déployé"
+        sous:
+          supervision:
+            motif: >
+              L ancien decoupage log / metric / trace / infra n a jamais depasse
+              une page par valeur ; il est fusionne.
+            frontiere: >
+              Surveiller du logiciel DEPLOYE : metriques, journaux, etat des
+              machines et des conteneurs, tableaux de bord, alertes. Distinct de
+              ml/monitoring (derive de modele) et de network/analyse.
+
+      - cle: automation
+        dossier: "Automatisation no-code"
+        portee: "connecter des applications sans code"
+        sous:
+          no-code:
+            libelle: "No-code"
+            motif: >
+              Declare mais NON promu : les 5 pages du domaine portent toutes cette
+              valeur, le plafond s applique. Defait le 2026-09-04.
+            frontiere: >
+              Connecte des APPLICATIONS par declencheurs et actions dans un
+              editeur visuel de noeuds. Distinct de data/orchestration (pipelines
+              de donnees en code).
+
+      - cle: docs
+        dossier: "Documents"
+        portee: "produire un document pour un humain"
+        sous:
+          capture:
+            frontiere: >
+              Capture de contenu EXTERNE vers un format texte reutilisable : page
+              web ou document converti en Markdown, a l unite, par un geste
+              manuel. Distinct de data/scraping (extraction programmatique et a l
+              echelle).
+          pdf:
+            frontiere: >
+              Manipuler un document POUR UN HUMAIN — fusion, decoupe, rotation,
+              signature : Stirling PDF. Distinct de data/parsing par D-R2.
+
+      - cle: media
+        dossier: "Médias"
+        portee: "vidéo, audio, image pour un humain"
+        sous:
+          ingestion:
+            frontiere: >
+              Ingestion et traitement de medias (video, audio, image) pour donner
+              a un assistant IA un INPUT multimodal : telechargement, extraction
+              de frames, transcription. Distinct de media/video (le media est la
+              finalite) et de signal/* (le signal comme objet d etude).
+          video:
+            frontiere: "Montage, production, lecture — le media est la finalite."
+
+      - cle: design
+        dossier: "Design & diagrammes"
+        portee: "dessin pour un humain : schémas, interfaces"
+        sous:
+          diagramme:
+            libelle: "Diagrammes"
+            frontiere: "Schemas techniques. Distinct de design/ui (interfaces produit) et de data/viz (graphiques de donnees)."
+          ui:
+            frontiere: "Interfaces produit."
+
+    # ------------------------------------------------------------------------
+    # rattachements — arbo.DOM_RATTACHE. Un prefixe qui N EST PAS un domaine et
+    # qu une decision EXPLICITE, nommee et datee, range quand meme dans l arbre.
+    # C est une exception declaree, pas une echappatoire.
+    # ------------------------------------------------------------------------
+    rattachements:
+      skill:
+        dossier: "Outils de développement"
+        motif: >
+          `skill/*` designe une pratique perso (Claude Code, Obsidian, MCP), pas
+          un domaine technique. Sa seule page, `Obsidian`, va dans « Outils de
+          developpement » — tranche par floSa le 2026-09-04, cf. lot-3, remontee 5.
+          v3-arborescence.md ne l assigne a aucun domaine : il est muet, il ne
+          contredit pas.
+        sous:
+          documents:    { portee: "manipulation PDF, XLSX, DOCX, PPTX" }
+          dev-flow:     { portee: "bootstrap, init, package mgmt, API SDK, GitHub" }
+          code-quality: { portee: "review, security, lint, refactor" }
+          knowledge:    { portee: "Obsidian, scraping, ingestion de contenu" }
+          data:         { portee: "acces DB, query, exploration (skills / connecteurs)" }
+          meta:         { portee: "skills sur les skills (creator, eval, debug)" }
+
+    # ------------------------------------------------------------------------
+    # arbre_de_decision — ORDRE STRICT, premiere reponse positive gagne.
+    # L ordre EST la decision de conception : pris une fois, ecrit ici, valable
+    # pour toutes les pages. C est lui — et non un arbitrage — qui range WrenAI
+    # (text-to-SQL gouverne) en llm/* plutot qu en database/* : D1 passe avant D3,
+    # et sans LLM WrenAI ne produit aucun SQL.
+    # QUATORZE questions, D1 -> D14.
+    # ------------------------------------------------------------------------
+    arbre_de_decision:
+      - { n: D1,  question: "L'objet a-t-il besoin d'un grand modèle de langage pour fonctionner ?", si_oui: ["llm/*"] }
+      - { n: D2,  question: "Entraîne-t-il, sert-il, suit-il ou explique-t-il un modèle d'apprentissage ?", si_oui: ["ml/*"] }
+      - { n: D3,  question: "Stocke et interroge-t-il des données de façon persistante ?", si_oui: ["database/*"] }
+      - { n: D4,  question: "Déplace ou transforme-t-il des données destinées à une machine ?", si_oui: ["data/*"] }
+      - { n: D5,  question: "Calcule-t-il des statistiques, du signal ou de l'optimisation mathématique ?", si_oui: ["stats/*", "signal/*", "math/*"] }
+      - { n: D6,  question: "Fournit-il de la capacité de calcul ou de stockage brut ?", si_oui: ["compute/*", "storage/*"] }
+      - { n: D7,  question: "Sert-il à exposer une application à des utilisateurs ?", si_oui: ["web/*", "ui/*"] }
+      - { n: D8,  question: "Porte-t-il sur ce qui circule entre machines ?", si_oui: ["network/*"] }
+      - { n: D9,  question: "Porte-t-il sur la sécurité ou le renseignement ?", si_oui: ["security/*"] }
+      - { n: D10, question: "Sert-il à déployer ou surveiller du logiciel en production ?", si_oui: ["devops/*", "observability/*"] }
+      - { n: D11, question: "Sert-il à fabriquer du logiciel (écrire, tester, configurer, packager) ?", si_oui: ["devtools/*"] }
+      - { n: D12, question: "Produit-il un document, un média ou un dessin pour un humain ?", si_oui: ["docs/*", "media/*", "design/*"] }
+      - { n: D13, question: "Connecte-t-il des applications sans code ?", si_oui: ["automation/*"] }
+      - { n: D14, question: "Aucun des précédents", si_oui: [], arret: true,
+          motif: "ARRET — demander avant d inventer. Une categorie manquante ne s invente jamais." }
+
+    # ------------------------------------------------------------------------
+    # departages — SEPT. L endroit ou s ecrit un arbitrage recurrent, une fois,
+    # avec le cas qui l a provoque. NAIT VIDE dans un brain neuf (principe 2) :
+    # ces sept sont le sediment de 337 pages.
+    # ------------------------------------------------------------------------
+    departages:
+      - n: D-R1
+        regle: "Le tri D1/D2 se fait sur ce dont l'objet a besoin pour tourner, pas sur ce à quoi il ressemble. Une bibliothèque qui inspecte des transformeurs sans appeler de LLM est ml/*."
+        cas: "TransformerLens, SAELens, nnsight, interpreto, sentence-transformers -> ml/*"
+      - n: D-R2
+        regle: "data/* = sortie destinée à une machine ; docs/* = sortie destinée à un humain."
+        cas: "Stirling PDF -> docs/pdf ; docTR, PyMuPDF -> data/parsing"
+      - n: D-R3
+        regle: "Un classement lexical (BM25, TF-IDF) est du stockage-interrogation, pas du NLP : database/recherche. Le NLP commence là où il y a un modèle de langue."
+        cas: "bm25s, rank-bm25 -> database/recherche"
+      - n: D-R4
+        regle: "Un moteur qui indexe et interroge est database/recherche, même s'il embarque des embeddings ou un pipeline RAG : c'est le stockage qui est son point d'entrée. database/vecteur est réservé aux moteurs dont l'unique index est vectoriel."
+        cas: "Marqo, txtai, Vespa, Elasticsearch -> database/recherche ; Qdrant, Milvus, Weaviate -> database/vecteur"
+      - n: D-R5
+        regle: "Une bibliothèque qui cherche des hyperparamètres est ml/hyperopt, même si son moteur d'exécution est distribué : le distribué est son moyen, pas son sujet."
+        cas: "Ray Tune -> ml/hyperopt (et non compute/distribue)"
+      - n: D-R6
+        regle: "Un connecteur qui rapatrie des lignes vers un DataFrame est data/ingestion ; un database/driver transporte du SQL sans construire de table en mémoire."
+        cas: "connectorx -> data/ingestion ; psycopg2, ADBC -> database/driver"
+      - n: D-R7
+        regle: "famille: annuaire n'exonère pas du domaine. Un annuaire multi-domaines prend le domaine de l'intention de recherche qui le fait ouvrir, et l'arbitrage s'écrit en clair dans le corps de la fiche."
+        cas: "public-apis -> web/api"
+        motif: >
+          Le refus de l exoneration est mesure : categorie: est un champ requis
+          controle, et build_mocs groupe par categorie: — une page sans categorie
+          sort des hubs et viole aussitot R7 (toute page atteignable). Une
+          exoneration pour 2 pages sur 337 serait une exception que personne ne
+          retient, au prix d une page injoignable.
+
+    # ------------------------------------------------------------------------
+    # frontieres — HUIT frontieres disputees, ecrites une fois. Distinctes des
+    # `frontiere:` portees par chaque valeur : celles-ci opposent DEUX OU TROIS
+    # valeurs nommees, elles ne definissent pas une valeur.
+    # ------------------------------------------------------------------------
+    frontieres:
+      - { entre: "ml/socle", et: ["ml/tabulaire"],
+          distinction: "ml/socle est généraliste, toutes tâches, aucune hypothèse sur le type de données ; ml/tabulaire est spécialisé données en colonnes. scikit-learn ne suppose rien du type de données, XGBoost si." }
+      - { entre: "llm/socle", et: ["llm/agents", "llm/rag"],
+          distinction: "llm/socle : on assemble (LangChain, DSPy). llm/agents : on orchestre une boucle d'outils. llm/rag : on indexe et on récupère." }
+      - { entre: "llm/runtime", et: ["llm/passerelle", "llm/outillage"],
+          distinction: "llm/runtime SERVIR le modèle · llm/passerelle ROUTER vers des fournisseurs · llm/outillage DÉCIDER quel modèle, sans le servir." }
+      - { entre: "data/*", et: ["docs/*"],
+          distinction: "Sortie machine contre sortie humaine — règle D-R2." }
+      - { entre: "devtools/*", et: ["devops/*", "observability/*"],
+          distinction: "devtools FABRIQUER du logiciel · devops le DÉPLOYER · observability le SURVEILLER une fois déployé." }
+      - { entre: "design/diagramme", et: ["design/ui", "data/viz"],
+          distinction: "Schémas techniques · interfaces produit · graphiques de données." }
+      - { entre: "llm/agent-de-code", et: ["llm/agents", "llm/assistant"],
+          distinction: "llm/agent-de-code : assistants et agents de codage, quelle que soit leur famille (extension d'IDE, CLI, application, plateforme de mémoire d'agent). llm/agents : briques génériques d'orchestration, sans spécialisation code. llm/assistant : application LLM prête à déployer pour un utilisateur final non développeur." }
+      - { entre: "database/admin", et: ["devtools/*"],
+          distinction: "Le sujet est la base, pas la fabrication de logiciel." }
+
+    # ------------------------------------------------------------------------
+    # journal — le vocabulaire de galaxie `concept/*` a ete CLOS le 2026-09-05,
+    # onze valeurs retirees. Le manifeste ne porte pas l historique (§2.3 point 5),
+    # mais il porte la REGLE qui l a produit, qui est generique et qui vaut pour
+    # toute instance.
+    # ------------------------------------------------------------------------
+    regle_de_retrait: >
+      Une valeur est retiree du vocabulaire des qu AUCUNE page ne la porte, meme
+      si elle parait un emplacement reserve. La laisser autoriserait une rechute
+      silencieuse, le validateur acceptant tout ce que le vocabulaire enumere.
+      `concept/devops` n a JAMAIS porte de page et a ete retiree pour cette raison
+      seule. L historique du retrait est dans git et AI/migration/, pas ici.
+
+  # ----------------------------------------------------------------------------
+  # L axe qui QUALIFIE : il ne range pas. ZERO OU UN.
+  # ----------------------------------------------------------------------------
+  nature:
+    champ: famille
+    porte_par: [brique]
+    interdit_sur: [notion, pattern, rule, hub, comparatif]
+    vide_autorise: true
+    motif_vide: >
+      Un champ vide est le SEUL signal prevu pour « l arbre de decision n a pas
+      tranche, a arbitrer ». Une famille inventee est une faute, un champ vide est
+      une question ouverte. R14 refuse en dur toute valeur hors du bloc, R14b
+      SIGNALE l absence sans en faire une faute — ce qu il fallait corriger n
+      etait pas la permissivite, c etait le silence. 1 brique concernee.
+    mesure: { valeurs: 9, date: "2026-09-07" }
+    valeurs:
+      - cle: paquet
+        definition: "S'installe dans un projet et s'importe dans du code."
+        frontiere: "Distinct de cli parce que le point d'entrée est un import, pas une commande. Distinct de extension parce que l'hôte est un projet, pas un logiciel."
+      - cle: plateforme
+        definition: "Se déploie et tourne en processus qu'un autre programme appelle."
+        frontiere: "Distinct de application parce que le consommateur nominal n'est pas un humain. Distinct de saas parce qu'elle est auto-hébergeable (F-R1)."
+      - cle: application
+        definition: "S'utilise par une interface faite pour un humain."
+        frontiere: "Distinct de plateforme parce qu'aucune API réseau n'y est un point d'entrée documenté."
+      - cle: cli
+        definition: "S'invoque en commande shell sans être importé."
+        frontiere: "Distinct de paquet par le point d'entrée documenté en premier (F-R3) : `axolotl train` contre `import trl`."
+      - cle: saas
+        definition: "Compte chez un tiers obligatoire, aucun auto-hébergement."
+        frontiere: "Distinct de plateforme parce que le code n'est pas déployable (F-R1) — une offre managée à côté d'un dépôt ouvert ne suffit pas."
+      - cle: extension
+        definition: "Ne s'exécute qu'à l'intérieur d'un hôte tiers."
+        frontiere: "Distinct de paquet parce que l'hôte est un LOGICIEL (IDE, navigateur, agent de code, SGBD), pas un projet : pgvector sans Postgres et jupysql sans Jupyter n'exécutent rien."
+      - cle: specification
+        definition: "Norme, format ou protocole sans implémentation de référence."
+        frontiere: "Distinct de paquet parce qu'il existe plusieurs implémentations et aucune canonique (F-R4)."
+      - cle: modele
+        definition: "Le livrable est un jeu de poids entraînés."
+        frontiere: "Distinct de paquet parce qu'on charge des poids, on n'écrit pas d'algorithme : timm (collection de backbones) est un paquet, segment-anything (code + poids officiels) un modele."
+      - cle: annuaire
+        definition: "Liste de ressources externes, pas un logiciel."
+        frontiere: "Distinct de tout le reste parce que rien ne s'installe, rien ne se déploie, il n'y a pas de version à suivre. N'exonère PAS du domaine (D-R7)."
+    # NEUF questions, F1 -> F9. Aucune n appelle un jugement de valeur : toutes
+    # portent sur un fait verifiable dans le depot amont ou dans la fiche.
+    arbre_de_decision:
+      - { n: F1, question: "La page décrit-elle une liste de ressources externes plutôt qu'un logiciel ?", si_oui: annuaire }
+      - { n: F2, question: "Est-ce une norme, un format ou un protocole, sans implémentation de référence unique ?", si_oui: specification }
+      - { n: F3, question: "Le livrable téléchargé est-il un jeu de poids entraînés ?", si_oui: modele }
+      - { n: F4, question: "Faut-il un logiciel hôte tiers (IDE, navigateur, agent, SGBD) pour l'exécuter ?", si_oui: extension }
+      - { n: F5, question: "L'auto-hébergement est-il impossible (compte chez un tiers obligatoire) ?", si_oui: saas }
+      - { n: F6, question: "Un autre programme, et pas seulement un humain, en est-il le consommateur nominal (port, API réseau) ?", si_oui: plateforme }
+      - { n: F7, question: "Le point d'entrée nominal est-il une interface graphique ?", si_oui: application }
+      - { n: F8, question: "S'invoque-t-il en commande shell sans être importé dans du code ?", si_oui: cli }
+      - { n: F9, question: "Aucun des précédents", si_oui: paquet, defaut: true }
+    # SIX departages. Sans elles, l arbre laisse 35 fiches en suspens sur 336 ;
+    # avec elles, aucune. NAIT VIDE dans un brain neuf.
+    departages:
+      - { n: F-R1, regle: "Si le code est publié et déployable, la famille est plateforme, jamais saas, même si l'éditeur pousse son offre managée.",
+          cas: "Comet, Neptune, Weights & Biases, LangSmith, E2B" }
+      - { n: F-R2, regle: "Un moteur exécutable en embarqué ET en serveur est paquet si l'installation par défaut ne lance aucun processus.",
+          cas: "DuckDB, SQLite, Chroma, LanceDB" }
+      - { n: F-R3, regle: "La famille suit le point d'entrée documenté en premier (README amont, à défaut la fiche).",
+          cas: "Uvicorn (cli), Ray (paquet), pi (cli), Mermaid (extension), LM Studio (application), TensorRT (paquet), Web-Check (application)" }
+      - { n: F-R4, regle: "specification seulement si la page ne documente AUCUNE implémentation de référence.",
+          cas: "Gymnasium -> paquet ; ADBC, Parquet, Avro, Iceberg -> specification" }
+      - { n: F-R5, regle: "Le tri se fait sur ce dont l'objet a besoin pour tourner, pas sur ce à quoi il ressemble.",
+          cas: "TransformerLens, SAELens, nnsight, sentence-transformers -> paquet" }
+      - { n: F-R6, regle: "Une sortie destinée à une machine et une sortie destinée à un humain ne rangent pas pareil (vaut surtout pour l'axe de rangement, cité ici pour mémoire).",
+          cas: "Stirling PDF contre docTR" }
+    frontieres: []
+    motif_frontieres_vides: >
+      Les neuf frontieres de cet axe sont portees par les valeurs elles-memes
+      (`frontiere:` ci-dessus), une chacune, parce qu une famille s oppose a
+      TOUTES les autres et pas a deux voisines nommees. C est l inverse de l axe
+      de rangement, ou une frontiere oppose deux ou trois valeurs precises.
+
+  # ----------------------------------------------------------------------------
+  # Les axes TRANSVERSES : ZERO OU PLUSIEURS. DevBrain n en a qu UN, et c est ce
+  # que la rupture 4 corrige — build_mocs.py code une seule boucle en dur.
+  # ----------------------------------------------------------------------------
+  transverses:
+    - champ: domaines
+      dossier: "Métiers"
+      multivalue: true
+      hub_par_valeur: true
+      pointe_vers: "les sous-hubs, jamais les feuilles"
+      motif_du_nom: >
+        « Domaines » designe deja les 20 dossiers de l arbre — l homonymie serait
+        un piege. Aucun dossier d axe transverse ne peut porter le nom de l axe de
+        rangement au pluriel : c est pour cette raison exacte que le dossier s
+        appelle Metiers/ et non Domaines/, et la note est dans le code.
+      motif: >
+        Le seul axe qui traverse l arbre technique. Un hub par valeur d un champ
+        MULTIVALUE — le mecanisme le plus reutilisable du lot 3, et le seul dont
+        le perimetre est un CHAMP et non un dossier.
+      valeurs:
+        - { cle: data-sci,  libelle: "Data Science",         couvre: "exploration, modélisation, viz, stats" }
+        - { cle: data-eng,  libelle: "Data Engineering",     couvre: "pipelines, ELT, qualité, streaming" }
+        - { cle: mlops,     libelle: "MLOps",                couvre: "déploiement modèle, monitoring, infra ML" }
+        - { cle: ml-eng,    libelle: "ML Engineering",       couvre: "entraînement scalable, optimisation" }
+        - { cle: ai-eng,    libelle: "AI Engineering",       couvre: "apps LLM, RAG, agents, MCP" }
+        - { cle: infra-ops, libelle: "Infrastructure & Ops", couvre: "réseau, supervision de machines, self-hosting, sécurité opérationnelle" }
+
+# ==============================================================================
+# champs — le dictionnaire, une fois. Chaque champ cite dans un role est defini
+# ici et une seule fois. Une source qui ne resout pas est une ERREUR DE
+# MANIFESTE, pas un champ vide.
+# ==============================================================================
+champs:
+  role:
+    type: enum
+    source: "roles[].id"
+    fonction: aucune
+    motif: >
+      Le champ qui choisit le gabarit que le validateur applique. Un `role:`
+      inconnu ou absent est refuse — il n y a plus de page sans gabarit (R3).
+  nom:
+    type: ligne
+    fonction: identite
+    exemption: 'un `nom:` portant / \ : * ? " < > | ne peut pas etre un nom de fichier (R9)'
+  alias:
+    type: liste
+    fonction: alias
+    unicite: souple
+    motif: >
+      L unicite globale detruirait des usages semantiques legitimes : `shap`,
+      `yolo`, `map`. R5 signale un doublon interne ou un alias qui est le `nom:`
+      d une autre page du MEME role, et reste souple.
+  pitch:
+    type: ligne
+    fonction: resume_court
+    section: null
+    reinjecte_dans: [Alternatives, Compléments]
+    motif: >
+      Le champ reinjecte. Chaque puce d une section de liste de liens adossee a un
+      champ commence par le pitch COURANT de sa cible — recopie, jamais retape
+      (regle 6). Il est aussi rendu DANS la zone AUTO du bandeau, en citation,
+      parce qu il vient du frontmatter : le laisser dehors aurait cree la seule
+      chose que la v3 supprime, une valeur recopiee a deux endroits dont l un se
+      perime sans que rien le dise.
+  categorie:
+    type: enum
+    source: axes.rangement
+    fonction: aucune
+  famille:
+    type: enum
+    source: axes.nature
+    fonction: aucune
+  domaines:
+    type: liste_enum
+    source: "axes.transverses[domaines]"
+    fonction: aucune
+  licence_type:
+    type: enum
+    valeurs: [open-source, source-available, proprietary, open-core]
+    fonction: aucune
+  maturite:
+    type: enum
+    valeurs: [production, beta, experimental, deprecated]
+    eliminatoire: [deprecated]
+    fonction: aucune
+    motif: >
+      Critere ELIMINATOIRE pour le skill d exploitation, et seul depuis la
+      suppression de `status:` au lot 2 (272 fiches sur 336 etaient
+      actif + production, 7 des 8 abandonne etaient deprecated). Sans lui, un
+      consommateur machine qui filtre sur l index sans ouvrir les fiches
+      proposerait une brique abandonnee sans jamais voir qu elle l est.
+      `eliminatoire:` est EXPLICITE et VIDE PAR DEFAUT : le kit n a aucune
+      intuition sur « quelle valeur d enumeration disqualifie ».
+  hosted:
+    type: liste_enum
+    valeurs: [self, managed]
+    fonction: aucune
+    motif: >
+      LISTE, pas scalaire : `both` (82 fiches) ne disait rien qu une enumeration
+      ne dise mieux, et une brique peut etre self-hebergeable ET managee sans que
+      ce soit une troisieme valeur a part.
+  scaling:
+    type: enum
+    valeurs: [single-node, distributed, serverless]
+    fonction: aucune
+  langage:
+    type: ligne
+    fonction: aucune
+    motif: >
+      Qualifie la colonne Nature du bandeau — sauf pour un `saas`. Indexe depuis
+      le lot 4 : sans lui, le skill d exploitation ne pouvait pas repondre a « un
+      paquet Python pour ce besoin » en une requete.
+  os:
+    type: ligne
+    fonction: aucune
+    motif: >
+      Vestige du gabarit `outil`, fusionne au lot 2. Sert quand meme la colonne
+      Execution d une `famille: application`, qui ne porte pas `hosted:` : « ou ca
+      tourne » est exactement la question a laquelle Execution repond.
+  alternatives:
+    type: liens
+    reciproque: { mode: symetrique }
+    section: "Alternatives"
+    fonction: aucune
+    motif: "Ce qui s utilise A LA PLACE de la brique."
+  complements:
+    type: liens
+    reciproque: { mode: symetrique }
+    section: "Compléments"
+    fonction: aucune
+    motif: >
+      Symetrique d `alternatives:`, ouvert au lot 2 : ce qui s utilise AVEC la
+      brique. pgvector et Postgres ne s excluent pas.
+  tags:
+    type: liste_enum
+    source: "vocabulaires.tags"
+    fonction: aucune
+  url_docs: { type: url, fonction: aucune }
+  url_repo: { type: url, fonction: aucune }
+  # --- champs des roles `prescription` : sans categorie ni nom par construction
+  contexte:          { type: texte, fonction: aucune }
+  services_cles:     { type: liens, fonction: aucune }
+  projets_appliques: { type: liste, fonction: aucune }
+  domaine:
+    type: ligne
+    fonction: aucune
+    motif: >
+      Champ de `role: rule`, chaine LIBRE. Ce n est PAS l axe de rangement, dont
+      le champ s appelle `categorie:` — l homonymie est malheureuse et le
+      manifeste la rend visible pour la premiere fois. Cf. Remontee 7.
+  applicable:        { type: ligne, fonction: aucune }
+  strictness:        { type: ligne, fonction: aucune }
+
+# ==============================================================================
+# bandeau — le haut de page. Le moteur est generique, le contenu est 100 % dev.
+# ==============================================================================
+bandeau:
+  porte_par: [brique]
+  vide: "—"
+  balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"]
+  motif_balises: >
+    Balises PROPRES au bandeau : le generateur de hubs possede deja
+    <!-- AUTO:START -->, et deux zones AUTO homonymes dans le meme vault
+    finiraient par se marcher dessus.
+  position: "juste sous le titre H1 ; une page sans H1 est SAUTEE et signalee, jamais devinee"
+  porte_le_resume: true
+  motif: >
+    Le panneau natif d Obsidian est masque : 18 proprietes rendues avant le titre
+    poussaient ## Definition sous la ligne de flottaison. Le lecteur a besoin de
+    quatre faits, la machine des dix-huit. Trois lignes rendues au lieu de
+    dix-huit. Idempotent : relance sur un vault deja traite, zero octet ecrit.
+  regle_dure: >
+    Une cellule sans source dans le frontmatter affiche `vide`, JAMAIS une valeur
+    plausible. Une fiche vide honnetement vaut mieux qu une fiche remplie au juge.
+    Le test porte sur les CELLULES, jamais sur la zone rendue : le tiret cadratin
+    est aussi un signe de ponctuation courant, et douze pitchs en portent un —
+    chercher « — » dans le texte du bandeau signalait onze trous inexistants.
+  echappement: "`|` est echappe dans une cellule : il couperait la ligne du tableau."
+  colonnes:
+    - titre: Nature
+      source: famille
+      qualifie_par: langage
+      exception_qualification:
+        si: "famille == saas"
+        motif: >
+          Pour un service qu on n execute jamais soi-meme, le langage d
+          implementation ne fait pas partie de ce que la chose EST : « SaaS Rust »
+          occupe une cellule sans rien apprendre. L exception est inscrite plutot
+          que devinee — une regle qui produit une cellule inutile n est pas
+          uniforme, elle est seulement inconditionnelle.
+      table:
+        paquet: Librairie
+        plateforme: Plateforme
+        application: Application
+        cli: CLI
+        saas: SaaS
+        extension: Extension
+        specification: Spécification
+        modele: Modèle
+        annuaire: Annuaire
+    - titre: Licence
+      source: licence_type
+      table:
+        open-source: open-source
+        open-core: open-core
+        source-available: source-available
+        proprietary: propriétaire
+      motif: "Table un pour un, donc reversible : la concordance se verifie par egalite de chaines, sans interpretation."
+    - titre: Exécution
+      source: famille
+      table:
+        paquet: "en bibliothèque, rien à héberger"
+        cli: "en ligne de commande, rien à héberger"
+        extension: "dans le moteur hôte, rien à héberger"
+        specification: "rien à exécuter"
+        annuaire: "rien à exécuter"
+        modele: "à charger dans un runtime"
+      depend_de:
+        familles: [plateforme, saas, application]
+        champs: [hosted, scaling]
+        table_hosted:
+          "[self]": "self-hébergé"
+          "[managed]": "managé"
+          "[managed, self]": "self-hébergé ou managé"
+        table_scaling:
+          single-node: "mono-nœud"
+          distributed: "distribué"
+          serverless: "serverless"
+          composition: "<hosted> · <scaling>"
+        repli:
+          si: "famille == application et os renseigné"
+          source: os
+          motif: "Une application de bureau ne porte pas hosted: — elle porte os:, et « ou ca tourne » est exactement la question a laquelle Execution repond."
+      motif: >
+        Pour les familles qui ne s hebergent pas, la reponse est dans la famille
+        elle-meme — c est precisement ce que R16 a acte en supprimant hosted: des
+        177 paquets qui le portaient sans raison.
+    - titre: Maturité
+      source: maturite
+
+# ==============================================================================
+# regles — LES DIX. `severite` est un RESULTAT DE MESURE, jamais une intention.
+# Une regle passe en dure quand le vault est a zero, et reste en avertissement
+# AVEC UN MOTIF ECRIT sinon. On ne durcit jamais en ajoutant une exception.
+# Etat arrete a la cloture du lot 8, le 2026-09-06 : sept dures, trois en
+# avertissement. Deux ont ete REECRITES parce que leur formulation d origine
+# etait inatteignable — la mesure l a montre, elle n a pas ete supposee.
+# ==============================================================================
+regles:
+
+  - id: reciprocite
+    enonce: "Si A cite B en `alternatives:`, B cite A. Idem pour `complements:`."
+    active: true
+    severite: dure
+    code: [R12, R18]
+    champs: [alternatives, complements]
+    mesure: { date: "2026-09-06", population: 337, violations: 0 }
+    motif: >
+      R1 et R11 ne regardaient qu `alternatives:` — c est ce qui a laisse la
+      reciprocite de `complements:` sans aucun controle, puis douze moities
+      orphelines pendant tout le lot 6. Un couple non reciproque ne se voit pas en
+      relisant une seule page. Le correctif de fond du lot 8 est de traiter les
+      deux listes par une TABLE et non par deux blocs de code.
+
+  - id: chemin_categorie
+    enonce: "Le dossier d'une page correspond à sa valeur de l'axe de rangement."
+    active: true
+    severite: dure
+    code: [check_arbo]
+    structurellement_dure: true
+    motif_structurelle: >
+      §5.6, recommandation ecrite, point NON tranche : une violation ici est une
+      INCOHERENCE DE STRUCTURE et non un defaut de redaction. Avec
+      `bandeau_a_jour`, ce sont les deux seules regles qu une instance neuve
+      pourrait recevoir dures. Le manifeste le SIGNALE ; il ne le decide pas.
+    sortie: "signale l'écart avec le `git mv` à faire"
+    mesure: { date: "2026-09-06", population: 765, violations: 0 }
+
+  - id: completude_du_hub
+    enonce: "Toute page d'un rôle `apparait_dans_le_hub` présente dans le dossier apparaît dans le hub du dossier."
+    active: true
+    severite: dure
+    code: [R19]
+    roles: [brique]
+    mesure: { date: "2026-09-06", population: 337, violations: 0 }
+    motif: >
+      Absente avant le lot 8 : R7 verifiait « atteignable depuis un hub », jamais
+      « presente dans le hub de SON dossier ». Une regle absente ne ressemble pas
+      a une regle souple, elle ressemble a une regle satisfaite.
+
+  - id: voisinage_declare
+    enonce: "Une page dont le dossier porte d'autres pages du même rôle et dont le champ de voisinage est vide est signalée."
+    active: true
+    severite: avertissement
+    definitif: true
+    code: [R20]
+    champ: alternatives
+    mesure: { date: "2026-09-06", population: 337, violations: 62 }
+    motif: >
+      PAR CONCEPTION, ET POUR TOUJOURS. Une brique peut legitimement n avoir
+      aucune alternative. La signaler aide, l interdire mentirait. Ce motif est
+      generique et se reecrit tel quel dans toute instance.
+
+  - id: redirection_sourcee
+    enonce: >
+      Une cellule de la colonne négative qui REDIRIGE — c'est-à-dire qui porte une
+      flèche — et dont la cible est une page fichée dans le brain, porte le
+      wikilink de cette page.
+    active: true
+    severite: dure
+    code: [R21]
+    sections: ["Prendre si / Écarter si"]
+    colonne: "Écarter si"
+    marqueur: "→|->"
+    condition: "la cible est une page fichée"
+    mesure: { date: "2026-09-06", population: 1388, violations: 1 }
+    mesure_des_formes_ecartees:
+      - { forme: "toute cellule porte un wikilink", violations: 357, sur: 1388,
+          verdict: "inatteignable, 26 %, de 0 % à 44 % selon le domaine" }
+      - { forme: "toute exclusion qui nomme un besoin couvert par une autre page porte son wikilink",
+          violations: 177,
+          verdict: "confond nommer et rediriger" }
+      - { forme: "toute cellule dont le motif est une redirection porte un wikilink",
+          violations: 18,
+          verdict: "dont 5 flèches de VERSION (0.x -> 1.x) et 13 redirections hors brain (-> argparse, -> mypy, -> un wiki d'équipe)" }
+      - { forme: "la CONJONCTION position × condition", violations: 1,
+          verdict: "retenue, réparée, dure" }
+    motif: >
+      La conjonction est le resultat : la position (la fleche marque la
+      redirection, 345 cellules sur 1 388) donne OU regarder, la condition (la
+      cible est couverte) donne QUOI exiger. Corollaire a ne pas rater : reecrire
+      les 1 031 bornes restantes sous forme comparative pour leur donner une cible
+      ferait exactement ce que le lot 5 a passe quatre sessions a defaire.
+    reecrite: true
+
+  - id: reinjection_du_resume
+    enonce: "Chaque puce d'une section de liste de liens adossée à un champ commence par le résumé COURANT de sa cible."
+    active: true
+    severite: dure
+    code: [R1, R22]
+    champ_resume: pitch
+    sections: [Alternatives, Compléments]
+    normalisation: "`**` et espaces normalisés avant comparaison"
+    mesure: { date: "2026-09-06", population: 337, violations: 0 }
+
+  - id: etiquettes_fermees
+    enonce: "Une section déclarée `genre: etiquetee` a un vocabulaire FERMÉ."
+    active: true
+    severite:
+      "Mise en œuvre": dure
+      "Ressources": avertissement
+    code: [R23]
+    mesure:
+      "Mise en œuvre": { date: "2026-09-06", population: 337, violations: 0,
+                         detail: "les 5 étiquettes obligatoires sur 337/337" }
+      "Ressources": { date: "2026-09-06", population: 337, violations: 5,
+                      detail: "4 « Site », 1 « Poids »" }
+    motif: >
+      Les cinq de « Mise en oeuvre » sont a zero, donc dures. Les cinq violations
+      de « Ressources » ne sont pas des fautes de redaction mais DEUX BESOINS QUE
+      LE VOCABULAIRE NE COUVRE PAS. La durcir demanderait d ouvrir le
+      vocabulaire, c est-a-dire d ajouter une exception pour faire passer la
+      regle. L arbitrage appartient a floSa.
+
+  - id: citation_unique
+    enonce: "Une même cible ne se LISTE pas dans deux sections de liste de liens."
+    active: true
+    severite: dure
+    code: [R24]
+    sections: [Alternatives, Compléments, "Voir aussi"]
+    definition_de_liste: >
+      Une cible est « listee » quand elle est l ENTREE d une puce, eventuellement
+      enchainee a d autres par « · », « , » ou « / ». La prose de la section de
+      definition et les cellules du tableau de decision citent librement, et le
+      DOIVENT.
+    mesure:
+      - { lecture: "toutes sections", violations: 242,
+          verdict: "arithmétiquement impossible : la règle de conversion du lot 6 GARDE la cible en colonne négative faute de vue d'accueil, et R11 EXIGE qu'elle figure en Alternatives — deux contraintes dures et contradictoires" }
+      - { lecture: "entrées de puce", violations: 0, population: 337,
+          verdict: "retenue, dure" }
+    motif: >
+      La restriction aux entrees de puce n est PAS un assouplissement de confort :
+      sans elle, la regle punirait la forme que le lot 6 recommande pour une
+      section Alternatives vide (« Aucune outillee dans le brain : l approche
+      concurrente est [[Diff-in-Diff]] »), ou le lien EXPLIQUE au lieu de LISTER.
+      Et le defaut d origine est toujours attrape : sur la page Faker, Mimesis
+      apparaissait en Alternatives ET en Liens, deux listes de liens.
+    reecrite: true
+
+  - id: bandeau_a_jour
+    enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
+    active: true
+    severite: dure
+    code: [build_bandeau --check]
+    structurellement_dure: true
+    motif_structurelle: "§5.6, comme `chemin_categorie` : regenerer et comparer les octets ne juge aucune redaction."
+    mesure: { date: "2026-09-06", population: 337, violations: 0 }
+
+  - id: anti_repetition
+    enonce: "La section de définition ne recontient ni la nature, ni la licence, ni la maturité affichées par le bandeau."
+    active: false
+    severite: avertissement
+    definitif: true
+    code: [R26]
+    scriptable: false
+    mesure: { date: "2026-09-06", population: 337, candidats: 11, vrais: 2 }
+    motif: >
+      NON SCRIPTABLE, et il ne faut pas la livrer. `production`, `paquet`,
+      `modele`, `application` et `open-source` sont des mots francais ordinaires.
+      Sur les seuls motifs BORNES la mesure donne 11 candidats dont 2 vrais :
+      « cote open source » chez PuLP parle des SOLVEURS, « Application de bureau »
+      ajoute « de bureau », « un annuaire de liens » est le coeur de la
+      definition. Durcir rendrait la regle contournee, pas respectee. Elle sert de
+      relecture assistee, et c est tout ce qu elle peut etre.
+    motifs_bornes:
+      licence:
+        open-source: '\bopen[- ]source\b'
+        source-available: '\bsource[- ]available\b'
+        proprietary: '\b(?:propri[ée]taire|proprietary)\b'
+        open-core: '\bopen[- ]core\b'
+      maturite:
+        beta: '\b(?:en )?b[êe]ta\b'
+        experimental: '\bexp[ée]rimental(?:e|es)?\b'
+        deprecated: '\b(?:d[ée]pr[ée]ci[ée]e?|deprecated)\b'
+      motif_absence_de_production: >
+        `production` est ABSENT de la table, et c est delibere : c est un mot
+        francais ordinaire (« pense des l origine pour le passage en production »).
+
+# Les regles hors des dix, ecrites parce que le vault les a exigees. Le kit garde
+# du CODE par regle ; le manifeste les BRANCHE, il ne les decrit pas. La liste des
+# dix est fermee par le kit ; celles-ci sont l ossature du validateur.
+regles_de_socle:
+  - id: frontmatter_lisible
+    code: [R17]
+    severite: dure
+    depuis: "2026-09-05"
+    enonce: "Un frontmatter illisible est une ERREUR, jamais une absence."
+    mesure: { violations: 0, motif_du_durcissement_gratuit: "zéro page dans ce cas, aucune réparation nécessaire" }
+    motif: >
+      Ce n etait pas une regle souple a durcir, c etait L ABSENCE DE REGLE. Une
+      page dont le frontmatter ne parsait pas etait silencieusement sautee par les
+      DEUX validateurs — hors du total, hors de toutes les autres regles, liens
+      non resolus, chemin non confronte a sa categorie. Un `pitch:` non quote
+      contenant « : » suffisait, et sur une brique ou une notion RIEN ne l aurait
+      signale : le vault restait vert. C est une lecon de conception de
+      validateur, pas une regle de dev.
+    quatre_motifs_distingues:
+      - "aucun frontmatter (le fichier ne commence pas par `---`)"
+      - "frontmatter non refermé (pas de second `---`)"
+      - "YAML invalide — le détail de l'erreur est affiché, avec sa cause la plus fréquente"
+      - "frontmatter lu comme autre chose qu'un dictionnaire de champs"
+  - id: gabarit_par_role
+    code: [R3]
+    severite: dure
+    enonce: "`role:` inconnu ou absent refusé ; champs requis non vides ; tout champ hors de `autorises` échoue."
+  - id: liens_resolus
+    code: [R2]
+    severite: dure
+    enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter."
+  - id: nom_egal_fichier
+    code: [R9]
+    severite: dure
+    enonce: "`nom:` identique au nom du fichier, sauf caractère illégal en nom de fichier."
+  - id: page_atteignable
+    code: [R7]
+    severite: dure
+    enonce: "Toute page atteignable depuis un hub."
+  - id: hub_par_niveau
+    code: [check_arbo]
+    severite: dure
+    enonce: "TOUT niveau du chemin porte son hub, pas seulement la feuille."
+  - id: vocabulaire_ferme
+    code: [R4, R14, R14b]
+    severite: dure
+    enonce: "Toute valeur d'un champ `enum` ou `liste_enum` appartient au vocabulaire déclaré de son axe."
+  - id: unicite_du_nom_de_fichier
+    severite: dure
+    enonce: "Un nom de fichier est unique dans le vault, à la casse près."
+    motif: >
+      C est la SEULE contrainte que la convention de wikilink nu impose, et elle
+      vaut aussi pour chaque hub a creer. Un lien qualifie porte un chemin, donc
+      casse au premier deplacement : le lot 3 a deplace 682 fichiers sans toucher
+      un seul lien. La derniere collision interne — la brique `hdbscan` contre la
+      notion `HDBSCAN`, que le systeme de fichiers Windows ne distingue meme pas —
+      est tombee avec le renommage de la notion.
+  - id: taille_avertissement
+    severite: avertissement
+    enonce: "Une page au-delà de `roles[].taille_avertissement` lignes suggère une scission."
+  - id: collision_alias
+    code: [R5]
+    severite: avertissement
+    enonce: "Doublon interne d'alias, ou alias qui est le `nom:` d'une autre page du MÊME rôle."
+  - id: couverture_des_vues
+    code: [R8, R8e]
+    severite: avertissement
+    enonce: "Une valeur de l'axe de rangement assez peuplée sans vue, et une page qu'une vue a laissée dehors alors qu'elle retient ses pairs."
+    mesure:
+      R8a: { categories_signalees: 13 }
+      R8e: { pages_hors_de_toute_vue: 89, sur: 337,
+             relevant_des_13: 51, invisibles_a_R8a: 38,
+             signalees_par_R8e: 11,
+             motif: "les 27 autres vivent dans une catégorie de 1 ou 2 briques, où aucune vue n'a de sens : backlog d'enrichissement, pas validateur" }
+    motif: "Creer une vue est une decision EDITORIALE, pas technique."
+  - id: champs_supprimes
+    code: [R25]
+    severite: dure
+    enonce: "Aucun champ supprimé par une version antérieure ne survit HORS de l'arbre des pages — racine, gouvernance, gabarits."
+
+# ==============================================================================
+# Le reste
+# ==============================================================================
+
+seuils:
+  vue_min_valeurs_axe: 3          # check_brain.BASE_MIN_CAT
+  vue_min_membres: 2              # check_brain.BASE_MIN_MEMBRES
+  motif: "Au-dessous, une valeur de l'axe n'a pas assez de membres pour qu'une vue ait un sens."
+
+vocabulaires:
+  tags:
+    fichier: "Documentation/general/tags.md"
+    mode: ferme
+    lecture: "colonne 1 des tableaux, en backticks, kebab-case"
+    regle: >
+      Le skill pioche, il n invente JAMAIS. Un tag manquant se propose, s ajoute
+      ici, puis s utilise.
+  themes:
+    fichier: "Documentation/general/themes.md"
+    mode: ferme
+    lecture: "colonne 1 des tableaux, en backticks"
+    porte: "axes.transverses[domaines]"
+  taxonomie:
+    fichier: "Documentation/general/taxonomie.md"
+    mode: ferme
+    lecture: "bloc ```famille pour l'axe de nature ; bloc ```domaine et fences nus pour l'axe de rangement"
+    genere: true
+    motif: >
+      Dans DevBrain, ce fichier est la source MACHINE lue par le validateur.
+      Dans BrainKit il devient un document GENERE depuis le manifeste : la place
+      du vocabulaire ferme devient le manifeste, et deux sources ne decrivent plus
+      la meme chose (motif E4).
+    motif_du_fence_par_langue: >
+      La langue du fence separe les vocabulaires : ```famille porte l axe nature,
+      un fence nu porte l axe de rangement. Sans cette distinction, le chargeur
+      avalerait les 9 valeurs de famille et `categorie: paquet` deviendrait valide.
+
+graphe:
+  cible: ".obsidian/graph.json, clé `colorGroups`"
+  versionne: false
+  motif_non_versionne: >
+    `.obsidian/graph.json` est GITIGNORE : cette table est la SEULE source de
+    verite des couleurs, a reappliquer a la main sur chaque poste. C est une etape
+    d installation, pas un fichier. L extrait CSS `.obsidian/snippets/roles.css`,
+    lui, est versionne — il colore l explorateur, les onglets et le badge de
+    propriete, pas le graphe.
+  motif_de_l_ordre: >
+    L ordre compte : une requete `path:` passe AVANT une requete `role:`, sinon un
+    hub special prend la couleur des hubs ordinaires. `path:Comparatifs/` est en
+    tete parce que ce n est pas un aiguillage de dossier parmi d autres, c est le
+    point de ralliement des 47 : en orange il se confondait avec les 46 hubs de
+    l arbre et devenait introuvable a l oeil (arbitrage du 2026-09-06).
+  ordre:
+    - { requete: "path:Comparatifs/",  couleur: "#EF4444", rgb: 15680580 }
+    - { requete: "path:Métiers/",      couleur: "#FFD43B", rgb: 16766011 }
+    - { requete: '["role":"hub"]',        couleur: "#FF922B", rgb: 16749099 }
+    - { requete: '["role":"brique"]',     couleur: "#412CDD", rgb: 4271325 }
+    - { requete: '["role":"notion"]',     couleur: "#7AB800", rgb: 8042496 }
+    - { requete: '["role":"comparatif"]', couleur: "#EF4444", rgb: 15680580 }
+    - { requete: '["role":"pattern"] OR ["role":"rule"]', couleur: "#94A3B8", rgb: 9741240 }
+  note_base: >
+    Un `.base` NE SE COLORE PAS, et ce n est pas un oubli : il n a ni frontmatter
+    ni corps, donc pas de `role:`, et aucune requete colorGroups ne peut l
+    atteindre. Les 47 apparaissent dans la couleur par defaut, tenus par l unique
+    arete de l embed de leur page. La page est le noeud qui compte.
+  note_couleurs_heritees: >
+    Le bleu et le vert sont EXACTEMENT ceux des anciennes galaxies `dev` et
+    `wiki` : ce sont les memes pages, elles ne changent que de nom de champ.
+  hors_graphe: "les pages de gouvernance sont exclues par `userIgnoreFilters`, pas par une couleur"
+
+genere:
+  chemins:
+    - { chemin: "AI/index/", par: build_index }
+    - { chemin: "zones AUTO des 74 hubs", par: build_mocs, balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"] }
+    - { chemin: "Métiers/", par: build_mocs }
+    - { chemin: "Comparatifs/Comparatifs.md", par: build_mocs }
+    - { chemin: "AI/index/liens.md", par: build_links }
+    - { chemin: "bandeaux des 337 briques", par: build_bandeau, balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"] }
+    - { chemin: "Documentation/general/taxonomie.md", par: kit, depuis: axes }
+    - { chemin: "Templates/", par: kit, depuis: "roles[].champs et roles[].corps" }
+    - { chemin: "docs/", par: kit, depuis: "tout le manifeste" }
+  contrat: >
+    Ce qui est genere n est JAMAIS edite a la main, et se verifie : zone a
+    balises dediees, remplacement en bloc, idempotence (zero octet ecrit si rien
+    ne change), `--check` en code 2, preservation de la zone manuelle.
+  non_pages:
+    - .git
+    - .claude
+    - .obsidian
+    - AI
+    - Documentation
+    - Templates
+    - Projects
+    - docs
+    - MOC
+  motif_non_pages: >
+    Le perimetre s enumere PAR LA NEGATIVE : tout dossier de la racine qui n est
+    pas de l outillage porte des pages. Aucune table de domaines a tenir a jour.
+    `Templates/` en est exclu et doit le rester — ses gabarits portent un
+    frontmatter d exemple a trous, dont un bandeau derive n aurait aucun sens.
+  index:
+    fichiers: ["AI/index/brain-index.json", "AI/index/brain-index.md"]
+    champs: [nom, alias, role, categorie, famille, langage, domaines,
+             pitch, tags, alternatives, complements, maturite]
+    plus: [path]
+    tri: stable
+    horodatage: false
+    motif: >
+      Ordre stable et aucun horodatage : deux regenerations d un vault inchange
+      produisent le meme octet, sans quoi le `diff` vide du critere d acceptation
+      des generateurs serait impossible.
+  liens:
+    fichier: "AI/index/liens.md"
+    sections: [tags, liens_sortants, backlinks, a_creer]
+    motif_a_creer: "Les liens NON RESOLUS sont un mecanisme de backlog qui vaut pour tout sujet."
+    masque_du_graphe: true
+
+propagation:
+  enonce: >
+    Le rayon de propagation d une insertion est le DOSSIER D ACCUEIL, plus ses
+    HUBS PARENTS. Le voisinage d une page est `ls` de son dossier — il ne se
+    devine plus.
+  clause: >
+    Une ligne sans objet se DECLARE sans objet, elle ne se tait pas.
+  derivee: true
+  motif_derivee: >
+    Les six lignes ci-dessous ne sont pas six decisions : elles SE DERIVENT de la
+    liste des roles. Un role `fonction: vue` -> une ligne vue ; un role
+    `protege: true` -> une ligne notion ; les pairs = meme role dans le dossier.
+    La table est donc GENEREE, pas ecrite.
+  table:
+    - { n: P1, cible: "le hub du dossier", trouve_par: "c'est le dossier d'accueil", par: genere }
+    - { n: P2, cible: "les hubs parents", trouve_par: "remontée de chemin", par: genere }
+    - { n: P3, cible: "la vue du dossier", trouve_par: "le fichier `fonction: vue` du dossier",
+        par: "vue embarquée : automatique ; section écrite à la main : à écrire" }
+    - { n: P4, cible: "la notion du dossier", trouve_par: "le fichier `fonction: notion` du dossier", par: "à écrire" }
+    - { n: P5, cible: "les pairs", trouve_par: "les autres pages du même rôle dans le dossier", par: "à écrire, réciprocité obligatoire" }
+    - { n: P6, cible: "les résumés réinjectés", trouve_par: "les champs à réciprocité des pairs", par: "script de resynchronisation" }
+
+skills:
+  capture:
+    nom: enrichir-brain
+    ecrit_dans_le_brain: true
+    mode_lot: false
+    motif_mode_lot: >
+      §5.9, recommandation ecrite, point NON tranche : capturer dix a vingt unites
+      d un meme dossier en une conversation, en n appliquant la propagation qu une
+      fois a la fin. Absent du DevBrain, qui n a jamais eu a s amorcer.
+    porte:
+      - "la règle de propagation P1->P6, dérivée"
+      - "le mode mise à jour et sa table des effets de bord (champ modifié -> consommateurs -> commande de vérification)"
+      - "la vérification [V1] de la réinjection du résumé"
+  cloture:
+    nom: cloturer-brain
+    ecrit_dans_le_brain: false
+    etapes:
+      - "régénérer les quatre artefacts dérivés"
+      - "passer les DEUX validateurs au vert"
+      - "vérifier la divergence avec la branche distante AVANT tout commit"
+      - "committer et intégrer en fast-forward"
+    motif: >
+      SEUL endroit ou la politique git du vault est ecrite, a une exception
+      declaree : la regle d IDENTITE vit aussi dans CLAUDE.md, parce qu elle doit
+      etre lue a chaque conversation.
+  exploitation:
+    nom: planifier-projet
+    ecrit_dans_le_brain: false
+    livrable: "un cahier des charges sourcé qui contraint l'IA de développement en aval"
+    archetypes: "Documentation/perso/archetypes.md"
+    questions: "Documentation/general/questions-projet.md"
+    filtre_eliminatoire: "champs[maturite].eliminatoire"
+    forme: >
+      Identifier l usage -> poser SEULEMENT les questions pertinentes ->
+      interroger l index -> produire un livrable SOURCE qui contraint l aval.
+      C est cette forme qui se transpose ; les archetypes et le format de
+      candidature, non.
+
+agent:
+  racine: "AI/"
+  sous:
+    - { chemin: "design/", role: "les specs de reference" }
+    - { chemin: "migration/", role: "un fichier par lot, avec ses *Remontees*" }
+    - { chemin: "index/", role: "genere, ne pas editer a la main" }
+    - { chemin: "sessions/", role: "resumes automatiques par le hook Stop" }
+    - { chemin: "scripts/", role: "l outillage — vide sur une instance `kit.mode: branche`" }
+    - { chemin: "backlog.md", role: "ce qui reste a faire" }
+  motif_migration: >
+    Le journal de lot n est PAS remplacable par de la configuration. `motif:`
+    porte « pourquoi ce libelle » ; il ne porte pas les quatre paragraphes de la
+    remontee qui l a produit. Le manifeste POINTE vers AI/migration/, il ne l
+    absorbe pas.
+  hook_stop: "écrit un résumé de session dans AI/sessions/"
+
+frontieres_d_ecriture:
+  libre:
+    - "AI/ hors index/"
+    - "Inbox.md"
+  sur_confirmation:
+    - "toute page d'un rôle non protégé"
+    - "Documentation/"
+  sur_demande_explicite:
+    - "toute page d'un rôle `protege: true`"
+  jamais_a_la_main:
+    - "les chemins de `genere`"
+  jamais_sans_accord:
+    - "une suppression de page"
+  deplacement: "par `git mv`, JAMAIS par suppression + création — sinon l'historique de la page est perdu"
+  motif: >
+    La premiere frontiere se lit sur un CHEMIN, la seconde sur un CHAMP. Une page
+    voisine d une unite, dans le meme dossier, sous le meme hub, peut etre une
+    notion protegee — la regle change, l emplacement ne le dit pas. Donc lire le
+    frontmatter avant d ecrire.
