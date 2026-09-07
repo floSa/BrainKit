@@ -18,8 +18,11 @@ controverses plutôt que des alternatives). S'il passe, un domaine client passe.
 
 ## Ce qui est établi avant de commencer
 
-État du DevBrain au 2026-09-06, migration v3 close : 338 briques, 299 notions,
-47 comparatifs, 75 hubs, 6 patterns, 6 règles. Trois axes (`role:`, `categorie:`,
+État du DevBrain au 2026-09-06, migration v3 close : 337 briques, 297 notions,
+47 comparatifs, 74 hubs, 5 patterns, 5 règles — 765 pages. *(Comptes rectifiés par
+le lot 1, le 2026-09-07, par balayage du vault ; les valeurs d'origine — 338 / 299 /
+75 / 6 / 6 — ne correspondaient ni au vault seul ni au vault plus les 6 gabarits de
+`Templates/`. Cf. `design/01-manifeste.md`, Remontée 1.)* Trois axes (`role:`, `categorie:`,
 `famille:`), un arbre de 20 domaines dérivé de `categorie:`, un seuil de promotion
 à 5, deux validateurs, quatre générateurs, trois skills, huit lots de migration
 dont chaque arbitrage est écrit avec sa mesure.
@@ -67,7 +70,7 @@ Deux principes traversent tout l'inventaire et valent d'être posés avant lui :
 | A2 | L'axe `role:` — un champ fermé qui **choisit le gabarit** que le validateur applique | **GÉNÉRIQUE** | `check_brain` R3 refuse un `role:` inconnu ou absent et applique `ALLOWED[role]` : c'est un moteur de schéma indexé par une chaîne, indifférent aux chaînes. |
 | A3 | Les **6 valeurs** de `role:` (`brique`, `notion`, `comparatif`, `hub`, `pattern`, `rule`) | **PARAMÉTRABLE** | `hub` est structurel et obligatoire partout ; `notion` se transpose (« ce qu'il faut comprendre ») ; les quatre autres sont des choix de sujet. La liste sort dans le manifeste. |
 | A4 | La dérivation `categorie:` → chemin (`arbo.domaine()`, `arbo.dossier_attendu()`, `arbo.promotions()`) | **GÉNÉRIQUE** | Trente lignes qui coupent un préfixe, cherchent dans une table, comptent par domaine et appliquent un seuil. Zéro vocabulaire dev **dans le code**. |
-| A5 | Les trois tables d'`arbo.py` : `DOM_LABEL` (20), `DOM_RATTACHE` (1), `SUB_LABEL` (39) | **PARAMÉTRABLE** | Ce sont les valeurs, et elles portent chacune un **motif d'arbitrage en commentaire** (« RAG & retrieval » parce que « RAG » est le nom d'une notion du dossier). Le manifeste doit donc porter `libelle:` **et** `motif:` — sans quoi la sortie en YAML perd ce que huit lots ont appris. |
+| A5 | Les trois tables d'`arbo.py` : `DOM_LABEL` (20), `DOM_RATTACHE` (1), `SUB_LABEL` (47) | **PARAMÉTRABLE** | Ce sont les valeurs, et elles portent chacune un **motif d'arbitrage en commentaire** (« RAG & retrieval » parce que « RAG » est le nom d'une notion du dossier). Le manifeste doit donc porter `libelle:` **et** `motif:` — sans quoi la sortie en YAML perd ce que huit lots ont appris. |
 | A6 | `SEUIL = 5` et son **plafond** (« un fils ne se promeut pas s'il ne laisse aucune page au parent ») | **PARAMÉTRABLE** | Le plafond est un raisonnement générique et remarquable ; le `5` est calibré sur ~700 pages. Voir §4 point 9 : c'est la valeur qui casse le plus vite. |
 | A7 | Les wikilinks **nus** et la contrainte qui va avec (nom de fichier unique dans le vault, à la casse près) | **GÉNÉRIQUE** | Un lien qualifié casse au premier `git mv` ; le lot 3 a déplacé 682 fichiers sans toucher un lien. Vrai de tout vault Obsidian, quel que soit le sujet. |
 
@@ -106,7 +109,7 @@ Deux principes traversent tout l'inventaire et valent d'être posés avant lui :
 | E1 | Le **contrat de frontmatter par rôle** : `REQUIRED` (non vides), `ALLOWED` (exacts, tout champ hors liste échoue), `VALUE_ENUMS`, `LIST_ENUMS` | **GÉNÉRIQUE** | C'est un moteur de schéma. Il ne connaît que « ce rôle attend ces clés, avec ces valeurs » : le schéma est de la donnée, pas du code. |
 | E2 | Les **6 schémas** eux-mêmes (14 champs de brique + 2 conditionnels, 6 de notion, 4 de comparatif, 6 de hub, 5 de pattern, 5 de rule) | **À RÉÉCRIRE** | `pitch`, `famille`, `licence_type`, `hosted`, `scaling`, `url_repo` : la liste **est** le sujet. |
 | E3 | Le mécanisme du **champ conditionnel** (R16 : `hosted:`/`scaling:` n'existent que si `famille ∈ {plateforme, saas, application}`) | **GÉNÉRIQUE** | « Ce champ n'existe que si cet autre champ vaut ceci » est une contrainte de schéma ordinaire, et §4 point 1 montre qu'elle se réemploie immédiatement en histoire. |
-| E4 | Les **5 fichiers de `Templates/`** (`Service-Dev`, `Outil-Dev`, `Concept-Wiki`, `Pattern`, `Rule`) | **À RÉÉCRIRE** | Et un constat qui compte pour la conception : ils sont **périmés**. `Service-Dev.md` porte encore `## Pourquoi`, `## Pièges`, `## Liens` — le corps v2 — alors que les 338 briques portent le gabarit du lot 6. La source de vérité du gabarit est `brain-v3.md` §6, pas `Templates/`. **Conséquence pour BrainKit : les gabarits doivent être GÉNÉRÉS depuis le manifeste, jamais maintenus à la main à côté de lui** — c'est exactement le défaut qu'on vient de constater. |
+| E4 | Les **5 fichiers de `Templates/`** (`Service-Dev`, `Outil-Dev`, `Concept-Wiki`, `Pattern`, `Rule`) | **À RÉÉCRIRE** | Et un constat qui compte pour la conception : ils sont **périmés**. `Service-Dev.md` porte encore `## Pourquoi`, `## Pièges`, `## Liens` — le corps v2 — alors que les 337 briques portent le gabarit du lot 6. La source de vérité du gabarit est `brain-v3.md` §6, pas `Templates/`. **Conséquence pour BrainKit : les gabarits doivent être GÉNÉRÉS depuis le manifeste, jamais maintenus à la main à côté de lui** — c'est exactement le défaut qu'on vient de constater. |
 | E5 | Le **corps** de `role: brique` (`## Définition`, `## Prendre si / Écarter si`, `## Mise en œuvre`, `## Écosystème` et ses deux listes, `## Ressources`, `## Voir aussi`) | **À RÉÉCRIRE** | Six titres, six intentions de dev. Ce qui se garde est la **doctrine** : une ligne, une étiquette, une idée ; aucune prose hors de `## Définition` ; une section `## Retours` n'existe **que** si une entrée datée existe. |
 | E6 | Le corps de `role: notion` (`Aperçu`, `Concepts clés`, `Les maths simplement`, `En pratique`, `Approches voisines`, `Pour aller plus loin`) | **PARAMÉTRABLE** | Quatre des six titres marchent tels quels sur n'importe quel sujet. `Les maths, simplement` est le seul vraiment lié — et il devient « la chose technique du sujet, expliquée ». |
 
@@ -116,7 +119,7 @@ Deux principes traversent tout l'inventaire et valent d'être posés avant lui :
 |---|---|---|---|
 | F1 | La **forme** de l'arbre de décision : questions **fermées**, **ordre strict**, première réponse positive gagne, et « si aucune ne tranche : laisser vide et **demander** » | **GÉNÉRIQUE** | C'est l'invention centrale de `taxonomie.md` et elle est intégralement transposable. L'ordre est *la* décision de conception : prise une fois, écrite, valable pour toutes les pages. |
 | F2 | Les **règles de départage** — 6 pour `famille:`, 7 pour `categorie:` — et le fait qu'il existe une place pour elles | **GÉNÉRIQUE** | Le mécanisme est « l'endroit où s'écrit un arbitrage récurrent, une fois, avec le cas qui l'a provoqué ». Elle **naît vide** dans un brain neuf (principe 2 du préambule). |
-| F3 | Les **94 valeurs** de `categorie:` en 20 préfixes, l'arbre D1→D14, les frontières disputées | **À RÉÉCRIRE** | C'est le dev, entièrement. |
+| F3 | Les **109 valeurs** de `categorie:` en 20 préfixes plus le rattachement `skill/*`, l'arbre D1→D14, les frontières disputées | **À RÉÉCRIRE** | C'est le dev, entièrement. |
 | F4 | Les **9 valeurs** de `famille:`, l'arbre F1→F9, les 9 définitions et frontières | **À RÉÉCRIRE** | Idem. Le **slot** survit (voir §2, axe `nature`), pas les valeurs. |
 | F5 | Les blocs clôturés ` ```domaine ` / ` ```famille ` comme **unique source machine** lue par le validateur | **PARAMÉTRABLE** | Excellente idée — un vocabulaire fermé lisible par l'humain **et** par le script, en un seul endroit. Dans BrainKit, cette place devient le **manifeste**, et `taxonomie.md` devient un document **généré**. |
 | F6 | `tags.md` — vocabulaire contrôlé, kebab-case, « le skill pioche, il n'invente jamais ; un tag manquant se propose, s'ajoute ici, puis s'utilise » | **PARAMÉTRABLE** | La règle est parfaite et générique ; les ~200 tags sont dev. |
@@ -225,7 +228,7 @@ Ce que ce compte dit, et qu'il faut lire comme un résultat de conception :
   est, sans l'avoir cherché, presque entièrement générique — parce que ses trois axes
   séparent déjà *ce qu'une page est*, *de quoi elle parle* et *ce qu'elle est
   techniquement*. Cette séparation est ce qui rend BrainKit possible.
-- **Les 16 « à réécrire » sont presque toutes des LISTES DE VALEURS** : les 94
+- **Les 16 « à réécrire » sont presque toutes des LISTES DE VALEURS** : les 109
   catégories, les 9 familles, les 6 métiers, les 4 colonnes du bandeau, les 6 titres
   de corps, deux gabarits de rôle, les 47 filtres `.base`, deux documents de
   consommateur, onze captures. Une seule est un *mécanisme* qui ne survit pas — le
@@ -254,7 +257,7 @@ Trois propriétés non négociables, chacune pour une raison mesurée dans le De
    gabarits de `Templates/` sont périmés par rapport aux 338 pages qu'ils étaient
    censés produire, parce que deux sources décrivaient le même gabarit.
 2. **Chaque valeur peut porter son motif.** Tout libellé, toute sévérité, toute
-   valeur d'énumération accepte un champ `motif:` frère. Motif : A5 — les 39 entrées
+   valeur d'énumération accepte un champ `motif:` frère. Motif : A5 — les 47 entrées
    de `SUB_LABEL` valent surtout par le commentaire qui dit *pourquoi ce libellé et
    pas l'évident*. Une sortie en YAML qui perd ces commentaires perd huit lots.
 3. **Il déclare des fonctions, pas seulement des mots.** Chaque rôle porte un `id:`
@@ -423,7 +426,7 @@ brain:
   nom: DevBrain
   sujet: "Les briques et les notions du développement data, ML et IA, rangées par domaine."
   langue: fr
-  volume_cible: 800          # 338 briques + 299 notions + 47 comparatifs + marge
+  volume_cible: 800          # 337 briques + 297 notions + 47 comparatifs + 74 hubs + marge
   usage: perso
   proprietaire:
     nom: floSa
@@ -835,7 +838,7 @@ plus que le manifeste lui-même.
 |---|---|---|
 | 1 | **Les 47 filtres `.base`.** Chacun est une requête réglée à la main (`role == "brique"` **et** `categorie == …`, plus une seconde vue « Self-hostable » sur `hosted.contains("self")`). Le manifeste ne peut donner que l'ordre de colonnes par défaut et la forme du filtre. | Les vues restent des **fichiers de contenu**, pas des dérivés. Le générateur en **amorce** un, il ne les tient pas. |
 | 2 | **L'algorithme de la règle 5.** La conjonction « il y a une flèche » × « la cible est une page fichée » n'est pas une donnée : c'est du code. Le manifeste ne déclare que la section, la colonne et le marqueur. | Le kit garde du **code par règle**. Le manifeste **branche** les règles, il ne les décrit pas. La liste des dix reste fermée par le kit. |
-| 3 | **Le corps écrit à la main des 75 hubs** (`Ce qu'il faut comprendre`, `Choisir`). | Par conception. Le manifeste déclare la **place**, l'humain écrit le contenu. Le générateur d'un brain neuf pose la place vide. |
+| 3 | **Le corps écrit à la main des 74 hubs** (`Ce qu'il faut comprendre`, `Choisir`). | Par conception. Le manifeste déclare la **place**, l'humain écrit le contenu. Le générateur d'un brain neuf pose la place vide. |
 | 4 | **Le raisonnement derrière un arbitrage**, quand il fait plus d'une phrase. `motif:` porte « pourquoi ce libellé » ; il ne porte pas les quatre paragraphes de la remontée qui l'a produit. | `AI/migration/lot-N.md` reste le lieu du raisonnement, et le manifeste **pointe** vers lui. Le journal de lot n'est pas remplaçable par de la configuration. |
 | 5 | **L'ordre historique.** Le manifeste décrit un **état**, pas un chemin. Il ne sait pas dire que `hosted:` était un scalaire avant le lot 2, ni que `Wiki/` a existé. | Un manifeste n'est pas un historique. C'est git et `AI/migration/` qui le sont — et §6 lot 9 en dépend. |
 | 6 | **`os:` et `domaines:` sur une brique.** Ils sont dans `BRIQUE_ALLOWED` parce que les gabarits `service` et `outil` ont fusionné au lot 2 : leur présence est un vestige, pas une intention. | Le manifeste les déclare et perd l'information « c'est un vestige ». Ajouter `deprecated: true` sur un champ autorisé est une décision à prendre (§5 point 11). |
@@ -1954,8 +1957,11 @@ et ne sont pas répétées ensuite :
 
 - **Périmètre.** Figer la structure de `brain.yml` : chaque champ, son type, son
   caractère obligatoire, ses valeurs légales. Écrire les deux remplissages **en
-  entier**, sans troncature — les 20 préfixes et 39 sous-libellés du DevBrain, ses 94
-  catégories, ses 9 familles, ses 14 arbres de décision.
+  entier**, sans troncature — les 20 préfixes et 47 sous-libellés du DevBrain, ses 109
+  catégories, ses 9 familles, ses **deux** arbres de décision (14 questions pour le
+  domaine, 9 pour la famille).
+  *(Chiffres rectifiés par le lot 1 : le brief annonçait 39 sous-libellés, 94
+  catégories et « 14 arbres de décision ».)*
 - **Livrable.** `design/01-manifeste.md` (la spécification) · `schema/brain.schema.json`
   (le contrat vérifiable) · `exemples/devbrain.brain.yml` **complet** ·
   `exemples/histobrain.brain.yml`.
@@ -2000,7 +2006,7 @@ et ne sont pas répétées ensuite :
 - **Livrable.** `brainkit/generer/` · `design/04-generation.md`.
 - **Acceptation.** Régénérer les artefacts dérivés de DevBrain **dans un arbre de travail
   séparé** et obtenir un `diff` **vide** contre les vrais : `brain-index.json`, `liens.md`,
-  les zones AUTO des 75 hubs, les 6 hubs de `Métiers/`, `Comparatifs.md`, les 338 bandeaux.
+  les zones AUTO des 74 hubs, les 6 hubs de `Métiers/`, `Comparatifs.md`, les 337 bandeaux.
 - **Interdictions.** Écrire dans DevBrain, y compris « juste pour tester ». Le mode par
   défaut des générateurs, pendant ce lot, est `--dry-run` avec une sortie vers un chemin
   imposé en argument.
@@ -2075,7 +2081,7 @@ et ne sont pas répétées ensuite :
   passent. La clôture se fait par `cloturer-brain`, pas à la main.
 - **Interdictions.** Commencer avant la vérification de divergence avec `origin/main`.
   Corriger une faute de contenu au passage, même évidente — elle va aux *Remontées*.
-  Toucher aux 299 notions, quelle que soit la raison.
+  Toucher aux 297 notions, quelle que soit la raison.
 
 ## Lot 10 — L'emballage
 
