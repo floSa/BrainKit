@@ -2193,6 +2193,43 @@ agent:
     absorbe pas.
   hook_stop: "écrit un résumé de session dans AI/sessions/"
 
+# ==============================================================================
+# racine — LES `.md` DE LA RACINE, DECLARES. Bloc ajoute au lot 5 (remontee 3 du
+# lot 4). Ce sont des artefacts de SEMIS, pas des artefacts derives : aucun des
+# quatre generateurs ne les produit, et le DevBrain n a AUCUN script qui les
+# ecrive. Le besoin etait de les DECLARER, pas de les generer — le validateur lit
+# tout `.md` de la racine pour son test d atteignabilite, sans qu aucun champ ne
+# dise lesquels aiguillent.
+#
+# TRANSCRIPTION, pas prescription : le vault reel porte huit `.md` a sa racine
+# (CHANGELOG, CLAUDE.md, CLAUDE-build.md, CLAUDE-project.md, CONTRIBUTING,
+# Home, INSTALL, Inbox, LICENSE, README). Deux seulement sont des PAGES au sens
+# du vault, et une seule aiguille. Les autres sont des documents de depot — ils
+# ne citent aucun hub, donc `page_atteignable` ne les lit pour rien, et le semis
+# n a aucune raison de les poser.
+# ==============================================================================
+racine:
+  porte_d_entree: Home.md
+  pages:
+
+    - fichier: Home.md
+      titre: Accueil
+      aiguille: true
+      role_editorial: porte
+      motif: >
+        La seule page du vault qui cite les vingt hubs de domaine, les deux hubs
+        ranges par role et le hub de ralliement des comparatifs. Sans elle, ils
+        sont tous « atteignables depuis aucun hub » : ils n ont pas de parent, et
+        seule la porte d entree les cite.
+
+    - fichier: Inbox.md
+      titre: Inbox
+      aiguille: false
+      role_editorial: capture
+      motif: >
+        Deja nommee dans `frontieres_d_ecriture.libre` — c est la seule page que
+        l utilisateur ecrit seul. Elle n aiguille pas : elle ne cite aucun hub.
+
 frontieres_d_ecriture:
   libre:
     - "AI/ hors index/"

@@ -190,6 +190,7 @@
     "propagation":        { "$ref": "#/$defs/propagation" },
     "skills":             { "$ref": "#/$defs/skills" },
     "agent":              { "$ref": "#/$defs/agent" },
+    "racine":             { "$ref": "#/$defs/racine" },
     "frontieres_d_ecriture": { "$ref": "#/$defs/frontieres" }
   },
 
@@ -1072,6 +1073,43 @@
           }
         },
         "hook_stop": { "type": "string" }
+      }
+    },
+
+    "racine": {
+      "$comment": "AJOUTE AU LOT 5, remontee 3 du lot 4. Les `.md` de la racine ne sont pas des artefacts DERIVES — aucun generateur ne les produit, et le DevBrain n a aucun script qui les ecrive. Ce sont des artefacts de SEMIS : ecrits une fois, puis edites a la main comme le corps d un hub. Le besoin n etait donc pas de les generer, il etait de les DECLARER : le validateur lit tout `.md` de la racine pour son test d atteignabilite, sans qu aucun champ ne dise lesquels aiguillent. Un brouillon pose a la racine elargissait silencieusement l atteignabilite. `aiguille: true` nomme les pages qui citent les hubs de premier niveau ; le semis n ecrit QUE les fichiers de cette liste, et n en ecrit aucun autre a la racine.",
+      "type": "object",
+      "required": ["porte_d_entree", "pages"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "porte_d_entree": {
+          "description": "Le fichier de `pages[]` qui porte l aller vers les hubs de premier niveau. Sans lui, tout hub sans parent est « atteignable depuis aucun hub ».",
+          "type": "string", "pattern": "\\.md$"
+        },
+        "pages": {
+          "description": "TOUS les `.md` que le semis pose a la racine, et aucun autre.",
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["fichier", "titre", "aiguille"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "fichier": { "type": "string", "pattern": "\\.md$" },
+              "titre":   { "type": "string", "minLength": 1 },
+              "aiguille": {
+                "$comment": "true = la page cite les hubs et compte pour l atteignabilite. false = elle est a la racine sans aiguiller (une inbox, un backlog).",
+                "type": "boolean"
+              },
+              "role_editorial": { "enum": ["porte", "capture", "journal", "note"] },
+              "amorce": {
+                "$comment": "Les items a traiter, poses en cases a cocher. C est ICI que vont les titres cites pendant l entretien : ils ont servi a INDUIRE la taxonomie, ils ne sont pas des pages. §3.4 : « pas une n a ete ecrite ».",
+                "type": "array", "items": { "type": "string" }
+              }
+            }
+          }
+        }
       }
     },
 

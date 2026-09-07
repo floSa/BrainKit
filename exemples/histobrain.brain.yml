@@ -1125,6 +1125,68 @@ agent:
     - { chemin: "backlog.md", role: "ce qui reste a faire" }
   hook_stop: "écrit un résumé de session dans AI/sessions/"
 
+# ==============================================================================
+# racine — LES `.md` DE LA RACINE, DECLARES. Bloc ajoute au lot 5 (remontee 3 du
+# lot 4). Ce ne sont PAS des artefacts derives : aucun generateur ne les produit,
+# et le DevBrain n a aucun script qui les ecrive. Ce sont des artefacts de SEMIS,
+# ecrits une fois puis edites a la main — comme le corps d un hub.
+#
+# Le besoin n etait donc pas de les GENERER, il etait de les DECLARER : le
+# validateur lit tout `.md` de la racine pour son test d atteignabilite, sans
+# qu aucun champ ne dise lesquels aiguillent. Un brouillon pose a la racine
+# elargissait silencieusement l atteignabilite de tous les hubs de premier
+# niveau. `aiguille:` le dit maintenant, et le semis n ecrit QUE cette liste.
+# ==============================================================================
+racine:
+  porte_d_entree: Home.md
+  pages:
+
+    - fichier: Home.md
+      titre: Accueil
+      aiguille: true
+      role_editorial: porte
+      motif: >
+        La seule page qui cite les hubs de premier niveau. Sans elle, les huit
+        hubs de periode, les deux hubs de role et le hub de ralliement sont
+        « atteignables depuis aucun hub » — le constat que la remontee 6 du lot 3
+        avait mesure a QUATRE pages sur le vault d epreuve.
+
+    - fichier: Inbox.md
+      titre: Inbox
+      aiguille: false
+      role_editorial: capture
+      motif: >
+        A la racine, mais elle n aiguille PAS : elle ne cite aucun hub, et une
+        page qu elle mentionnerait ne doit pas devenir atteignable pour autant.
+        C est exactement la distinction que `aiguille:` existe pour porter.
+      amorce:
+        # Les vingt titres cites en passe 2.1 de l entretien (§4.1 du cadrage).
+        # Ils ont servi a INDUIRE la taxonomie — c est eux qui ont fait sortir
+        # huit paquets ranges par PERIODE, et le prefixe `transversal` a la
+        # vingtieme. Ils partent ici comme premier backlog, et PAS UNE de ces
+        # pages n est ecrite : c est le point qui distingue l entretien du
+        # remplissage (§3.4).
+        - "source : Thucydide, La Guerre du Péloponnèse"
+        - "source : Hérodote, Enquête"
+        - "source : Duby, Les trois ordres"
+        - "source : Braudel, La Méditerranée"
+        - "source : Bloch, La société féodale"
+        - "source : Le Roy Ladurie, Montaillou"
+        - "source : Hobsbawm, L'ère des révolutions"
+        - "source : Paxton, La France de Vichy"
+        - "source : Kershaw, Hitler"
+        - "source : Cours du Collège de France sur les Lumières"
+        - "source : Édit de Nantes (texte)"
+        - "source : Cahiers de doléances (fonds)"
+        - "source : Recensement de 1851 (base)"
+        - "source : Carte des mobilités antiques (ORBIS)"
+        - "source : Actes du concile de Trente"
+        - "source : Un article de revue sur la peste noire"
+        - "source : Une thèse sur les ouvriers du textile lyonnais"
+        - "source : Photographies de la Commune"
+        - "source : Manuel de paléographie"
+        - "source : Histoire de la France des origines à nos jours"
+
 frontieres_d_ecriture:
   libre:
     - "AI/ hors index/"
