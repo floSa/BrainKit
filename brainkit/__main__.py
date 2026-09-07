@@ -33,6 +33,8 @@ if str(RACINE_KIT) not in sys.path:
 # commandes vivent dans le meme module : elles partagent le plan d ecriture du
 # semis, et un module par commande dupliquerait ses garde-fous.
 SOUS_COMMANDES = {
+    "entretien": ("brainkit.entretien.__main__", "main",
+                  "mène l'entretien qui produit un `brain.yml`, puis sème"),
     "valider": ("brainkit.valider.__main__", "main",
                 "valide un vault contre son manifeste"),
     "generer": ("brainkit.generer.__main__", "main",
