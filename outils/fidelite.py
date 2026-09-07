@@ -139,7 +139,9 @@ CONTROLES: dict[str, str] = {
     "A14": "hub sur un dossier qui ne porte aucune page",
     "A15": "`hub_par_valeur: true` et hub d axe transverse manquant",
     "A16": "lien retour vers un hub de ralliement absent",
+    "A17": "fichier de vue sans page — l inverse de C8",
     "N1": "valeur d axe homonyme d un `roles[].id`",
+    "N2": "champ du dictionnaire homonyme du libelle de l axe de rangement",
 }
 
 M = "manifeste"
@@ -230,6 +232,13 @@ VERDICTS: dict[str, tuple[str, str]] = {
                               "« l arbre n a pas tranche »"),
     "N1/ml/hub": (V, "`ml/hub` est une sous-valeur homonyme du role `hub`, portee par "
                      "2 briques — meme famille que la remontee 7 (`domaine:`)"),
+    "N2/domaine": (V, "`domaine:` de `role: rule` est une chaine LIBRE et c est le "
+                      "libelle de l axe de rangement, dont le champ est `categorie:` "
+                      "— la remontee 7, retrouvee"),
+    "N2/domaines": (V, "`domaines:` est le champ de l axe TRANSVERSE et le pluriel du "
+                       "libelle de l axe de RANGEMENT. Le manifeste le sait — c est "
+                       "pour ca que le dossier s appelle « Metiers/ » et non "
+                       "« Domaines/ » — mais le CHAMP garde le mot"),
 }
 
 
@@ -1051,6 +1060,20 @@ def passe_axes(mo: Modele, pages: list[Page], r: Rapport) -> None:
             r.ajoute("N1", c, f"la sous-valeur `{c}` est homonyme du role "
                               f"`{c.split('/')[-1]}` et {portees[c]} page(s) la portent")
 
+    # un champ du dictionnaire homonyme du LIBELLE de l axe de rangement, sans
+    # etre l axe : deux choses differentes portent alors le meme mot, et la prose
+    # generee ne peut plus les distinguer
+    lib = (mo.m.get("libelles") or {}).get("axe_rangement") or {}
+    mots = {str(lib.get("s") or ""), str(lib.get("p") or "")} - {""}
+    for c in sorted(mo.champs):
+        if c in mots and c != mo.champ_rangement:
+            roles_porteurs = sorted(rid for rid, d in mo.roles.items()
+                                    if c in ((d.get("champs") or {}).get("autorises") or []))
+            r.ajoute("N2", c, f"`{c}:` est un champ a part entiere (porte par "
+                              f"{roles_porteurs}) et c est AUSSI le libelle de l axe "
+                              f"de rangement, dont le champ s appelle "
+                              f"`{mo.champ_rangement}:`")
+
     # --- axe de nature
     nature = collections.Counter()
     for p in pages:
@@ -1198,6 +1221,22 @@ def passe_chemins(mo: Modele, pages: list[Page], r: Rapport) -> None:
     # justifie. Ce qui ne l est pas, c est un hub sur un dossier qui ne porte de
     # page ni a son niveau ni au-dessous.
     ancetres = {d.rsplit("/", 1)[0] for d in dossiers if "/" in d}
+    # --- un fichier de vue sans page : l inverse de C8. Les deux a zero disent que
+    # les DEUX sources possibles d une liste de vues — les pages `fonction: vue` et
+    # les fichiers de l extension — donnent aujourd hui le meme ensemble.
+    reels = {p.dossier: p.absolu.parent for p in pages if p.illisible is None}
+    for rid, decl in mo.roles.items():
+        ext = (decl.get("vue_embarquee") or {}).get("extension")
+        if not ext:
+            continue
+        pages_du_role = {(p.dossier, p.nom_fichier) for p in pages if p.role == rid}
+        for d, reel in sorted(reels.items()):
+            for f in sorted(reel.glob(f"*{ext}")):
+                if (d, f.stem) not in pages_du_role:
+                    r.ajoute("A17", rid, f"`{d}/{f.name}` n a pas de page "
+                                         f"`role: {rid}` a son nom",
+                             page=f"{d}/{f.name}")
+
     inconnus = (hubs - dossiers - ancetres - dossiers_de_role - ralliements
                 - dossiers_transverses)
     for d in sorted(inconnus):
