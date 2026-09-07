@@ -78,25 +78,43 @@ class Corpus:
 
     # ------------------------------------------------------------------ #
     def _entree(self, p: Page) -> dict:
-        """Une ligne d index. L ordre des cles est celui du manifeste, et il est stable.
+        """Une page, lue comme une ligne : son chemin, puis TOUT son frontmatter.
 
-        Un champ que la page ne porte pas sort a `null` et n est pas omis : un
-        consommateur machine qui filtre sur l index doit voir la CASE VIDE, sans
-        quoi il ne distingue pas « pas renseigne » de « pas indexe ».
+        L entree n est PAS la ligne de l index. Elle porte tout ce que la page
+        declare, et c est le generateur d index qui PROJETTE les colonnes que le
+        manifeste publie. La difference n est pas cosmetique : `genere.index`
+        decide de ce qui sort dans le catalogue, pas de ce que les generateurs
+        ont le droit de lire. Un manifeste qui ne declare aucun index — celui
+        d un jeu d epreuve de validation, par exemple — laisserait sinon les
+        hubs sans un nom a citer.
+
+        `path` est la seule cle CALCULEE, et elle est toujours la : c est
+        l identite d une entree a l interieur du kit.
         """
-        decl = (self.mo.m.get("genere") or {}).get("index") or {}
-        e: dict = {}
-        for nom in decl.get("plus") or []:
-            if nom == "path":
-                e["path"] = p.chemin
-        for nom in decl.get("champs") or []:
-            e[nom] = p.fm.get(nom)
+        e: dict = {"path": p.chemin}
+        e.update(p.fm)
         # Le champ d identite retombe sur le nom de fichier : le vault a des
         # roles qui n en portent pas (une prescription n a ni identite ni valeur
         # d axe), et une entree sans nom ne se cite pas.
         if self.champ_identite and not e.get(self.champ_identite):
             e[self.champ_identite] = p.stem
         return e
+
+    def colonnes_publiees(self, e: dict) -> dict:
+        """La ligne d index PUBLIEE : les colonnes declarees, dans leur ordre.
+
+        Un champ que la page ne porte pas sort a `null` et n est PAS omis : un
+        consommateur machine qui filtre sur le catalogue doit voir la case vide,
+        sans quoi il ne distingue pas « pas renseigne » de « pas indexe ».
+        """
+        decl = (self.mo.m.get("genere") or {}).get("index") or {}
+        out: dict = {}
+        for nom in decl.get("plus") or []:
+            if nom in CALCULEES:
+                out[nom] = e.get(nom)
+        for nom in decl.get("champs") or []:
+            out[nom] = e.get(nom)
+        return out
 
     # ------------------------------------------------------------------ #
     def nom(self, e: dict) -> str:

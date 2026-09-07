@@ -27,17 +27,18 @@ from pathlib import Path
 from . import bandeau, hubs, index, liens
 from .corpus import Corpus, charge_corpus
 from .prose import Prose
-from .sortie import CHECK, ECRIRE, IDENTIQUE, Sortie
+from .sortie import CHECK, ECRIRE, ECRIT, IDENTIQUE, Sortie
 from ..valider.manifeste import Modele
 
 # Les quatre, dans l ordre. Ferme par le kit : un artefact est du code.
 ARTEFACTS = ("index", "hubs", "liens", "bandeau")
 
+# Plafond de passes du point fixe. Cf. `genere_tout`.
+PASSES_MAX = 4
 
-def genere_tout(mo: Modele, racine: Path, mode: str = CHECK,
-                dossier: Path | None = None,
-                quoi: tuple[str, ...] = ARTEFACTS,
-                corpus: Corpus | None = None) -> Sortie:
+
+def _une_passe(mo: Modele, racine: Path, mode: str, dossier: Path | None,
+               quoi: tuple[str, ...], corpus: Corpus | None) -> Sortie:
     s = Sortie(racine=racine, mode=mode, dossier=dossier)
     if s.refus:
         return s
@@ -58,20 +59,71 @@ def genere_tout(mo: Modele, racine: Path, mode: str = CHECK,
     return s
 
 
+def genere_tout(mo: Modele, racine: Path, mode: str = CHECK,
+                dossier: Path | None = None,
+                quoi: tuple[str, ...] = ARTEFACTS,
+                corpus: Corpus | None = None) -> Sortie:
+    """Une passe en `check` et en `sortie`, un POINT FIXE en `ecrire`.
+
+    Pourquoi le point fixe, et pourquoi seulement en ecriture. Deux artefacts
+    dependent de ce que les autres ecrivent :
+
+      - la zone AUTO d un hub porte des WIKILINKS. Les reecrire change les liens
+        sortants du hub, donc la carte des liens — qui a ete composee, dans la
+        meme passe, depuis le corpus lu AVANT ;
+      - un hub transverse peut etre CREE. La page n existait pas quand le
+        catalogue a compte les pages : il en annonce donc un de moins.
+
+    Le DevBrain avait le meme defaut, et sa procedure de cloture le contournait a
+    la main : « lancer `build_index.py` puis `build_mocs.py` / `build_links.py` »
+    — un ordre a retenir, qui ne repare que le premier des deux cas et jamais le
+    second. Ici, une passe qui a ECRIT quelque chose invalide le corpus : on
+    relit et on recommence, jusqu a ce qu une passe n ecrive plus rien. C est la
+    definition de l idempotence, appliquee a l ORCHESTRATION et pas seulement a
+    chaque generateur.
+
+    En `check` et en `sortie`, une seule passe — et c est voulu : le rapport doit
+    dire ce que le vault EST, pas ce qu il deviendrait apres reparation. Un vault
+    dont le catalogue ne compte pas encore un hub a creer est en ecart, et le
+    dire est exactement le travail de `--check`.
+    """
+    s = _une_passe(mo, racine, mode, dossier, quoi, corpus)
+    if mode != ECRIRE or not s.poses:
+        return s
+    passes = 1
+    # Un REFUS n interrompt PAS le point fixe, et c est un correctif du lot :
+    # une page sans zone AUTO ou sans titre est une condition STABLE du vault,
+    # identique a chaque passe. S arreter dessus laissait les artefacts derives
+    # composes depuis le corpus d AVANT la reparation — le defaut exact que le
+    # point fixe existe pour supprimer.
+    while any(p.etat == ECRIT for p in s.poses) and passes < PASSES_MAX:
+        precedent = s
+        s = _une_passe(mo, racine, mode, dossier, quoi, None)
+        s.passes = passes + 1
+        s.trous = precedent.trous or s.trous
+        passes += 1
+    if passes >= PASSES_MAX and any(p.etat == ECRIT for p in s.poses):
+        s.refuse(f"le point fixe n'est pas atteint en {PASSES_MAX} passes — "
+                 f"deux générateurs se contredisent, et c'est un défaut du kit, "
+                 f"pas du vault")
+    return s
+
+
 # --------------------------------------------------------------------------- #
 def imprime(s: Sortie, mo: Modele, racine: Path, detail: int = 12) -> int:
     """Le rapport. Sort en 2 s il reste un ecart en mode `check`, 1 sur un refus."""
     c = s.corpus
     n_pages = len(c.pages) if isinstance(c, Corpus) else 0
-    print(f"générer ({s.mode}) — {n_pages} page(s) lue(s) — vault "
+    suffixe = f", {s.passes} passes" if s.passes > 1 else ""
+    print(f"générer ({s.mode}{suffixe}) — {n_pages} page(s) lue(s) — vault "
           f"`{racine.name}`, manifeste "
           f"`{mo.chemin.name if mo.chemin else '(inconnu)'}`")
     if s.dossier is not None:
         print(f"  sortie : {s.dossier}")
 
-    for a, (poses, ecarts, lignes) in s.par_artefact().items():
+    for a, (poses, ecarts, lignes) in s.par_artefact(avec_forme=True).items():
         etat = "concorde" if not ecarts else f"{ecarts} écart(s), {lignes} ligne(s)"
-        print(f"  {a or '(sans artefact)':10s} · {poses:4d} artefact(s) — {etat}")
+        print(f"  {a or '(sans artefact)':18s} · {poses:4d} artefact(s) — {etat}")
 
     trous = s.trous
     if trous:

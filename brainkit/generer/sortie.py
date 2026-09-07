@@ -55,6 +55,7 @@ def _long(p: Path) -> Path:
         return p
     return Path("\\\\?\\" + brut)
 
+
 CHECK = "check"
 SORTIE = "sortie"
 ECRIRE = "ecrire"
@@ -74,6 +75,12 @@ class Pose:
     chemin: str            # relatif a la racine du vault, en posix
     etat: str
     artefact: str = ""     # quel generateur l a posee
+    # La FORME, quand un artefact en a plusieurs : les 74 hubs du DevBrain sont
+    # tous `role: hub` et se composent de trois facons. Sans elle, un rapport ne
+    # dit pas laquelle des trois s ecarte, et un test ne peut pas verifier qu une
+    # forme a CESSE d etre posee — ce que la boucle sur les axes transverses
+    # exige de savoir.
+    forme: str = ""
     lignes: int = 0        # taille du `diff` unifie, pour un ECART
     extrait: str = ""      # les premieres lignes du `diff`, pour le rapport
 
@@ -97,6 +104,7 @@ class Sortie:
     # information, et la remplir au juge l effacerait.
     trous: list[str] = field(default_factory=list)
     corpus: object | None = None        # le corpus lu, pour le rapport
+    passes: int = 1                     # passes qu il a fallu pour le point fixe
 
     # ------------------------------------------------------------------ #
     def __post_init__(self) -> None:
@@ -145,7 +153,8 @@ class Sortie:
         return p.read_text(encoding="utf-8")
 
     # ------------------------------------------------------------------ #
-    def pose(self, rel: str, texte: str, artefact: str = "") -> Pose:
+    def pose(self, rel: str, texte: str, artefact: str = "",
+             forme: str = "") -> Pose:
         """Pose un artefact regenere. Rend l etat, et n ecrit que si on l a demande."""
         # Deux generateurs qui posent le MEME fichier : le second compare au
         # vault et non a la pose du premier, donc il l ecrase en silence. Aucun
@@ -184,7 +193,7 @@ class Sortie:
             if self.mode == ECRIRE:
                 etat = ECRIT
 
-        p = Pose(rel, etat, artefact, lignes, extrait)
+        p = Pose(rel, etat, artefact, forme, lignes, extrait)
         self.poses.append(p)
         return p
 
@@ -195,11 +204,12 @@ class Sortie:
     def ecarts(self) -> list[Pose]:
         return [p for p in self.poses if not p.concorde]
 
-    def par_artefact(self) -> dict[str, tuple[int, int, int]]:
+    def par_artefact(self, avec_forme: bool = False) -> dict[str, tuple[int, int, int]]:
         """{artefact : (poses, ecarts, lignes de diff)} — le rapport chiffre."""
         out: dict[str, list[int]] = {}
         for p in self.poses:
-            c = out.setdefault(p.artefact, [0, 0, 0])
+            cle = f"{p.artefact}/{p.forme}" if avec_forme and p.forme else p.artefact
+            c = out.setdefault(cle, [0, 0, 0])
             c[0] += 1
             if not p.concorde:
                 c[1] += 1

@@ -82,7 +82,7 @@ def catalogue(corpus: _corpus.Corpus) -> str:
         doc["scope"] = str(portee)
     doc["count"] = len(corpus.entrees)
     doc["tags_index"] = index_des_mots_cles(corpus)
-    doc["pages"] = corpus.entrees
+    doc["pages"] = [corpus.colonnes_publiees(e) for e in corpus.entrees]
     return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
 
 

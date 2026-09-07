@@ -70,6 +70,13 @@ DEPUIS_SOUS_DOSSIERS = "sous_dossiers"
 DEPUIS_ROLE = "role"
 DEPUIS_VUES = "vues"
 
+# Les TROIS formes de zone AUTO. Fermees par le kit : une forme est du code. Le
+# manifeste ne les nomme pas — la forme se DERIVE du dossier du hub, cf. le
+# docstring ci-dessus.
+FORME_ARBRE = "arbre"
+FORME_TRANSVERSE = "transverse"
+FORME_RALLIEMENT = "ralliement"
+
 
 # --------------------------------------------------------------------------- #
 #  La declaration
@@ -285,15 +292,17 @@ def genere(corpus: _corpus.Corpus, prose: Prose, s: Sortie) -> None:
         if tete in transverses:
             continue            # rempli par la boucle transverse, pas par `ls`
         if tete in ralliements:
+            forme = FORME_RALLIEMENT
             lignes = zone_ralliement(corpus, prose, ralliements[tete])
         else:
+            forme = FORME_ARBRE
             lignes = zone_arbre(corpus, prose, p.chemin)
         texte = p.absolu.read_text(encoding="utf-8")
         if not zone.porte_une_zone(texte, bal):
             s.refuse(f"{p.chemin} : aucune zone {bal[0]}/{bal[1]} — hub non rempli")
             continue
         bloc = zone.bloc(bal, "\n".join(lignes).rstrip())
-        s.pose(p.chemin, zone.remplace(texte, bal, bloc), ARTEFACT)
+        s.pose(p.chemin, zone.remplace(texte, bal, bloc), ARTEFACT, forme)
 
     # --- un hub par valeur portee de chaque axe transverse ---------------- #
     for axe in mo.transverses:
@@ -305,12 +314,14 @@ def genere(corpus: _corpus.Corpus, prose: Prose, s: Sortie) -> None:
             bloc = (f"{bal[0]}\n{intro}\n\n" + "\n".join(puces) + f"\n{bal[1]}")
             avant = s.lit(rel)
             if avant is None:
-                s.pose(rel, _hub_neuf(corpus, titre, intro, bloc), ARTEFACT)
+                s.pose(rel, _hub_neuf(corpus, titre, intro, bloc), ARTEFACT,
+                       FORME_TRANSVERSE)
                 continue
             if not zone.porte_une_zone(avant, bal):
                 s.refuse(f"{rel} : aucune zone {bal[0]}/{bal[1]} — hub non rempli")
                 continue
-            s.pose(rel, zone.remplace(avant, bal, bloc), ARTEFACT)
+            s.pose(rel, zone.remplace(avant, bal, bloc), ARTEFACT,
+                   FORME_TRANSVERSE)
 
 
 def _hub_neuf(corpus: _corpus.Corpus, titre: str, intro: str, bloc: str) -> str:
