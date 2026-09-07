@@ -35,6 +35,7 @@ RACINE_KIT = Path(__file__).resolve().parents[2]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
 
+from brainkit import defauts                                 # noqa: E402
 from brainkit.semer import figer, reseuiller, semis          # noqa: E402
 from brainkit.valider import charge                          # noqa: E402
 
@@ -49,15 +50,24 @@ def _utf8() -> None:
 def _manifeste(chemin: Path | None, vault: Path) -> Path | None:
     """Le manifeste donne, ou celui de l instance. Jamais un defaut du kit.
 
-    Un defaut du kit — `exemples/devbrain.brain.yml`, comme pour `valider` et
-    `generer` — serait ici un piege : semer ou re-seuiller avec le manifeste
-    d un AUTRE brain reformerait l arbre selon des valeurs qui ne sont pas
-    celles du vault.
+    Un defaut du kit serait ici un piege : re-seuiller avec le manifeste d un
+    AUTRE brain reformerait l arbre selon des valeurs qui ne sont pas celles du
+    vault. Depuis le lot 6, la resolution est PARTAGEE avec `valider` et
+    `generer` (`brainkit/defauts.py`), et l incoherence se DIT — un
+    `--manifeste` qui n est pas celui du vault est annonce, nom contre nom,
+    avant que quoi que ce soit ne tourne.
     """
-    if chemin is not None:
-        return chemin
-    candidat = vault / "brain.yml"
-    return candidat if candidat.is_file() else None
+    resolu, dits = defauts.resout(chemin, vault)
+    for ligne in dits:
+        print(ligne)
+    if resolu is not None and resolu.resolve() ==             defauts.MANIFESTE_DE_DEVELOPPEMENT.resolve() and chemin is None:
+        # `semer`, `re-seuiller` et `freeze` ECRIVENT. Le repli sur le
+        # manifeste de developpement du kit est acceptable pour un verdict, il
+        # ne l est pas pour une migration.
+        print("refus — ces commandes écrivent : elles ne se rabattent pas sur "
+              "le manifeste de développement du kit.")
+        return None
+    return resolu
 
 
 # --------------------------------------------------------------------------- #

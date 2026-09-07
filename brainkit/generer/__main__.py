@@ -35,10 +35,8 @@ if str(RACINE_KIT) not in sys.path:
 
 from brainkit.generer import ARTEFACTS, genere_tout, imprime      # noqa: E402
 from brainkit.generer.sortie import CHECK, ECRIRE, SORTIE         # noqa: E402
+from brainkit import defauts                                      # noqa: E402
 from brainkit.valider import charge                               # noqa: E402
-
-MANIFESTE_DEFAUT = RACINE_KIT / "exemples" / "devbrain.brain.yml"
-VAULT_DEFAUT = RACINE_KIT.parent / "DevBrain"
 
 
 def main() -> int:
@@ -48,8 +46,10 @@ def main() -> int:
         pass
     ap = argparse.ArgumentParser(
         description="Régénère les artefacts dérivés d'un vault depuis son manifeste.")
-    ap.add_argument("--manifeste", type=Path, default=MANIFESTE_DEFAUT)
-    ap.add_argument("--vault", type=Path, default=VAULT_DEFAUT)
+    ap.add_argument("--manifeste", type=Path, default=None,
+                    help="défaut : le `brain.yml` du vault visé")
+    ap.add_argument("--vault", type=Path, default=None,
+                    help="défaut : le dossier courant s'il porte un `brain.yml`")
     ap.add_argument("--sortie", type=Path, default=None,
                     help="arbre de travail où poser les artefacts, HORS du vault")
     ap.add_argument("--ecrire", action="store_true",
@@ -66,12 +66,21 @@ def main() -> int:
         print("--ecrire et --sortie s'excluent : l'un écrit dans le vault, "
               "l'autre à côté.")
         return 1
-    if not ns.manifeste.exists():
-        print(f"manifeste introuvable : {ns.manifeste}")
+    vault = ns.vault if ns.vault is not None else defauts.vault_par_defaut()
+    if not vault.is_dir():
+        print(f"vault introuvable : {vault}")
         return 2
-    if not ns.vault.is_dir():
-        print(f"vault introuvable : {ns.vault}")
+    manifeste, dits = defauts.resout(ns.manifeste, vault)
+    for ligne in dits:
+        print(ligne)
+    if manifeste is None:
         return 2
+    if not manifeste.exists():
+        print(f"manifeste introuvable : {manifeste}")
+        return 2
+    if dits:
+        print()
+    ns.manifeste, ns.vault = manifeste, vault
 
     quoi = tuple(x.strip() for x in ns.quoi.split(",") if x.strip())
     inconnus = [x for x in quoi if x not in ARTEFACTS]

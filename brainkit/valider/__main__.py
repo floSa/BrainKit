@@ -34,10 +34,8 @@ RACINE_KIT = Path(__file__).resolve().parents[2]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
 
+from brainkit import defauts                          # noqa: E402
 from brainkit.valider import charge, imprime, valide  # noqa: E402
-
-MANIFESTE_DEFAUT = RACINE_KIT / "exemples" / "devbrain.brain.yml"
-VAULT_DEFAUT = RACINE_KIT.parent / "DevBrain"
 
 
 def main() -> int:
@@ -46,8 +44,10 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Valide un vault contre son manifeste.")
-    ap.add_argument("--manifeste", type=Path, default=MANIFESTE_DEFAUT)
-    ap.add_argument("--vault", type=Path, default=VAULT_DEFAUT)
+    ap.add_argument("--manifeste", type=Path, default=None,
+                    help="défaut : le `brain.yml` du vault visé")
+    ap.add_argument("--vault", type=Path, default=None,
+                    help="défaut : le dossier courant s'il porte un `brain.yml`")
     ap.add_argument("--regle", default=None,
                     help="n'imprimer que les constats d'une règle")
     ap.add_argument("--tout", action="store_true",
@@ -55,10 +55,20 @@ def main() -> int:
                          "pages écartées d'une dérivation)")
     ns = ap.parse_args()
 
-    if not ns.manifeste.exists():
-        return print(f"manifeste introuvable : {ns.manifeste}") or 2
-    if not ns.vault.is_dir():
-        return print(f"vault introuvable : {ns.vault}") or 2
+    vault = ns.vault if ns.vault is not None else defauts.vault_par_defaut()
+    if not vault.is_dir():
+        return print(f"vault introuvable : {vault}") or 2
+    manifeste, dits = defauts.resout(ns.manifeste, vault)
+    for ligne in dits:
+        print(ligne)
+    if manifeste is None:
+        return 2
+    if not manifeste.exists():
+        return print(f"manifeste introuvable : {manifeste}") or 2
+    if dits:
+        print()
+    ns = argparse.Namespace(**{**vars(ns), "manifeste": manifeste,
+                               "vault": vault})
 
     mo = charge(ns.manifeste)
     v = valide(mo, ns.vault.resolve())
