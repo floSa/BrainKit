@@ -1,0 +1,8 @@
+# Bytecode Python. Le jeu d'epreuve importe `schema/valider.py` comme un module
+# pour rejouer les dix contraintes de coherence sur son propre manifeste : c'est
+# ce qui fait naitre un `schema/__pycache__/`. Rien de tout ca n'est un livrable.
+__pycache__/
+*.py[cod]
+
+# Environnements virtuels, si l'on en pose un a cote d'`uv run`.
+.venv/
