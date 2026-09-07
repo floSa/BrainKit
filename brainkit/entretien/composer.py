@@ -1257,38 +1257,29 @@ def _genere(b: Brouillon, m: dict, axe_r: dict) -> dict:
 
 def _propagation(m: dict, unite: dict, notion_id: str | None,
                  vue_id: str | None) -> dict:
-    table = [
-        {"n": "P1", "cible": "le hub du dossier",
-         "trouve_par": "c'est le dossier d'accueil", "par": "généré"},
-        {"n": "P2", "cible": "les hubs parents",
-         "trouve_par": "remontée de chemin", "par": "généré"},
-    ]
-    n = 3
-    if vue_id:
-        table.append({"n": f"P{n}", "cible": f"la page `role: {vue_id}` du dossier",
-                      "trouve_par": f"le fichier `role: {vue_id}` du dossier",
-                      "par": "vue embarquée : automatique ; la section écrite à "
-                             "la main : à écrire"})
-        n += 1
-    if notion_id:
-        table.append({"n": f"P{n}", "cible": f"la page `role: {notion_id}` du dossier",
-                      "trouve_par": f"le fichier `role: {notion_id}` du dossier",
-                      "par": "à écrire"})
-        n += 1
-    table.append({"n": f"P{n}", "cible": "les pairs",
-                  "trouve_par": f"les autres `role: …` du dossier",
-                  "par": "à écrire, réciprocité obligatoire"})
-    n += 1
-    table.append({"n": f"P{n}", "cible": "les résumés réinjectés",
-                  "trouve_par": "les champs à réciprocité des pairs",
-                  "par": "script de resynchronisation"})
-    n += 1
-    hubs_t = []
-    if m["axes"].get("transverses"):
-        hubs_t.append({
-            "n": f"P{n}",
-            "cible": "les hubs des axes transverses",
-            "trouve_par": "les valeurs portées par la page", "par": "généré"})
+    """L enonce et la clause. PAS la table — elle se DERIVE.
+
+    ARBITRAGE DU LOT 8, remontee 2 du lot 7. Le schema rendait `table:`
+    obligatoire et ce composeur l ecrivait, pendant que le lot 7 la DERIVAIT
+    depuis les roles et les axes. Deux sources de la meme information, et elles
+    divergeaient deja en longueur : sept lignes declarees contre neuf derivees
+    pour HistoBrain, parce que la declaration repliait les deux axes transverses
+    en une ligne et enfouissait le hub de ralliement.
+
+    C est exactement le constat E4 que le manifeste existe pour supprimer. La
+    declaration est donc RETIREE, et c est la plus simple des deux issues que le
+    lot 7 proposait : un champ qu on regenere a chaque composition depuis la
+    derivation ne serait pas une source non plus, il serait une copie — avec, en
+    plus, le cout de la tenir a jour.
+
+    Ce qui RESTE ici, et qui ne se derive de rien : l ENONCE de la regle et sa
+    CLAUSE. Ce sont des phrases, pas des donnees ; c est le seul endroit ou
+    elles sont ecrites, et le skill de capture les lit telles quelles.
+
+    Un manifeste ecrit avant l arbitrage porte encore sa table : le schema la
+    TOLERE (elle n est plus `required`), le kit ne la lit pas, et `mesurer` la
+    confronte a la derivation sous le code `E4` de son backlog.
+    """
     return {
         "enonce": "Le rayon de propagation d'une insertion est le DOSSIER "
                   "D'ACCUEIL, plus ses HUBS PARENTS. Le voisinage d'une page est "
@@ -1296,12 +1287,14 @@ def _propagation(m: dict, unite: dict, notion_id: str | None,
         "clause": "Une ligne sans objet se DÉCLARE sans objet, elle ne se tait "
                   "pas.",
         "derivee": True,
-        "motif": "DÉRIVÉE des rôles et des axes : rien à écrire à la main. Elle "
-                 "ne dépend que d'un fait structurel — le dossier porte la "
-                 "valeur de l'axe de rangement — donc tout brain construit sur "
-                 "l'arbre l'obtient gratuitement.",
-        "table": table,
-        **({"hubs_transverses": hubs_t} if hubs_t else {}),
+        "motif": "DÉRIVÉE des rôles et des axes : rien à écrire à la main, et "
+                 "rien à écrire ICI. Elle ne dépend que d'un fait structurel — "
+                 "le dossier porte la valeur de l'axe de rangement — donc tout "
+                 "brain construit sur l'arbre l'obtient gratuitement.",
+        "motif_sans_table": "Lot 8 : `table:` retirée. Une information déclarée "
+                            "ici ET dérivée par le kit est une seconde source, "
+                            "c'est-à-dire le constat E4. La table se lit dans le "
+                            "skill de capture, qui la dérive.",
     }
 
 

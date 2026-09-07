@@ -991,7 +991,8 @@
 
     "propagation": {
       "type": "object",
-      "required": ["enonce", "clause", "table"],
+      "$comment": "LOT 8 — `table` n est plus requise (remontee 2 du lot 7). Le kit DERIVE la table de propagation depuis les roles et les axes ; une seconde declaration ici serait le constat E4, et les deux divergeaient deja en longueur (7 declarees contre 9 derivees pour HistoBrain). Le champ reste ACCEPTE pour les manifestes ecrits avant l arbitrage : le kit ne le lit pas, et `brainkit mesurer` le confronte a la derivation sous le code `E4` de son backlog.",
+      "required": ["enonce", "clause"],
       "unevaluatedProperties": false,
       "allOf": [{ "$ref": "#/$defs/annotations" }],
       "properties": {
