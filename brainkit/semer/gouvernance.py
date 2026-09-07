@@ -433,21 +433,31 @@ def claude_md(mo: Modele, prose: ProseSemis) -> str:
             L.append(f"- **`{s['nom']}`** — {titre}. "
                      f"{'Écrit' if s.get('ecrit_dans_le_brain') else 'N écrit pas'} "
                      f"dans le brain. Emplacement : `.claude/skills/{s['nom']}/`.")
-    L += ["", "> Les trois skills sont **posés en emplacement** par le semis et "
-          "**instanciés au lot 7** du kit. Tant qu'ils ne le sont pas, la capture "
-          "se fait à la main, en suivant les gabarits de `Templates/` et la règle "
-          "de propagation ci-dessous.", "",
+    L += ["", "> Les trois skills sont **écrits par le semis**, depuis ce "
+          "manifeste — y compris la table de propagation ci-dessous, qui est "
+          "**dérivée** des rôles, des axes et des champs réciproques déclarés. "
+          "`.claude/skills/README.md` dit ce que chacun porte, et pourquoi l'un "
+          "d'eux peut légitimement ne pas exister.", "",
           "---", "", "## La règle de propagation", ""]
     prop = mo.m.get("propagation") or {}
     if prop.get("enonce"):
         L += [f"**{_ligne(prop['enonce'])}**", ""]
     if prop.get("clause"):
         L += [f"> {_ligne(prop['clause'])}", ""]
+    # La table est DERIVEE, jamais recopiee depuis `propagation.table` — sans
+    # quoi le routeur et le skill de capture porteraient deux tables issues de
+    # deux sources, et l une prendrait du retard sur l autre. C est le constat
+    # E4, en miniature, dans les deux fichiers les plus lus du vault.
+    from ..skills import propagation as _prop
     L += ["| # | Cible | Trouvée par | Par |", "|---|---|---|---|"]
-    for ligne in (prop.get("table") or []) + (prop.get("hubs_transverses") or []):
-        L.append(f"| {ligne.get('n')} | {_ligne(ligne.get('cible'))} | "
-                 f"{_ligne(ligne.get('trouve_par'))} | {_ligne(ligne.get('par'))} |")
-    L += ["", "---", "", "## En cas de doute", "",
+    for li in _prop.derive(mo):
+        L.append(f"| {li.n} | {_ligne(li.cible)} | {_ligne(li.trouve_par)} | "
+                 f"{_ligne(li.par)} |")
+    L += ["", f"Cette table est **dérivée** de `roles`, `axes` et `champs` — "
+          f"pas écrite à la main. Le skill de capture porte la même, avec, pour "
+          f"chaque ligne, ce qui la produit dans le manifeste et la condition "
+          f"exacte dans laquelle elle est **sans objet**.",
+          "", "---", "", "## En cas de doute", "",
           "Demande. N'invente pas. Ne devine ni une valeur d'axe, ni une "
           "sévérité, ni une frontière — demande.", ""]
     return "\n".join(L)
@@ -605,33 +615,62 @@ def scripts_readme(mo: Modele, mode: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
-#  L emplacement des skills — POSE, pas instancie (c est le lot 7)
+#  Les skills — INSTANCIES depuis le manifeste (lot 7)
 # --------------------------------------------------------------------------- #
 def seme_les_skills(mo: Modele, plan: Plan) -> None:
+    """Les trois skills, ecrits — et le README qui dit ce que chacun porte.
+
+    Le lot 5 posait les DOSSIERS et laissait les skills vides, avec un motif
+    ecrit : « poser un skill a moitie serait pire que ne pas en poser ». Le
+    lot 7 les ecrit, et le motif tient toujours — c est pourquoi le skill
+    d exploitation n est PAS pose quand `skills.exploitation` n est pas
+    declare : son absence est une reponse, sa presence creuse serait un
+    mensonge charge a chaque conversation.
+    """
+    from ..skills import exploitation as _expl
+    from ..skills import propagation as _prop
+    from ..skills import rendus
+
     skills = mo.m.get("skills") or {}
+    lignes = _prop.derive(mo)
+    ecrits = rendus(mo)
+
     L = ["# Les skills de ce brain", "",
          "Trois skills, et le découpage est **structurel**, pas thématique : un "
          "skill qui **écrit** dans le brain, un skill qui **clôt** toute écriture, "
          "un skill qui **consomme** le brain sans y écrire. Tout brain a besoin "
-         "des trois.", "", "| Rôle | Nom | Écrit dans le brain |", "|---|---|---|"]
+         "des trois.", "", "| Rôle | Nom | Écrit dans le brain | État |",
+         "|---|---|---|---|"]
     for cle in ("capture", "cloture", "exploitation"):
         s = skills.get(cle) or {}
         if not s.get("nom"):
+            L.append(f"| {cle} | *(non déclaré)* | — | **pas écrit** |")
             continue
+        pose = f".claude/skills/{s['nom']}/SKILL.md" in ecrits
         L.append(f"| {cle} | `{s['nom']}` | "
-                 f"{'oui' if s.get('ecrit_dans_le_brain') else 'non'} |")
-        plan.dossier(f".claude/skills/{s['nom']}", garde=True)
-    L += ["", "> **Les dossiers de ces trois-là sont posés, les skills ne sont "
-          "pas écrits.** C'est le lot 7 de BrainKit qui les instancie, avec la "
-          "table de propagation **dérivée** du manifeste. Poser un skill à "
-          "moitié serait pire que ne pas en poser : il serait chargé, et il "
-          "mentirait.", "",
-          "## Le quatrième, celui qui est écrit", "",
-          "`reprendre-l-entretien` est **instancié**, lui, et c'est la seule "
-          "exception : tout ce qu'il dit se dérive du manifeste qu'on vient "
-          "d'écrire, donc il est complet ou il n'est pas. Il rouvre une "
-          "question de l'entretien qui a construit ce brain, applique les "
-          "treize refus de deviner, recompose le `brain.yml` — et il annonce le "
-          "PRIX de chaque changement avant de le faire : un `motif:` ne coûte "
-          "rien, un seuil coûte une migration.", ""]
+                 f"{'oui' if s.get('ecrit_dans_le_brain') else 'non'} | "
+                 f"{'écrit' if pose else '**pas écrit**'} |")
+        plan.dossier(f".claude/skills/{s['nom']}", garde=not pose)
+    L += ["", "## Ce qui est DÉRIVÉ, et pourquoi c'est le point", "",
+          f"La **table de propagation** du skill de capture — {len(lignes)} "
+          f"lignes dans ce brain — n'est pas recopiée d'un autre vault : elle "
+          f"sort des rôles, des axes et des champs réciproques que `brain.yml` "
+          f"déclare. Un manifeste différent donne une table différente ; une "
+          f"table identique sur deux brains différents serait la preuve qu'elle "
+          f"est recopiée.", "",
+          "| # | Ligne du rayon | Ce qui la produit dans le manifeste |",
+          "|---|---|---|"]
+    for li in lignes:
+        L.append(f"| {li.n} | {li.cible} | {li.origine} |")
+    L.append("")
+    if not _expl.declare(mo):
+        L += ["## Le troisième skill n'est pas écrit", "", _expl.absence(mo), ""]
+    L += ["## Le quatrième, hors triptyque", "",
+          "`reprendre-l-entretien` rouvre une question de l'entretien qui a "
+          "construit ce brain, applique les treize refus de deviner, recompose "
+          "le `brain.yml` — et il annonce le **prix** de chaque changement "
+          "avant de le faire : un `motif:` ne coûte rien, un seuil coûte une "
+          "migration.", ""]
     plan.pose(".claude/skills/README.md", "\n".join(L), "skills")
+    for chemin, texte in ecrits.items():
+        plan.pose(chemin, texte, "skills")
