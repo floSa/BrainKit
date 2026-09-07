@@ -1134,3 +1134,217 @@ skills:
                   livrable: "un plan sourcé — cours, article ou note — où chaque affirmation porte sa source",
                   archetypes: "Documentation/perso/usages.md" }
 ```
+
+---
+
+# 3. L'entretien d'initialisation
+
+## 3.0 Ce que l'entretien est
+
+Un skill, invoqué une seule fois dans la vie d'un brain, à l'ouverture d'un vault
+vierge. Il ne produit **qu'une chose** : un `brain.yml` valide. La génération de
+l'arborescence, des gabarits et des skills n'est pas son travail — c'est celui du
+générateur qu'il appelle en dernière étape (§6, lot 5).
+
+Trois propriétés de conduite, et elles ne sont pas décoratives :
+
+- **Il induit, il ne propose pas.** La tentation évidente est de présenter à
+  l'utilisateur une liste de 20 domaines candidats à cocher. C'est exactement ce
+  qu'il faut refuser : un utilisateur coche par politesse, et le brain hérite d'une
+  taxonomie qui n'est pas la sienne. L'entretien lui fait **citer des pages réelles**
+  et en **induit** les paquets.
+- **Il ne devine aucune sévérité.** Toutes les règles sortent en `a_mesurer`. Il
+  n'existe aucun cas où l'entretien écrit `dure`.
+- **Il s'arrête à zéro page de contenu.** Aucune source, aucune notion, aucun
+  contenu de page. Ce qui a été cité pendant l'entretien part dans `Inbox.md` comme
+  liste de travail, pas comme pages.
+
+## 3.1 Les onze passes, dans l'ordre
+
+L'ordre est la seule décision de conception de l'entretien, et il est contraint :
+chaque passe a besoin de la réponse de la précédente. On ne peut pas demander les
+sections du corps avant de savoir quelle est l'unité, ni le seuil de promotion avant
+le volume cible.
+
+### Passe 0 — Identité et dépôt (5 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 0.1 | De quoi ce brain parle-t-il, en une phrase ? | `brain.sujet` | Ne jamais reformuler en mieux : la phrase de l'utilisateur est la bonne. |
+| 0.2 | Comment veux-tu l'appeler ? | `brain.nom`, nom du dépôt et du coffre | — |
+| 0.3 | Ce brain est-il personnel, professionnel, ou celui d'un client ? | `brain.usage`, et la **polarité** du garde-fou d'identité (M2) | — |
+| 0.4 | Sous quel nom et quelle adresse ses commits doivent-ils être signés ? | `git.identite` | **REFUS ABSOLU de deviner.** Ne jamais reprendre l'adresse annoncée par le harnais. Si l'utilisateur ne répond pas, l'entretien s'arrête là. |
+| 0.5 | Quelle adresse ne doit *jamais* apparaître dans un commit ici ? | `git.domaines_refuses` | — |
+
+### Passe 1 — L'unité (4 questions) — la passe qui commande tout
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 1.1 | Dans six mois, tu ouvres ce brain pour t'en servir. **Qu'est-ce que tu vas chercher ?** | Identifie l'unité : `fonction: unite` | Ne jamais nommer l'unité soi-même. |
+| 1.2 | Comment appelles-tu cette chose, au singulier et au pluriel ? | `roles[].id`, `libelles.unite` | **REFUS de traduire depuis le dev.** « brique » ne sort jamais de la bouche de l'entretien. |
+| 1.3 | Y a-t-il, à côté, des pages qui n'expliquent pas *quoi utiliser* mais *ce qu'il faut comprendre* ? | Crée ou non un rôle `fonction: notion` | Réponse « non » légale : un brain sans notions est valide. |
+| 1.4 | Y a-t-il des pages que **tu** écris pour toi, et que l'IA ne doit pas réécrire sans te demander ? | `protege: true` sur les rôles concernés | Ne jamais poser `protege: true` par défaut, ni le refuser. |
+
+### Passe 2 — L'axe qui range (7 questions) — la passe la plus longue, et la plus payante
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 2.1 | Cite-moi **vingt pages** que tu voudrais dans ce brain. Des vraies, pas des catégories. | L'échantillon d'induction | **REFUS de proposer les vingt.** L'entretien attend, quitte à revenir. Moins de dix : il redemande, l'induction ne tient pas. |
+| 2.2 | Range ces vingt en paquets, **de ta main**. Combien de paquets, et comment les appelles-tu ? | `axes.rangement.prefixes[]` — les dossiers de domaine | **REFUS de proposer les paquets.** C'est le cœur de la méthode : la taxonomie est induite d'un échantillon réel. |
+| 2.3 | Chacune de tes vingt pages tombe-t-elle dans **exactement un** paquet ? | `axes.rangement.exclusif` | Si « non » : ne pas passer outre. Poser 2.4. |
+| 2.4 | *(si 2.3 = non)* Pour celles qui débordent : est-ce qu'un paquet **domine** quand même, ou couvrent-elles vraiment tout ? | `regle_de_majorite: true` et/ou `prefixe_transversal` | Ne jamais forcer une valeur unique pour faire passer la contrainte. C'est le cas histoire, §4 point 5. |
+| 2.5 | Comment appelles-tu ce que ces paquets sont ? (« domaine », « période », « client », « discipline »…) | `libelles.axe_rangement` | — |
+| 2.6 | Combien de pages ce brain aura-t-il **quand il sera plein** ? Un ordre de grandeur suffit. | `brain.volume_cible`, dont le **seuil de promotion se dérive** | **REFUS de demander le seuil directement.** L'utilisateur n'a aucun moyen de le connaître ; le volume, si. |
+| 2.7 | Pour chaque paire de paquets qui pourrait se disputer une page : quelle **question fermée** tranche, et laquelle passe en premier ? | `axes.rangement.arbre_de_decision[]` | **REFUS de fabriquer l'ordre.** L'ordre est *la* décision de conception ; l'IA peut proposer les questions, jamais leur rang. |
+
+`departages[]` et `frontieres[]` sortent **vides**, et l'entretien le dit à haute
+voix : « ces deux listes se rempliront page par page, quand un arbitrage se répétera.
+Les remplir maintenant serait inventer des problèmes qu'on n'a pas. »
+
+### Passe 3 — L'axe qui qualifie (4 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 3.1 | Deux pages du **même paquet** peuvent-elles être de deux natures très différentes ? | Crée ou non `axes.nature` | Réponse « non » **légale et fréquente** : un brain sans axe de nature est valide, et l'entretien ne doit pas insister. |
+| 3.2 | *(si oui)* En regardant tes vingt pages : quelles natures vois-tu ? | `axes.nature.valeurs[]` avec définitions | Induit de l'échantillon, jamais listé d'avance. |
+| 3.3 | Dans quel ordre les questions fermées qui les séparent ? | `axes.nature.arbre_de_decision[]` | Idem 2.7. |
+| 3.4 | Y a-t-il des informations qui n'ont de sens que pour **certaines** de ces natures ? | `champs.conditionnels` (E3) | — |
+
+L'entretien inscrit `vide_autorise: true` et l'explique : *un champ vide est le seul
+signal prévu pour « l'arbre n'a pas tranché » ; une valeur inventée est une faute,
+un champ vide est une question ouverte.*
+
+### Passe 4 — Les axes transverses (3 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 4.1 | Y a-t-il une question que tu poseras au brain et qui **traverse tous les paquets** ? | Zéro, un ou plusieurs `axes.transverses[]` | **REFUS d'en inventer un.** Zéro axe transverse est légal, et le générateur ne créera alors aucun dossier. |
+| 4.2 | *(par axe)* Une page en porte-t-elle une seule valeur, ou plusieurs ? | `multivalue` | — |
+| 4.3 | *(par axe)* Comment appelles-tu le dossier qui les rassemble ? | `dossier` | Vérifier qu'il ne redouble aucun nom de l'axe de rangement — le DevBrain a nommé `Métiers/` et non `Domaines/` pour cette raison exacte. |
+
+### Passe 5 — Le haut de page (3 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 5.1 | Tu ouvres une page. **Avant le texte**, quels trois à cinq faits veux-tu voir ? | `bandeau.colonnes[]` | Plus de cinq : redemander. Le bandeau existe *parce que* dix-huit propriétés poussaient le texte sous la ligne de flottaison. |
+| 5.2 | *(par colonne)* D'où vient ce fait — quel champ du frontmatter le porte ? | `colonnes[].source` | **REFUS d'une colonne sans source.** Une colonne dérivée d'un jugement, pas d'un champ, n'entre pas dans le bandeau. |
+| 5.3 | Et quand un de ces faits manque sur une page, on affiche quoi ? | `bandeau.vide` | Proposer le tiret cadratin et la règle : *une cellule sans source affiche un tiret, jamais une valeur plausible.* |
+
+### Passe 6 — Le corps (5 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 6.1 | Sur une page d'unité, que veux-tu lire, **dans l'ordre** ? | `roles[].corps[]` — les titres et leur rang | Ne pas proposer les titres du DevBrain. |
+| 6.2 | Laquelle de ces sections est une **prose** ? | `genre: prose` | Une seule, en principe. Si l'utilisateur en veut trois, le dire : la doctrine du lot 6 est *aucune prose hors de la section de définition*, et elle a une raison mesurée. |
+| 6.3 | Y a-t-il une section où tu **décides** — d'un côté ce qui va, de l'autre ce qui ne va pas ? | `genre: decision`, et la règle 5 se branche | Réponse « non » légale. La règle 5 se désactive alors, elle ne se force pas. |
+| 6.4 | Y a-t-il une section qui est une **liste de liens** vers d'autres pages ? Lesquelles ? | `genre: liste_liens`, et les règles 1, 6, 8 se branchent | — |
+| 6.5 | Y a-t-il une section **étiquetée** — des puces « Étiquette — valeur » ? Quelles étiquettes exactement, et lesquelles sont obligatoires ? | `genre: etiquetee`, vocabulaire fermé, règle 7 | **REFUS de compléter le vocabulaire.** Cinq étiquettes nommées par l'utilisateur valent mieux que sept dont deux inventées. |
+
+### Passe 7 — Les liens et le résumé (4 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 7.1 | Deux pages peuvent-elles être en **opposition** ? En **complément** ? Autrement ? | Les champs `type: liens` | — |
+| 7.2 | *(par relation)* Si A est dans cette relation avec B, est-ce que **B est dans la même relation avec A** ? | `reciproque: {mode: symetrique}` | — |
+| 7.3 | *(si non)* Comment se dit la relation **dans l'autre sens** ? | `reciproque: {mode: inverse, champ: …}` | **REFUS de forcer la symétrie.** C'est le trou de DevBrain, découvert en §4 point 3 : « A prolonge B » n'est pas « B prolonge A ». |
+| 7.4 | Quel champ est le **résumé d'une ligne** qu'on recopiera chez tous ceux qui citent la page ? | `fonction: resume_court`, règle 6 | Si aucun : la règle 6 se désactive. Ne pas en inventer un. |
+
+### Passe 8 — Ce qui rassemble (3 questions) — la passe qui sauve le comparatif
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 8.1 | Tes unités sont-elles **interchangeables** ? En choisit-on une **contre** une autre ? | Si oui : un rôle `fonction: vue` orienté « départager » | — |
+| 8.2 | *(si non)* Y a-t-il quand même une **table** que tu voudrais voir, une liste filtrée sur un paquet, triée sur quelque chose ? | Un rôle `fonction: vue` orienté « séquence » ou « panorama », avec son `tri_par` | **REFUS de traduire le comparatif.** Si les unités ne sont pas interchangeables, le mot « comparatif » ne doit pas apparaître. Cf. §4 point 2. |
+| 8.3 | *(si un rôle `vue` existe)* Veux-tu un dossier qui les rassemble tous ? | `hub_de_ralliement` et son lien retour | Rappeler pourquoi : *c'est le lien retour qui fait la grappe* (B5). |
+
+### Passe 9 — Gouvernance et frontières (4 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 9.1 | Les mots-clés transverses : vocabulaire **fermé** (on propose avant d'ajouter) ou libre ? | `vocabulaires.tags.mode` | Recommander `ferme` et dire pourquoi, mais accepter `libre`. |
+| 9.2 | Une suppression de page : permise, ou toujours à te demander ? | La frontière du `CLAUDE.md` généré | — |
+| 9.3 | Y a-t-il un second mode — travailler **depuis** ce brain, dans un autre dépôt ? | Génère ou non un `CLAUDE-consommation.md` | Réponse « non » légale ; le DevBrain en a un parce que son consommateur est un dépôt de code. |
+| 9.4 | Quels chemins ne doivent **jamais** être édités à la main ? | `genere[]` | Proposer la liste déduite du manifeste, la faire confirmer. |
+
+### Passe 10 — L'exploitation (3 questions)
+
+| Q | Question | Ce qu'elle produit | Refus |
+|---|---|---|---|
+| 10.1 | Que produiras-tu **à partir** de ce brain ? | `skills.exploitation.livrable` | **REFUS de deviner.** C'est la question qui décide si le troisième skill est un cadreur de projet, un préparateur de propos, ou une note de synthèse client. |
+| 10.2 | Ce livrable a-t-il des **formes types** ? Lesquelles ? | Les archétypes du skill d'exploitation | Zéro archétype légal au démarrage. |
+| 10.3 | Quelles questions faut-il te poser avant de produire ce livrable ? | La check-list du skill | Induire des réponses précédentes, faire compléter. |
+
+## 3.2 La clôture de l'entretien
+
+Avant d'écrire quoi que ce soit, l'entretien **redit le manifeste en prose**, en
+français, en une vingtaine de lignes : « ton brain s'appelle X, il parle de Y ; son
+unité est la *source* ; il se range par *période*, en huit paquets ; une source
+porte une *nature* prise dans neuf valeurs ; deux axes le traversent ; le haut de
+page montre quatre faits ; les dix règles sont **toutes en attente de mesure** ».
+
+Puis **un seul oui**. Pas une validation par bloc : l'utilisateur doit voir
+l'ensemble d'un coup, parce que les incohérences sont entre les blocs, pas dedans.
+
+Ensuite, et alors seulement, l'entretien appelle le générateur.
+
+## 3.3 Ce qui est généré à la fin
+
+| Ce qui est écrit | Depuis quoi |
+|---|---|
+| `brain.yml` | l'entretien |
+| L'arbre des dossiers de domaine, **avec un hub à zéro entrée par dossier** | `axes.rangement.prefixes` |
+| Les dossiers des rôles `range_par: role`, avec leur hub | `roles[]` |
+| Les dossiers des axes transverses, avec un hub par valeur | `axes.transverses[]` |
+| Un gabarit par rôle dans `Templates/` | `roles[].champs` et `roles[].corps` |
+| `Documentation/<axe>/taxonomie.md` — les vocabulaires, les arbres, les places vides pour les départages | `axes` |
+| `Documentation/.../tags.md` — l'en-tête et la règle, vocabulaire vide | `vocabulaires` |
+| Les deux validateurs, **branchés** sur `brain.yml** (pas copiés) | le kit |
+| Les quatre générateurs, idem | le kit |
+| Les trois skills, instanciés avec le vocabulaire du brain, table de propagation **dérivée** | `libelles`, `roles`, `skills` |
+| `CLAUDE.md` + le contexte de mode, avec la **règle d'identité git en tête** | `brain`, `git`, `roles[].protege` |
+| `.githooks/` (les trois) + `core.hooksPath` + l'identité en config locale | `git` |
+| La table de couleurs du graphe et son étape d'installation | `graphe` |
+| `Home.md`, `Inbox.md`, `AI/` (design, migration, index, sessions, scripts) | `agent` |
+| `INSTALL.md` et les guides, générés | tout le manifeste |
+| Le premier fichier de `AI/migration/` : **le journal du lot 1 du brain**, vide, avec sa section *Remontées* | — |
+
+## 3.4 Où l'entretien s'arrête, où le remplissage commence
+
+**La frontière est nette et elle est vérifiable :** l'entretien se termine quand les
+deux validateurs sont **verts sur un brain à zéro page d'unité**. C'est son critère
+d'acceptation, et c'est le seul.
+
+Concrètement, à la fin de l'entretien :
+
+- il existe un hub par dossier, et **aucune** autre page ;
+- `check_arbo` compte « 0 page rangée » et ne trouve aucun écart ;
+- `check_brain` valide les hubs et ne trouve aucune violation ;
+- **les vingt pages citées en passe 2.1 sont dans `Inbox.md`**, en liste à traiter,
+  et pas une n'a été écrite. C'est le point qui distingue l'entretien du
+  remplissage : l'entretien a *utilisé* ces vingt titres pour induire la taxonomie,
+  il ne les a pas capturés.
+
+Le remplissage commence au premier appel du skill de capture. C'est un autre skill,
+un autre commit, et il obéit à la règle de propagation — laquelle n'a rien à faire
+tant qu'il n'y a qu'un hub par dossier.
+
+## 3.5 Ce que l'entretien doit REFUSER de deviner, et redemander
+
+Récapitulatif, parce que c'est la partie du skill qui se dégrade le plus vite si
+elle n'est pas écrite comme une liste fermée :
+
+| # | Ce qu'il ne devine jamais | Ce qu'il fait à la place |
+|---|---|---|
+| 1 | **L'identité git**, sous aucune forme | Redemande, et s'arrête si la réponse ne vient pas. Ne lit **jamais** l'adresse annoncée par le harnais. |
+| 2 | **Le nom de l'unité** et la liste des rôles | Fait décrire l'usage (1.1) et reprend les mots de l'utilisateur. |
+| 3 | **Les paquets de l'axe de rangement** | Fait citer vingt pages réelles et les fait ranger à la main. Jamais de liste à cocher. |
+| 4 | **Le seuil de promotion** | Demande le volume cible et *dérive*, en écrivant le calcul dans `motif_seuil`. |
+| 5 | **L'ordre des arbres de décision** | Peut proposer les questions ; l'ordre reste à l'utilisateur, et il l'annonce comme *la* décision de conception. |
+| 6 | **Toute sévérité de règle** | Écrit `a_mesurer` partout. Ne sait pas écrire `dure`. |
+| 7 | **Le vocabulaire de tags** | Laisse le fichier vide avec sa règle. |
+| 8 | **Une valeur de l'axe de nature quand l'arbre ne tranche pas** | Laisse le champ vide — c'est le signal prévu — et le dit. |
+| 9 | **L'existence d'un rôle `vue`** | Passe 8. Si les unités ne sont pas interchangeables, ne traduit pas le comparatif. |
+| 10 | **L'existence d'un axe transverse** | Zéro est une réponse. Ne crée aucun dossier par analogie avec `Métiers/`. |
+| 11 | **Les règles de départage et les frontières** | Les laisse vides, et dit qu'elles se rempliront page par page. |
+| 12 | **Une colonne de bandeau sans champ source** | Refuse la colonne et redemande d'où vient le fait. |
+| 13 | **Le livrable du skill d'exploitation** | Passe 10.1. Sans réponse, le skill n'est pas généré — mieux vaut deux skills que trois dont un inventé. |
