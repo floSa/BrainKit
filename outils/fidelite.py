@@ -75,6 +75,73 @@ NIVEAU_0 = 0
 # La cle est `<code>/<sujet>` — le meme couple que le rapport imprime. Un groupe
 # absent de cette table sort en INEXPLIQUEE et fait echouer l outil.
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# CONTROLES — l inventaire des confrontations, un libelle par code. Un code
+# ABSENT du rapport n est pas un controle qui n a pas tourne : c est un controle
+# qui n a rien trouve, donc un endroit ou le manifeste redit le vault a
+# l identique. La liste est imprimee en fin de rapport, ce qui rend le silence
+# aussi lisible que le bruit — sans elle, un test vert et un test mort se
+# ressemblent.
+# --------------------------------------------------------------------------- #
+CONTROLES: dict[str, str] = {
+    "P1": "population d un role contre `roles[].population`",
+    "F1": "`role:` porte par une page et inconnu du manifeste",
+    "F2": "champ `requis` absent ou vide",
+    "F3": "champ present hors de `autorises`",
+    "F4": "champ d une page absent du dictionnaire `champs:`",
+    "F5": "valeur hors du vocabulaire declare d un champ enumere",
+    "F6": "champ conditionnel present, condition NON remplie",
+    "F7": "condition remplie, champ conditionnel absent",
+    "F8": "champ declare `deprecies` encore porte",
+    "F9": "frontmatter illisible",
+    "F10": "axe de nature porte par un role `interdit_sur`",
+    "F11": "axe de nature vide alors que `vide_autorise: false`",
+    "F12": "axe de nature vide — legal, compte pour memoire",
+    "F13": "condition d un conditionnel que l outil ne sait pas evaluer",
+    "F14": "champ du vault absent du dictionnaire `champs:` (vu globalement)",
+    "C1": "section declaree absente d une page",
+    "C2": "titre de niveau 2 present et non declare",
+    "C3": "titre de niveau 3 present et non declare, hors section libre",
+    "C4": "section a condition declaree : sa couverture reelle",
+    "C5": "titre de niveau superieur a 3 — hors des niveaux declares",
+    "C6": "zone de bandeau absente sur une page de `porte_par`",
+    "C7": "embed d une vue absent",
+    "C8": "fichier de vue absent a cote de sa page",
+    "C9": "accroche absente avant la premiere section",
+    "C10": "`mesure:` declaree differente du compte reel",
+    "C11": "etiquette hors du vocabulaire ferme d une section `etiquetee`",
+    "C12": "etiquette `obligatoires` absente",
+    "C13": "champ renseigne et section adossee absente",
+    "C14": "section adossee presente et champ vide",
+    "C15": "zone AUTO absente",
+    "C16": "zone AUTO groupee, hors du gabarit du role",
+    "C17": "sous-section de zone AUTO non declaree",
+    "B1": "zone de bandeau hors de `bandeau.porte_par`",
+    "B2": "zone de bandeau qui ne porte pas un tableau",
+    "B3": "en-tete du bandeau different des `colonnes[].titre`",
+    "B4": "nombre de cellules different du nombre de colonnes",
+    "B5": "`porte_le_resume: true` et resume non rendu",
+    "B6": "colonne de bandeau que le manifeste ne permet pas de rendre",
+    "B7": "cellule de bandeau differente de la derivation du manifeste",
+    "A1": "valeur d axe de rangement declaree et portee par aucune page",
+    "A2": "valeur d axe de rangement portee et non declaree",
+    "A3": "`libelle` declare pour une valeur non promue",
+    "A4": "valeur d axe de nature declaree et portee par aucune page",
+    "A5": "valeur d axe transverse declaree et portee par aucune page",
+    "A6": "valeur d axe transverse portee et non declaree",
+    "A7": "valeur promue par le seuil sans `libelle` declare",
+    "A8": "nom de fichier sans le `prefixe_nom` declare",
+    "A9": "hub qui ne nomme ni son dossier ni une valeur transverse",
+    "A10": "`range_par: role` et page hors du `dossier` declare",
+    "A11": "prefixe d axe hors des declares — dossier inderivable",
+    "A12": "chemin de page different de la derivation du manifeste",
+    "A13": "dossier de l arbre sans page `role: hub` a son nom",
+    "A14": "hub sur un dossier qui ne porte aucune page",
+    "A15": "`hub_par_valeur: true` et hub d axe transverse manquant",
+    "A16": "lien retour vers un hub de ralliement absent",
+    "N1": "valeur d axe homonyme d un `roles[].id`",
+}
+
 M = "manifeste"
 V = "vault"
 
@@ -1229,6 +1296,19 @@ def imprime(mo: Modele, pages: list[Page], r: Rapport, ns) -> int:
     print(f"mesures confrontees : {len(r.mesures)}, dont {len(ecarts)} en ecart")
     for quoi, ou, decl, reel_, _ in ecarts:
         print(f"  [ECART] {quoi} · {ou} : declare {decl!r}, mesure {reel_!r}")
+    print("-" * 78)
+
+    # Ce que le manifeste redit JUSTE : les controles qui n ont rien trouve. Sans
+    # cette liste, un controle vert et un controle mort se ressemblent.
+    tourne = {g.code for g in r.groupes.values()}
+    muets = [c for c in CONTROLES if c not in tourne]
+    inconnus = sorted(tourne - set(CONTROLES))
+    print(f"\ncontroles : {len(CONTROLES)}, dont {len(tourne)} avec au moins une "
+          f"divergence et {len(muets)} a zero")
+    for c in muets:
+        print(f"  [zero] {c:4s} {CONTROLES[c]}")
+    for c in inconnus:
+        print(f"  [!!  ] {c:4s} code emis sans libelle dans CONTROLES")
     print("-" * 78)
 
     if inexpliquees:
