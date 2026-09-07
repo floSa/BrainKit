@@ -1,0 +1,421 @@
+# ==============================================================================
+# epreuve.brain.yml — le manifeste du JEU D EPREUVE du lot 3.
+# ------------------------------------------------------------------------------
+# CE N EST PAS un vault de demonstration, et ce n est pas HistoBrain. C est le
+# manifeste le plus PETIT qui exerce les quatre mecanismes que le test a blanc
+# « histoire » a exiges et que le DevBrain ne rencontre jamais :
+#
+#   1. `reciproque: {mode: inverse, champ: Y}` — une PAIRE de champs orientee,
+#      la ou le DevBrain n a que des miroirs (`alternatives:` <-> `alternatives:`) ;
+#   2. l axe de rangement NON EXCLUSIF, avec sa REGLE DE MAJORITE ;
+#   3. le PREFIXE TRANSVERSAL, qui l emporte sur les valeurs qu une page traverse ;
+#   4. l axe ABSENT — une page qui ne porte AUCUNE valeur d axe.
+#
+# Plus l arbitrage 1 du lot : `conditionnels[].sens`, `permet` et `exige`.
+#
+# Trois roles seulement — le minimum que le schema tolere plus celui dont la
+# regle R15 a besoin : exactement une `fonction: unite`, exactement une
+# `fonction: hub`, et une `fonction: notion` pour qu une unite ait une page a
+# comprendre a citer. Aucun bandeau, aucune vue, aucun vocabulaire de fichier :
+# ces trois blocs sont facultatifs et le jeu d epreuve n en teste rien.
+#
+# Les severites sont ECRITES, et c est le seul endroit du kit ou elles ne sont
+# pas un resultat de mesure : un jeu d epreuve a besoin qu une regle ECHOUE DUR
+# pour prouver qu elle mord. Une instance neuve, elle, recoit tout en
+# `a_mesurer` — cf. histobrain.brain.yml, ou les dix y sont.
+# ==============================================================================
+
+manifeste: 1
+
+kit:
+  version: "0.1.0"
+  mode: branche
+
+brain:
+  nom: Épreuve
+  sujet: "Le plus petit brain qui exerce les mécanismes que DevBrain ne rencontre jamais."
+  langue: fr
+  volume_cible: 24
+  usage: perso
+  profil: nu
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: []
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+
+libelles:
+  unite:         { s: source,  p: sources }
+  notion:        { s: notion,  p: notions }
+  hub:           { s: hub,     p: hubs }
+  axe_rangement: { s: période, p: périodes }
+  axe_nature:    { s: nature,  p: natures }
+
+# ------------------------------------------------------------------------------
+roles:
+
+  - id: source
+    fonction: unite
+    libelle: { s: source, p: sources }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    taille_avertissement: 500
+    champs:
+      requis: [role, nom, apport, periode]
+      autorises: [role, nom, alias, apport, periode, nature, langue_originale,
+                  cote, contredit, prolonge, prolonge_par]
+      conditionnels:
+        - champ: langue_originale
+          si: "nature == source-primaire"
+          sens: permet
+        - champ: cote
+          si: "nature == archive"
+          sens: exige
+      motif_conditionnels: >
+        LES DEUX SENS, cote a cote, et c est tout l objet de l arbitrage 1. Une
+        langue originale n a de sens QUE pour une source primaire : le champ est
+        PERMIS par la condition, jamais exige — une source primaire en francais
+        n a pas de langue originale a declarer. Une cote de fonds, elle, est
+        EXIGEE des qu il s agit d une archive : sans elle, le document n est pas
+        retrouvable, et c est la seule chose qui fasse d une archive une source.
+    corps:
+      - { titre: "Ce que c'est", niveau: 2, genre: prose }
+      - { titre: "Ce qu'elle établit / Ce qu'elle ne peut pas établir",
+          niveau: 2, genre: decision,
+          colonne_positive: "Établit", colonne_negative: "N'établit pas" }
+      - { titre: "Comment y accéder", niveau: 2, genre: etiquetee,
+          obligatoires: [Édition, Langue, Accès, Coût],
+          permises:     [Édition, Langue, Accès, Coût] }
+      - { titre: "Autour",          niveau: 2, genre: libre }
+      - { titre: "Contredit par",   niveau: 3, genre: liste_liens, champ: contredit }
+      - { titre: "Prolonge",        niveau: 3, genre: liste_liens, champ: prolonge }
+      - { titre: "Prolongée par",   niveau: 3, genre: liste_liens, champ: prolonge_par }
+      - { titre: "Voir aussi",      niveau: 2, genre: liste_liens, champ: null }
+
+  - id: notion
+    fonction: notion
+    libelle: { s: notion, p: notions }
+    range_par: axe
+    protege: true
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    taille_avertissement: 500
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, alias, apport, periode]
+      motif: >
+        `periode` est AUTORISEE et NON REQUISE, et c est le cas qui passe pour le
+        mecanisme 4 : une notion peut n avoir aucune periode — l historiographie
+        n appartient a aucun siecle. La regle de chemin l ECARTE et le COMPTE ;
+        elle ne la signale pas. Sur le role `source`, la meme absence echoue,
+        parce que `periode` y est REQUISE : c est le gabarit qui decide, jamais
+        la regle de chemin.
+    corps:
+      - { titre: "Aperçu",     niveau: 2, genre: libre }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
+
+  - id: hub
+    fonction: hub
+    libelle: { s: hub, p: hubs }
+    range_par: axe
+    porte_categorie: false
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: false
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, apport]
+    corps:
+      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre,
+          ecrit_a_la_main: true }
+      - { titre: "<AUTO>", niveau: 0, genre: auto,
+          balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"],
+          perimetre: dossier }
+
+# ------------------------------------------------------------------------------
+axes:
+
+  rangement:
+    champ: periode
+    # ---------------------- MECANISMES 2, 3 et 4 -----------------------------
+    exclusif: false
+    regle_de_majorite: true
+    definition_de_la_majorite: "la valeur de l'axe est celle qui rassemble le plus de la page"
+    prefixe_transversal: transversal
+    motif_prefixe_transversal: >
+      Reserve a ce qui n a AUCUN centre de gravite. Il l emporte sur les valeurs
+      qu une page traverse : une synthese de longue duree ne vit pas dans la
+      premiere periode qu elle touche.
+    seuil_promotion: 2
+    motif_seuil: >
+      DERIVE du volume cible, comme partout : volume_cible 24 / 3 prefixes -> ~8
+      pages par periode, donc un seuil bas. Il est petit exprès — un jeu
+      d epreuve doit faire franchir et NE PAS faire franchir le seuil avec une
+      poignee de pages, sinon il ne teste ni la promotion ni son plafond.
+    plafond_promotion: true
+    motif_plafond: >
+      Un sous-dossier qui ne laisse AUCUNE page au niveau de la periode redouble
+      son parent. C est ce qui rend `Antiquité/Herodote - Histoires.md`
+      necessaire au jeu d epreuve : sans elle, `antiquite/rome` egalerait le
+      total du prefixe et ne se promouvrait pas.
+    niveaux: 2
+    valeur_courte_autorisee: true
+    motif_valeur_courte: >
+      Une valeur NUE est legale : `periode: antiquite` sans sous-valeur. C est ce
+      qui distingue cet axe de celui du DevBrain, ou `categorie:` est TOUJOURS
+      `prefixe/sous`.
+
+    prefixes:
+      - cle: antiquite
+        dossier: "Antiquité"
+        portee: "jusqu'à 476"
+        sous:
+          rome:  { libelle: "Rome" }
+          grece:
+            libelle: "Monde grec"
+            motif: >
+              DECLAREE et jamais promue : aucune page ne la porte, donc aucun
+              dossier `Antiquité/Monde grec/` n existe. C est le cas qui prouve
+              qu un libelle declare n exige pas un dossier — la promotion
+              reprendra d elle-meme le jour ou deux pages arriveront.
+      - cle: xxe
+        dossier: "XXe siècle"
+        portee: "après 1914"
+        sous: {}
+      - cle: transversal
+        dossier: "Transversal"
+        portee: "les synthèses de longue durée, sans centre de gravité"
+        sous: {}
+
+    rattachements: {}
+
+    arbre_de_decision:
+      - { n: D1, question: "La source porte-t-elle sur plus de deux des périodes ci-dessous ?",
+          si_oui: ["transversal"],
+          motif: "Hors chronologie, et EN PREMIER : sans elle, une synthese tomberait dans la premiere periode qu elle touche." }
+      - { n: D2, question: "Son objet est-il antérieur à 476 ?", si_oui: ["antiquite/*"] }
+      - { n: D3, question: "Son objet est-il postérieur à 1914 ?", si_oui: ["xxe"] }
+      - { n: D4, question: "Aucun des précédents", si_oui: [], arret: true,
+          motif: "ARRET — demander. Une periode manquante ne s invente jamais." }
+
+    departages: []
+    frontieres: []
+    motif_listes_vides: "NAISSENT VIDES : le mecanisme a transposer est la PLACE ou elles s ecrivent."
+
+  nature:
+    champ: nature
+    porte_par: [source]
+    interdit_sur: [notion, hub]
+    vide_autorise: true
+    motif_vide: >
+      Un champ vide est le SEUL signal prevu pour « l arbre n a pas tranche ».
+      Toutes les sources du jeu d epreuve en portent une : l absence est
+      signalee en AVERTISSEMENT, et un avertissement dans le vault VERT
+      brouillerait la lecture du verdict.
+    valeurs:
+      - { cle: source-primaire, definition: "Produite par les contemporains du fait." }
+      - { cle: ouvrage,         definition: "Livre d'auteur, appareil critique." }
+      - { cle: archive,         definition: "Document non publié, conservé en fonds, avec une cote." }
+    arbre_de_decision:
+      - { n: N1, question: "Le document est-il conservé en fonds, sans publication ?", si_oui: archive }
+      - { n: N2, question: "Son auteur est-il contemporain du fait ?", si_oui: source-primaire }
+      - { n: N3, question: "Aucun des précédents", si_oui: ouvrage, defaut: true }
+    departages: []
+
+  transverses: []
+
+# ------------------------------------------------------------------------------
+champs:
+  role:
+    type: enum
+    source: "roles[].id"
+    fonction: aucune
+  nom:
+    type: ligne
+    fonction: identite
+    exemption: 'un `nom:` portant / \ : * ? " < > | ne peut pas etre un nom de fichier'
+  alias:
+    type: liste
+    fonction: alias
+    unicite: souple
+  apport:
+    type: ligne
+    fonction: resume_court
+    section: null
+    reinjecte_dans: ["Contredit par", "Prolonge", "Prolongée par"]
+  periode:
+    type: enum
+    source: axes.rangement
+    fonction: aucune
+    motif: >
+      `type: enum` sur un axe NON EXCLUSIF, exactement comme
+      histobrain.brain.yml : le champ porte tantot un scalaire, tantot une liste.
+      Le moteur lit les deux, et la remontee est ecrite dans
+      design/03-validation.md — c est le contrat qui manque d un mot, pas le
+      vault qui a tort.
+  nature:
+    type: enum
+    source: axes.nature
+    fonction: aucune
+  langue_originale:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel, sens PERMET : n a de sens que pour une source primaire."
+  cote:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel, sens EXIGE : une archive sans cote n est pas retrouvable."
+  contredit:
+    type: liens
+    reciproque: { mode: symetrique }
+    section: "Contredit par"
+    fonction: aucune
+    motif: "SYMETRIQUE : une contradiction l est par nature."
+  # ------------------------- MECANISME 1 -------------------------------------
+  prolonge:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge_par }
+    section: "Prolonge"
+    fonction: aucune
+    motif: >
+      MODE INVERSE. « A prolonge B » n implique pas « B prolonge A » : il
+      implique « B EST PROLONGEE PAR A ». La relation demande une PAIRE de
+      champs, pas un miroir, et le validateur doit refuser une paire MAL
+      DECLAREE — sinon on remplace un trou par un autre.
+  prolonge_par:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge }
+    section: "Prolongée par"
+    fonction: aucune
+
+# ------------------------------------------------------------------------------
+# regles — LES DIX. Severites ECRITES, cf. l en-tete de ce fichier.
+# ------------------------------------------------------------------------------
+regles:
+
+  - id: reciprocite
+    enonce: "Si A cite B dans un champ à réciprocité, B cite A — ou son inverse déclaré."
+    active: true
+    severite: dure
+    champs: [contredit, prolonge, prolonge_par]
+    modes: { contredit: symetrique, prolonge: inverse, prolonge_par: inverse }
+
+  - id: chemin_categorie
+    enonce: "Le dossier d'une page correspond à sa valeur de l'axe de rangement."
+    active: true
+    severite: dure
+    structurellement_dure: true
+
+  - id: completude_du_hub
+    enonce: "Toute page d'un rôle `apparait_dans_le_hub` présente dans le dossier apparaît dans le hub du dossier."
+    active: true
+    severite: dure
+    roles: [source, notion]
+
+  - id: voisinage_declare
+    enonce: "Une page dont le dossier porte d'autres pages du même rôle et dont le champ de voisinage est vide est signalée."
+    active: false
+    severite: a_mesurer
+    motif: >
+      DESACTIVEE : dans un brain de sources, l absence de voisin est la NORME.
+      Deux sources d une meme periode ne se contredisent ni ne se prolongent la
+      plupart du temps — meme signaler serait du bruit.
+
+  - id: redirection_sourcee
+    enonce: >
+      Une cellule de la colonne négative qui REDIRIGE — c'est-à-dire qui porte une
+      flèche — et dont la cible est une page fichée dans le brain, porte le
+      wikilink de cette page.
+    active: true
+    severite: dure
+    sections: ["Ce qu'elle établit / Ce qu'elle ne peut pas établir"]
+    colonne: "N'établit pas"
+    marqueur: "→|->"
+    condition: "la cible est une page fichée"
+
+  - id: reinjection_du_resume
+    enonce: "Chaque puce d'une section de liste de liens adossée à un champ commence par le résumé COURANT de sa cible."
+    active: true
+    severite: dure
+    champ_resume: apport
+    sections: ["Contredit par", "Prolonge", "Prolongée par"]
+    normalisation: "`**` et espaces normalisés avant comparaison"
+
+  - id: etiquettes_fermees
+    enonce: "Une section déclarée `genre: etiquetee` a un vocabulaire FERMÉ."
+    active: true
+    severite: dure
+    sections: ["Comment y accéder"]
+
+  - id: citation_unique
+    enonce: "Une même cible ne se LISTE pas dans deux sections de liste de liens."
+    active: true
+    severite: dure
+    sections: ["Contredit par", "Prolonge", "Prolongée par", "Voir aussi"]
+    definition_de_liste: "entrée de puce, pas lien cité dans une phrase"
+
+  - id: bandeau_a_jour
+    enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
+    active: false
+    severite: a_mesurer
+    motif: "Aucun bloc `bandeau:` dans ce manifeste — la regle n a pas d objet."
+
+  - id: anti_repetition
+    enonce: "La section de définition ne recontient pas les valeurs affichées par le bandeau."
+    active: false
+    severite: a_mesurer
+    scriptable: false
+    motif: "NON LIVREE : non scriptable, et sans bandeau elle n a rien a lire."
+
+regles_de_socle:
+  - { id: frontmatter_lisible, severite: dure,
+      enonce: "Un frontmatter illisible est une ERREUR, jamais une absence." }
+  - { id: gabarit_par_role, severite: dure,
+      enonce: "`role:` inconnu ou absent refusé ; champs requis non vides ; tout champ hors de `autorises` échoue ; le SENS d'un conditionnel est respecté." }
+  - { id: liens_resolus, severite: dure,
+      enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter." }
+  - { id: nom_egal_fichier, severite: dure,
+      enonce: "`nom:` identique au nom du fichier, sauf caractère illégal en nom de fichier." }
+  - { id: page_atteignable, severite: dure,
+      enonce: "Toute page atteignable depuis un hub." }
+  - { id: hub_par_niveau, severite: dure,
+      enonce: "TOUT niveau du chemin porte son hub, pas seulement la feuille." }
+  - { id: vocabulaire_ferme, severite: dure,
+      enonce: "Toute valeur d'un champ `enum` ou `liste_enum` appartient au vocabulaire déclaré de son axe." }
+  - { id: unicite_du_nom_de_fichier, severite: dure,
+      enonce: "Un nom de fichier est unique dans le vault, à la casse près." }
+  - { id: couverture_de_section, severite: dure,
+      enonce: "Une section `genre: liste_liens` adossée à un `champ:` liste TOUTES les cibles de ce champ." }
+  - { id: lien_vers_une_page_a_comprendre, severite: dure,
+      enonce: "Toute page d'un rôle `fonction: unite` porte au moins un lien vers une page à comprendre." }
+  - id: paire_inverse_bien_declaree
+    severite: dure
+    enonce: "Un champ `reciproque: {mode: inverse, champ: Y}` exige que Y déclare `reciproque: {mode: inverse, champ: X}`."
+    motif: >
+      Verifiable sur le MANIFESTE, sans lire une seule page. Dure d emblee : ce n
+      est pas une regle a durcir, c est un trou a ne pas ouvrir.
+  - { id: taille_avertissement, severite: a_mesurer,
+      enonce: "Une page au-delà de `roles[].taille_avertissement` lignes suggère une scission." }
+  - { id: collision_alias, severite: a_mesurer,
+      enonce: "Doublon interne d'alias, ou alias qui est le `nom:` d'une autre page du MÊME rôle." }
+
+seuils:
+  vue_min_valeurs_axe: 3
+  vue_min_membres: 2
+
+genere:
+  chemins:
+    - { chemin: "zones AUTO des hubs", par: build_mocs }
+  non_pages: [.git, .claude, .obsidian, AI, Documentation, Templates]
+
+agent:
+  racine: "AI/"
+  sous:
+    - { chemin: "design/", role: "les specs de reference" }
