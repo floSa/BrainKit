@@ -7,6 +7,7 @@
     brainkit valider [...]
     brainkit mesurer [...]
     brainkit generer [...]
+    brainkit sonder [...]
     brainkit semer [...]
     brainkit re-seuiller [...]
     brainkit freeze [...]
@@ -42,6 +43,8 @@ SOUS_COMMANDES = {
                 "mesure ce qu'une règle coûte, AVANT de la durcir"),
     "generer": ("brainkit.generer.__main__", "main",
                 "régénère les artefacts dérivés (mode `--check` par défaut)"),
+    "sonder": ("brainkit.amont.__main__", "main",
+               "sonde l'amont des unités et date leur fraîcheur (side-car seul)"),
     "semer": ("brainkit.semer.__main__", "main",
               "sème une instance vierge (mode lecture par défaut)"),
     "re-seuiller": ("brainkit.semer.__main__", "main_reseuiller",

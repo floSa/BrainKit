@@ -47,6 +47,8 @@ from __future__ import annotations
 
 import argparse
 import collections
+import hashlib
+import json
 import re
 import sys
 from dataclasses import dataclass, field
@@ -921,11 +923,46 @@ def extrait_section(corps: str, niveau: int, titre: str) -> str | None:
 
 
 # ------------------------------------------------------------------ le bandeau
-def passe_bandeau(mo: Modele, pages: list[Page], r: Rapport) -> None:
+def faits_amont(mo: Modele, racine: Path) -> dict[str, dict]:
+    """{chemin de page : {nom du fait : valeur}}, lus dans le side-car de l amont.
+
+    On LIT l etat, on ne le RECALCULE pas. La derivation vit dans le kit
+    (`brainkit/amont/etat.py`) et la refaire ici donnerait deux implementations
+    de la meme regle, dont l une prendrait du retard — exactement ce que cet
+    outil existe pour detecter ailleurs. Ce qu on confronte au vault, c est le
+    LIBELLE que le manifeste donne a un etat, pas l etat lui-meme.
+    """
+    amont = mo.m.get("amont") or {}
+    faits = amont.get("faits") or {}
+    fichier = racine / str(amont.get("side_car") or "")
+    if not faits.get("etat") or not amont.get("side_car") or not fichier.is_file():
+        return {}
+    try:
+        brut = json.loads(fichier.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    out: dict[str, dict] = {}
+    for chemin, rec in (brut if isinstance(brut, dict) else {}).items():
+        entree = {faits["etat"]: rec.get("etat") or ""}
+        if faits.get("date"):
+            entree[faits["date"]] = rec.get("date") or ""
+        out[chemin] = entree
+    return out
+
+
+def passe_bandeau(mo: Modele, pages: list[Page], r: Rapport,
+                  racine: Path | None = None) -> None:
     """Les colonnes du bandeau, rendues depuis le frontmatter selon les tables declarees."""
     b = mo.bandeau
     if not b:
         return
+    faits = faits_amont(mo, racine) if racine is not None else {}
+    amont = mo.m.get("amont") or {}
+    defaut = {}
+    if (amont.get("faits") or {}).get("etat"):
+        defaut = {amont["faits"]["etat"]: "jamais_sonde"}
+        if amont["faits"].get("date"):
+            defaut[amont["faits"]["date"]] = ""
     porte_par = set(b.get("porte_par") or [])
     bal = b.get("balises") or []
     vide = b.get("vide") or ""
@@ -966,8 +1003,9 @@ def passe_bandeau(mo: Modele, pages: list[Page], r: Rapport) -> None:
                 r.ajoute("B5", "resume",
                          f"`porte_le_resume: true` et la zone ne rend pas "
                          f"`{champ_resume}:` en citation", page=p.chemin.as_posix())
+        externes = faits.get(p.chemin.as_posix(), defaut)
         for col, cell in zip(colonnes, cellules):
-            attendu = rend_colonne(mo, col, p.fm, vide)
+            attendu = rend_colonne(mo, col, p.fm, vide, externes)
             if attendu is None:
                 r.ajoute("B6", col["titre"],
                          f"colonne `{col['titre']}` que l outil ne sait pas rendre "
@@ -980,10 +1018,17 @@ def passe_bandeau(mo: Modele, pages: list[Page], r: Rapport) -> None:
                          detail=f"{p.chemin.as_posix()} — « {cell} » contre « {attendu} »")
 
 
-def rend_colonne(mo: Modele, col: dict, fm: dict, vide: str) -> str | None:
-    """La cellule qu une colonne de bandeau doit porter, derivee du manifeste seul."""
+def rend_colonne(mo: Modele, col: dict, fm: dict, vide: str,
+                 externes: dict | None = None) -> str | None:
+    """La cellule qu une colonne de bandeau doit porter, derivee du manifeste seul.
+
+    Une colonne `externe:` lit le meme dictionnaire de valeurs, mais celui des
+    FAITS SONDES et non celui du frontmatter. Le rendu ne change pas d une
+    ligne : meme table, meme qualification, meme caractere vide.
+    """
+    lu = (externes or {}) if col.get("externe") else fm
     src = col.get("source")
-    val = fm.get(src)
+    val = lu.get(src)
     table = col.get("table") or {}
     dep = col.get("depend_de") or {}
 
@@ -997,8 +1042,8 @@ def rend_colonne(mo: Modele, col: dict, fm: dict, vide: str) -> str | None:
         if q:
             exc = col.get("exception_qualification") or {}
             excl = evalue_condition(exc.get("si", ""), fm) if exc.get("si") else False
-            if not excl and non_vide(fm.get(q)):
-                rendu = f"{rendu} {fm[q]}"
+            if not excl and non_vide(lu.get(q)):
+                rendu = f"{rendu}{col.get('separateur') or ' '}{lu[q]}"
         return rendu
 
     # la valeur n est pas dans la table : la colonne depend d autres champs
@@ -1404,6 +1449,37 @@ def imprime(mo: Modele, pages: list[Page], r: Rapport, ns) -> int:
     return 0
 
 
+def passe_jumeau(manifeste: Path, vault: Path) -> int:
+    """Les DEUX manifestes sont-ils le meme fichier, a l octet ?
+
+    Remontee 4 du lot 9, remontee 4 du lot 10, fermee ici. `exemples/devbrain.brain.yml`
+    et le `brain.yml` du vault decrivent le meme brain et doivent etre identiques :
+    le premier est ce que le kit teste, le second ce que le vault applique. Ils
+    l ont ete jusqu ici par ATTENTION SEULE, et cinq documents du depot les
+    lisent l un pour l autre — une divergence ferait mentir un jeu d epreuve vert.
+
+    Cinq lignes qui evitent une erreur silencieuse, et ce n est pas une figure de
+    style : une divergence ne casse rien, elle rend juste faux tout ce qu on
+    croit avoir verifie.
+    """
+    jumeau = vault / "brain.yml"
+    if not jumeau.is_file() or jumeau.resolve() == manifeste.resolve():
+        return 0
+    a = hashlib.sha256(manifeste.read_bytes()).hexdigest()
+    b = hashlib.sha256(jumeau.read_bytes()).hexdigest()
+    if a == b:
+        print(f"\nOK — `{manifeste.name}` et `{jumeau}` sont identiques à l'octet "
+              f"(sha256 {a[:12]}…).")
+        return 0
+    print(f"\nÉCART — les deux manifestes ont divergé :"
+          f"\n  {manifeste}  sha256 {a[:12]}…"
+          f"\n  {jumeau}  sha256 {b[:12]}…"
+          f"\n  Ils décrivent le même brain : l'un est ce que le kit teste, "
+          f"l'autre ce que le vault applique. Une divergence ne casse rien — "
+          f"elle rend faux tout ce qu'on croit avoir vérifié.")
+    return 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Confronte un brain.yml a son vault.")
     ap.add_argument("--manifeste", type=Path, default=MANIFESTE_DEFAUT)
@@ -1425,10 +1501,11 @@ def main() -> int:
     passe_population(mo, pages, r)
     passe_frontmatter(mo, pages, r)
     passe_corps(mo, pages, r)
-    passe_bandeau(mo, pages, r)
+    passe_bandeau(mo, pages, r, ns.vault)
     passe_axes(mo, pages, r)
     passe_chemins(mo, pages, r)
-    return imprime(mo, pages, r, ns)
+    code = imprime(mo, pages, r, ns)
+    return max(code, passe_jumeau(ns.manifeste, ns.vault))
 
 
 if __name__ == "__main__":

@@ -32,6 +32,7 @@ qu'il ne fait pas, ce qui reste ouvert : **[design/etat-final.md](design/etat-fi
 | `valider` | dix règles de contenu et de structure, chacune avec la sévérité **que le manifeste déclare** |
 | `generer` | les artefacts dérivés — index, hubs, liens, hauts de page. `--check` par défaut |
 | `mesurer` | ce qu'une règle **coûterait** avant de la durcir, et les garde-fous qui l'interdisent trop tôt |
+| `sonder` | l'**amont** d'une unité, quand elle en a un : dernière version publiée, dernier commit, dépôt archivé. Sans jeton, et n'écrit que dans un side-car |
 | `re-seuiller` | changer le seuil de promotion d'un sous-dossier — une **migration**, par `git mv` |
 | `freeze` | copier le kit **dans** l'instance et couper la dépendance (livraison hors ligne) |
 

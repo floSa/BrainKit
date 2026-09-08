@@ -181,6 +181,7 @@
     },
 
     "bandeau":            { "$ref": "#/$defs/bandeau" },
+    "amont":              { "$ref": "#/$defs/amont" },
     "regles":             { "$ref": "#/$defs/regles" },
     "regles_de_socle":    { "type": "array", "items": { "$ref": "#/$defs/regleDeSocle" } },
     "seuils":             { "$ref": "#/$defs/seuils" },
@@ -721,7 +722,16 @@
             "properties": {
               "titre":  { "type": "string", "minLength": 1 },
               "source": { "type": "string", "minLength": 1 },
+              "externe": {
+                "description": "La colonne lit un FAIT constate par un mecanisme du kit, pas un champ du frontmatter. Seule valeur : `amont`. La `source:` et le `qualifie_par:` nomment alors des faits (`amont.faits`), et C2 ne les cherche pas dans `champs:`.",
+                "enum": ["amont"]
+              },
               "qualifie_par": { "type": "string", "minLength": 1 },
+              "separateur": {
+                "description": "Ce qui separe la base de sa qualification. Defaut : une espace. Utile quand les deux ne sont pas de meme nature — un libelle et une date se lisent mal colles.",
+                "type": "string",
+                "minLength": 1
+              },
               "table": { "type": "object", "additionalProperties": { "type": "string" } },
               "exception_qualification": {
                 "type": "object",
@@ -847,6 +857,89 @@
         "depuis":   { "type": "string" },
         "mesure":   { "type": "object" },
         "quatre_motifs_distingues": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "amont": {
+      "description": "La SOURCE VIVANTE d une unite : ce dont elle parle et qui continue d exister ailleurs. Bloc FACULTATIF, et c est tout le point — une source d histoire n a pas de depot. Sans ce bloc, le kit ne sonde rien, ne signale rien et n affiche aucune colonne de fraicheur.",
+      "type": "object",
+      "required": ["porte_par", "side_car", "faits"],
+      "unevaluatedProperties": false,
+      "allOf": [{ "$ref": "#/$defs/annotations" }],
+      "properties": {
+        "porte_par": {
+          "description": "Les roles dont les pages ont un amont. Un role absent d ici n est jamais sonde.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/identifiant" }
+        },
+        "champ_url": {
+          "description": "Le champ de frontmatter qui porte l URL de l amont. Doit etre un champ declare (C2).",
+          "type": "string",
+          "minLength": 1
+        },
+        "champ_confronte": {
+          "description": "Le champ que l amont peut CONTREDIRE. Ses valeurs `eliminatoire:` disent lesquelles declarent deja la chose morte — c est ce qui distingue « l amont est archive et la page ne le dit pas » de « la page le dit deja ».",
+          "type": "string",
+          "minLength": 1
+        },
+        "side_car": {
+          "description": "Le fichier ou les faits sondes sont ranges. JAMAIS le frontmatter : cette donnee se perime seule, elle n est pas ecrite par l auteur, et l y mettre produirait un diff par page a chaque sondage.",
+          "type": "string",
+          "minLength": 1
+        },
+        "faits": {
+          "description": "Le NOM des deux faits que le sondage produit, tels qu une colonne `externe: amont` les nomme dans sa `source:` et son `qualifie_par:`.",
+          "type": "object",
+          "required": ["etat"],
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "etat": { "type": "string", "minLength": 1 },
+            "date": { "type": "string", "minLength": 1 }
+          }
+        },
+        "sondes": {
+          "description": "Quel hote se sonde par quelle sonde. La liste des sondes est FERMEE par le kit : `gitlab` est un nom parfaitement legitime, ce n est pas une sonde que ce kit possede.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["hote", "sonde"],
+            "unevaluatedProperties": false,
+            "allOf": [{ "$ref": "#/$defs/annotations" }],
+            "properties": {
+              "hote":  { "type": "string", "minLength": 1 },
+              "sonde": { "enum": ["github", "pypi"] }
+            }
+          }
+        },
+        "registre": {
+          "description": "Le registre de publication, quand l unite en a un independamment de son depot. Un paquet publie sans taguer son depot n a de date que la.",
+          "type": "object",
+          "required": ["sonde", "champs"],
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "sonde":  { "enum": ["github", "pypi"] },
+            "si":     { "type": "string", "minLength": 1 },
+            "champs": {
+              "description": "Les champs ou chercher le nom du paquet, dans l ordre. Le premier non vide gagne.",
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "seuils": {
+          "description": "Au-dela de combien de jours une trace d amont est ANCIENNE. Deux seuils distincts, parce qu une publication et un commit ne disent pas la meme chose.",
+          "type": "object",
+          "unevaluatedProperties": false,
+          "allOf": [{ "$ref": "#/$defs/annotations" }],
+          "properties": {
+            "release_ancienne_jours": { "type": "integer", "minimum": 1 },
+            "commit_ancien_jours":    { "type": "integer", "minimum": 1 }
+          }
+        }
       }
     },
 

@@ -94,17 +94,34 @@ VERT_MULTIVALUES = {
 # Le critere d acceptation du lot, mesure sur les deux validateurs actuels du
 # DevBrain le 2026-09-07 : `uv run AI/scripts/check_brain.py` (0 dure, 111
 # avertissements) et `uv run AI/scripts/check_arbo.py` (0 ecart).
+#
+# MIS A JOUR LE 2026-09-08, lot 11 : 111 -> 127. Les seize de plus sont les
+# constats de `amont_concorde`, une regle NEUVE — aucun compte existant n a
+# bouge, et c est ce qu il fallait verifier. Les trois sous-cles sont ecrites
+# separement parce que c est ainsi qu elles se reparent : `archive` demande une
+# decision sur la brique, `ancien` une relecture, `contredit` l inverse des deux
+# — une fiche declaree morte dont l amont publie encore.
+#
+# Ce compte depend du SIDE-CAR (`AI/index/fraicheur.json`) : un vault dont le
+# side-car n a pas ete sonde rend 0 sur les trois, et le scenario le dit au lieu
+# d echouer — une regle qui n a rien a lire n est pas une regle en faute.
 DEVBRAIN_ATTENDU = {
     ("voisinage_declare", ""): 62,
     ("collision_alias", ""): 13,
     ("couverture_des_vues", "a"): 13,
     ("couverture_des_vues", "e"): 11,
+    ("amont_concorde", "ancien"): 10,
     ("etiquettes_fermees", "Ressources"): 5,
     ("anti_repetition", ""): 4,
+    ("amont_concorde", "archive"): 4,
+    ("amont_concorde", "contredit"): 2,
     ("couverture_des_vues", "b"): 1,
     ("couverture_des_vues", "d"): 1,
     ("vocabulaire_ferme", "axe_vide"): 1,
 }
+# Les sous-cles dont le compte depend d un side-car sonde. Sans lui, elles sont
+# a zero et le scenario l ANNONCE plutot que d echouer.
+DEPEND_DU_SONDAGE = {k for k in DEVBRAIN_ATTENDU if k[0] == "amont_concorde"}
 
 
 def charge_dict() -> dict:
@@ -224,16 +241,29 @@ def scenario_devbrain(j: Journal, vault: Path) -> None:
     dures = constats(v, "dure")
     j.verifie("0 violation dure", not dures,
               "\n".join(sorted(f"{r}/{c} — {p}" for r, c, p in dures)))
-    j.verifie("111 avertissements", len(v.avertissements) == 111,
-              f"{len(v.avertissements)} au lieu de 111")
+
+    # Le side-car de l amont est une donnee de SONDAGE, pas de depot : un clone
+    # frais ne l a pas, et les seize constats de fraicheur sont alors absents.
+    # On le DIT et on retire ces sous-cles de l attendu, plutot que d echouer
+    # sur une absence qui n est pas une regression.
+    attendu = dict(DEVBRAIN_ATTENDU)
+    side_car = vault / "AI" / "index" / "fraicheur.json"
+    sonde = side_car.is_file() and '"etat"' in side_car.read_text(encoding="utf-8")
+    if not sonde:
+        print("        (side-car de l'amont absent ou non sondé — les 16 constats "
+              "de `amont_concorde` sont retirés de l'attendu)")
+        attendu = {k: n for k, n in attendu.items() if k not in DEPEND_DU_SONDAGE}
+    total = sum(attendu.values())
+    j.verifie(f"{total} avertissements", len(v.avertissements) == total,
+              f"{len(v.avertissements)} au lieu de {total}")
     reel = {(r, c): n for (r, c, s), n in v.rapport.compte_par_regle().items()
             if s == "avertissement"}
     ecarts = [f"{r}/{c} : {reel.get((r, c), 0)} au lieu de {n}"
-              for (r, c), n in sorted(DEVBRAIN_ATTENDU.items())
+              for (r, c), n in sorted(attendu.items())
               if reel.get((r, c), 0) != n]
     ecarts += [f"{r}/{c} : {n} avertissement(s) non attendu(s)"
                for (r, c), n in sorted(reel.items())
-               if (r, c) not in DEVBRAIN_ATTENDU]
+               if (r, c) not in attendu]
     j.verifie("le compte exact, RÈGLE PAR RÈGLE", not ecarts, "\n".join(ecarts))
 
 

@@ -1622,6 +1622,118 @@ bandeau:
         177 paquets qui le portaient sans raison.
     - titre: Maturité
       source: maturite
+    # --- CINQUIEME COLONNE, ajoutee le 2026-09-08. La seule qui ne lise pas le
+    # frontmatter : sa valeur est un FAIT SONDE, range dans le side-car declare
+    # par `amont:` ci-dessous. Le moteur ne change pas d une ligne — meme table,
+    # meme qualification, meme caractere vide — seul l endroit ou il va chercher
+    # la valeur differe.
+    - titre: Fraîcheur
+      source: fraicheur
+      externe: amont
+      qualifie_par: fraicheur_date
+      separateur: " · "
+      table:
+        recente: "à jour"
+        ancienne: "amont ancien"
+        archive: "dépôt archivé"
+        sans_amont: "aucun amont fiché"
+        jamais_sonde: "amont non sondé"
+      motif: >
+        `maturite:` est DECLARATIF : ecrit une fois a la capture, jamais
+        reverifie. Rien dans le vault ne disait qu un depot n avait pas eu de
+        release depuis trois ans, ni qu il etait archive — et il y en a. La
+        cinquieme colonne dit ce que l amont fait, a cote de ce que la fiche
+        pretend. Les deux se lisent ensemble, et le desaccord se VOIT.
+      motif_les_cinq_etats: >
+        Les cinq etats sont fermes par le kit et le manifeste leur donne un
+        libelle, comme une table de colonne ordinaire. Deux d entre eux sont
+        deux SILENCES differents, et les fondre serait la faute : « aucun amont
+        fiche » dit qu on a regarde et qu il n y a rien (Figma, AWS S3 — 19
+        briques), « amont non sonde » dit que le sondage n a pas eu lieu. Un
+        compteur unique ferait passer le second pour le premier.
+      motif_la_date_est_accolee: >
+        Sans sa date, « amont ancien » n apprend rien : ancien de combien ? La
+        date est le second fait du sondage, accolee par `qualifie_par:` comme
+        `langage` l est a `famille`. Le `separateur:` existe pour ce cas — une
+        espace collerait un libelle et une date, qui ne sont pas de meme nature.
+
+# ==============================================================================
+# amont — la SOURCE VIVANTE d une brique. Bloc FACULTATIF du contrat, et c est
+# tout son interet : un brain d histoire ne le declare pas, et alors le kit ne
+# sonde rien, ne signale rien et n affiche aucune colonne de fraicheur. Ici, une
+# brique EST un depot, un paquet, un service — l amont existe et il bouge.
+#
+# Ce que ce bloc n autorise nulle part : ecrire dans une page. Le sondage n a
+# qu une sortie, le side-car ci-dessous ; le desaccord entre l amont et la fiche
+# se SIGNALE (regle `amont_concorde`), il ne se corrige pas. Le champ que
+# l amont contredit reste ce que floSa a ecrit.
+# ==============================================================================
+amont:
+  porte_par: [brique]
+  champ_url: url_repo
+  champ_confronte: maturite
+  side_car: "AI/index/fraicheur.json"
+  motif_side_car: >
+    LE SIDE-CAR, PAS LE FRONTMATTER, et pour trois raisons. Un, cette donnee se
+    perime toute seule : le frontmatter dit ce que floSa a decide, une date de
+    release dit ce que le monde a fait pendant qu il ne regardait pas. Deux, un
+    sondage produirait 337 diffs a chaque passage, dont aucun ne parlerait du
+    travail de la semaine ; le side-car en produit UN. Trois, un side-car se
+    jette — le supprimer ne perd rien qu un sondage ne refasse, supprimer un
+    champ de frontmatter perd une decision.
+  motif_le_fichier_choisi: >
+    C est le chemin que `verifier_fraicheur.py` ecrivait avant ce lot. Il est
+    repris ici parce que c est LE side-car de fraicheur du vault, et que deux
+    fichiers de fraicheur seraient exactement la seconde source que le manifeste
+    existe pour supprimer. Le script d origine, qui garde ses regles hors ligne
+    (URL mortes, licences divergentes, croisement avec les comparatifs), ecrit
+    desormais `AI/index/fraicheur-hors-ligne.json` : deux ecrivains sur un
+    fichier se seraient efface l un l autre en silence.
+  faits:
+    etat: fraicheur
+    date: fraicheur_date
+    motif: >
+      Le nom des deux faits, tel que la colonne de bandeau les cite. Ce ne sont
+      PAS des champs de frontmatter : aucune page ne les porte, et R3 les
+      refuserait si une page essayait.
+  sondes:
+    - hote: github.com
+      sonde: github
+      motif: >
+        316 des 337 briques declarent un depot GitHub canonique, plus une URL
+        qui vise un sous-arbre de monorepo (ScaNN dans google-research) — elle
+        est sondee, et le rapport dit que ses dates decrivent le depot entier.
+        Une seule brique est ailleurs (git.deuxfleurs.fr) : le kit n a pas de
+        sonde pour cet hote, la page sort en « aucun amont fiche », et c est la
+        bonne reponse — dire qu on ne sait pas vaut mieux que ne rien dire.
+  registre:
+    sonde: pypi
+    si: "famille == paquet"
+    champs: [nom, alias]
+    motif: >
+      Un paquet publie parfois sur le registre sans taguer son depot : sa seule
+      date de publication est la. La sonde tourne donc sur les 177 briques
+      `famille: paquet`, en essayant `nom:` puis les `alias:` — un nom absent du
+      registre ne coute qu un 404 et n efface rien de ce que le depot a rendu.
+  seuils:
+    release_ancienne_jours: 730
+    commit_ancien_jours: 365
+    motif: >
+      DEUX seuils, parce qu une publication et un commit ne disent pas la meme
+      chose. Un projet stable peut ne rien publier pendant deux ans en recevant
+      des correctifs — deux ans est donc le seuil de la publication. Le second
+      ne sert QUE lorsqu il n existe aucune publication datee : la seule trace
+      est alors le mouvement du depot, et un an sans mouvement sur un projet qui
+      n a jamais rien publie est un signal plus fort.
+    motif_de_la_valeur_730: >
+      MESUREE avant d etre arretee, sur les 337 briques sondees le 2026-09-08 :
+      180 j -> 38 briques au-dela · 365 j -> 21 · 545 j -> 16 · 730 j -> 13 ·
+      1095 j -> 10 · 1460 j -> 8. La courbe est plate apres 730 : descendre a
+      365 ajoute huit briques dont la plupart sont des paquets stables qui
+      publient peu, et monter a 1095 n en retire que trois. 730 est le point ou
+      la liste reste RELISABLE EN UNE FOIS sans rien perdre de ce qui compte.
+      Le chiffre se change ici, et `brainkit sonder --recalculer` rejoue la
+      derivation sans un seul appel reseau.
 
 # ==============================================================================
 # regles — LES DIX. `severite` est un RESULTAT DE MESURE, jamais une intention.
@@ -1948,6 +2060,45 @@ regles_de_socle:
     code: [R25]
     severite: dure
     enonce: "Aucun champ supprimé par une version antérieure ne survit HORS de l'arbre des pages — racine, gouvernance, gabarits."
+  # AJOUTEE LE 2026-09-08, avec le bloc `amont:`. Elle ne tourne que sur les
+  # pages REELLEMENT sondees : une page jamais sondee n est pas conforme, elle
+  # est inconnue, et la compter dans la population ferait passer un side-car
+  # vide pour un vault sain.
+  - id: amont_concorde
+    code: [C1-amont]
+    severite: avertissement
+    depuis: "2026-09-08"
+    enonce: >
+      L'amont sondé d'une brique ne contredit pas ce que sa page déclare : ni
+      dépôt archivé, ni dernière trace datée au-delà du seuil, ni amont vivant
+      sous une `maturite:` éliminatoire.
+    mesure: { date: "2026-09-08", population: 337, violations: 16,
+              detail: "archive 4 · ancien 10 · contredit 2 — sur 7 dépôts
+                       archivés et 13 amonts au-delà du seuil, six sont déjà
+                       `maturite: deprecated` et ne produisent donc rien" }
+    motif: >
+      JAMAIS DURE, ET CE N EST PAS PROVISOIRE. Une violation ici n est pas une
+      faute de redaction : c est un desaccord entre le vault et un TIERS, dont
+      le tiers peut avoir tort — un depot miroir archive pendant que le vrai
+      developpement demenage, un projet qui ne tague plus ses versions mais
+      livre sur son registre. L outil ne sait pas laquelle des deux sources dit
+      vrai, et trancher appartient a floSa. Durcir reviendrait a faire echouer
+      la cloture du vault parce qu un inconnu a clique sur « archiver » : le
+      brain serait otage de l amont. C est aussi pour cela que `brainkit sonder`
+      sort en 0 sur ses constats.
+    motif_les_trois_sous_cles: >
+      `archive`, `ancien` et `contredit` se comptent separement parce qu ils ne
+      se reparent pas de la meme facon. Le troisieme est l inverse des deux
+      autres et vaut autant : une brique `maturite: deprecated` dont l amont
+      publie encore est aussi trompeuse qu une brique dite vive qui ne l est
+      plus — et personne ne relit une fiche qu il croit enterree.
+    motif_la_population: >
+      337 pages sondees sur 337 au 2026-09-08. Le denominateur n est PAS le
+      nombre de briques mais le nombre de pages SONDEES : les deux coincident
+      aujourd hui parce que la passe est complete, et ils se separeront des
+      qu une passe sera bornee par `--limit`. Une page jamais sondee n est pas
+      conforme, elle est inconnue — la compter ferait passer un side-car vide
+      pour un vault sain.
 
 # ==============================================================================
 # Le reste

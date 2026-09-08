@@ -47,6 +47,14 @@ from jsonschema import Draft202012Validator
 
 RACINE = Path(__file__).resolve().parent.parent
 SCHEMA = RACINE / "schema" / "brain.schema.json"
+
+# Les etats de fraicheur, FERMES par le kit. Importes plutot que recopies : une
+# seconde liste prendrait du retard sur la premiere, et c est exactement le
+# constat E4 que le manifeste existe pour supprimer.
+if str(RACINE) not in sys.path:
+    sys.path.insert(0, str(RACINE))
+from brainkit.amont.etat import ETATS as ETATS_DU_KIT      # noqa: E402
+
 DEFAUT = [
     (RACINE / "exemples" / "devbrain.brain.yml", True),
     (RACINE / "exemples" / "histobrain.brain.yml", True),
@@ -166,6 +174,12 @@ def coherence(m: dict) -> list[tuple[str, str]]:
             if s.get("genre") == "liste_liens":
                 exige_champ(s.get("champ"), f"roles[{i}].corps[{j}].champ")
     for j, c in enumerate((m.get("bandeau") or {}).get("colonnes") or []):
+        # Une colonne `externe:` ne lit PAS le frontmatter : sa source est un
+        # fait constate par un mecanisme du kit, declare dans `amont.faits`.
+        # La chercher dans `champs:` la refuserait pour la seule raison qu elle
+        # n est pas ce qu elle ne pretend pas etre. C11 la controle ailleurs.
+        if c.get("externe"):
+            continue
         exige_champ(c.get("source"), f"bandeau.colonnes[{j}].source")
         exige_champ(c.get("qualifie_par"), f"bandeau.colonnes[{j}].qualifie_par")
 
@@ -189,6 +203,8 @@ def coherence(m: dict) -> list[tuple[str, str]]:
         return None
 
     for j, c in enumerate((m.get("bandeau") or {}).get("colonnes") or []):
+        if c.get("externe"):
+            continue                      # vocabulaire ferme par le kit — cf. C11
         legales = source_de(c.get("source"))
         if legales is None:
             continue
@@ -306,6 +322,61 @@ def coherence(m: dict) -> list[tuple[str, str]]:
                 err.append((f"regles[{i}].champ_resume",
                             f"C10 — `{cr}` n est pas le champ declare "
                             f"`fonction: resume_court`"))
+
+    # C11 — le bloc `amont:` et la colonne de bandeau qui l affiche se tiennent.
+    # Trois trous a fermer, et le dernier est le seul qui ne se voit pas a l oeil :
+    # une colonne dont la `table:` oublie un etat rend une cellule VIDE pour cet
+    # etat, ce qui se lit « champ absent du frontmatter » alors que le fait est
+    # parfaitement connu. Un etat non libelle est un defaut de manifeste.
+    err += coherence_amont(m, dico, ids)
+    return err
+
+
+def coherence_amont(m: dict, dico: dict, ids: set[str]) -> list[tuple[str, str]]:
+    err: list[tuple[str, str]] = []
+    amont = m.get("amont") or {}
+    colonnes = (m.get("bandeau") or {}).get("colonnes") or []
+    externes = [(j, c) for j, c in enumerate(colonnes) if c.get("externe")]
+
+    if not amont:
+        for j, _c in externes:
+            err.append((f"bandeau.colonnes[{j}].externe",
+                        "C11 — colonne `externe: amont` alors que le manifeste "
+                        "ne declare aucun bloc `amont:` : elle rendrait le "
+                        "caractere vide sur toutes les pages"))
+        return err
+
+    for cle in ("champ_url", "champ_confronte"):
+        nom = amont.get(cle)
+        if nom is not None and nom not in dico:
+            err.append((f"amont.{cle}",
+                        f"C11 — `{nom}` n est defini nulle part dans `champs:`"))
+    for k, v in enumerate(amont.get("porte_par") or []):
+        if v not in ids:
+            err.append((f"amont.porte_par[{k}]",
+                        f"C11 — `{v}` n est pas un `roles[].id` declare"))
+
+    faits = amont.get("faits") or {}
+    attendus = {str(faits.get("etat") or ""), str(faits.get("date") or "")} - {""}
+    for j, c in externes:
+        for cle in ("source", "qualifie_par"):
+            v = c.get(cle)
+            if v and v not in attendus:
+                err.append((f"bandeau.colonnes[{j}].{cle}",
+                            f"C11 — `{v}` n est pas un fait declare dans "
+                            f"`amont.faits` ({', '.join(sorted(attendus)) or 'aucun'})"))
+        if c.get("source") == faits.get("etat"):
+            table = set((c.get("table") or {}))
+            manquants = [e for e in ETATS_DU_KIT if e not in table]
+            en_trop = sorted(table - set(ETATS_DU_KIT))
+            if manquants:
+                err.append((f"bandeau.colonnes[{j}].table",
+                            f"C11 — etat(s) sans libelle : {', '.join(manquants)} "
+                            f"— la cellule serait vide alors que le fait est connu"))
+            if en_trop:
+                err.append((f"bandeau.colonnes[{j}].table",
+                            f"C11 — {', '.join(en_trop)} n est pas un etat du kit "
+                            f"(fermes : {', '.join(ETATS_DU_KIT)})"))
     return err
 
 

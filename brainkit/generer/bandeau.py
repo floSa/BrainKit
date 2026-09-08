@@ -35,12 +35,32 @@ deux autres champs). Cinq mecanismes, aucun mot de sujet. Une valeur de source
 hors de la table rend le caractere vide : elle n est pas absorbee en silence,
 parce qu une valeur inconnue est un defaut de vocabulaire et se voit dans le
 rapport de trous.
+
+# Une sixieme forme de colonne : `externe:`
+
+Une colonne ordinaire lit le FRONTMATTER, c est-a-dire ce que l auteur a ecrit.
+Une colonne `externe:` lit un FAIT, c est-a-dire ce qu un autre mecanisme du kit
+a constate — aujourd hui le seul est `amont`, le sondage de la source vivante
+d une unite. Le moteur ne change pas : il lit le meme dictionnaire de valeurs,
+avec la meme `table:`, le meme `qualifie_par:` et le meme caractere vide ; seul
+l endroit ou il va chercher la valeur differe.
+
+Pourquoi une colonne externe et pas un champ de frontmatter de plus : parce
+qu un fait sonde se perime tout seul et n est pas ecrit par l auteur. Le mettre
+dans les pages produirait un diff par page a chaque sondage, et surtout ferait
+porter a l auteur une valeur dont il n est pas responsable. Cf.
+`brainkit/amont/sidecar.py`, qui porte l arbitrage en entier.
+
+Un brain qui ne declare pas de colonne `externe:` — ni de bloc `amont:` — rend
+exactement le meme bandeau qu avant : le mecanisme est **entierement absent**
+quand il n est pas declare, il n a pas d etat par defaut.
 """
 
 from __future__ import annotations
 
 from . import corpus as _corpus
 from . import zone
+from .. import amont as _amont
 from ..valider import conditions, vault
 from ..valider.manifeste import Modele
 from .sortie import Sortie
@@ -76,9 +96,21 @@ def cellule(valeur: str | None, mo: Modele) -> str:
     return v.replace("|", r"\|") if v else vide(mo)
 
 
-def rendu_de_colonne(colonne: dict, fm: dict, mo: Modele) -> str:
+def source_de_colonne(colonne: dict, fm: dict, externes: dict | None) -> dict:
+    """Ou une colonne lit ses valeurs : le frontmatter, ou les faits externes.
+
+    Une colonne `externe:` qui ne recoit AUCUN fait lit un dictionnaire vide,
+    donc rend le caractere vide. C est le comportement voulu : sans le
+    mecanisme externe correspondant, la colonne ne devine rien.
+    """
+    return (externes or {}) if colonne.get("externe") else fm
+
+
+def rendu_de_colonne(colonne: dict, fm: dict, mo: Modele,
+                     externes: dict | None = None) -> str:
     """La valeur affichee d une colonne, avant echappement. Chaine vide = pas de source."""
-    brut = str(fm.get(colonne["source"]) or "").strip()
+    src = source_de_colonne(colonne, fm, externes)
+    brut = str(src.get(colonne["source"]) or "").strip()
     if not brut:
         return ""
     table = colonne.get("table") or {}
@@ -91,7 +123,7 @@ def rendu_de_colonne(colonne: dict, fm: dict, mo: Modele) -> str:
                 return ""
     else:
         base = brut
-    return _qualifie(colonne, fm, base)
+    return _qualifie(colonne, src, base)
 
 
 def _valeur_dependante(colonne: dict, fm: dict, brut: str) -> str:
@@ -139,6 +171,11 @@ def _qualifie(colonne: dict, fm: dict, base: str) -> str:
     seulement inconditionnelle : pour un service qu on n execute jamais soi-meme,
     le langage d implementation ne fait pas partie de ce que la chose EST.
     L exception est donc inscrite dans le manifeste plutot que devinee.
+
+    Le `separateur:` est declare et vaut l espace par defaut. Il existe parce
+    qu une qualification peut etre de meme nature que sa base (« Librairie
+    Python ») ou d une autre (« à jour » et une date) : dans le second cas,
+    l espace seul colle deux choses qui ne se lisent pas ensemble.
     """
     champ = colonne.get("qualifie_par")
     if not champ:
@@ -147,11 +184,12 @@ def _qualifie(colonne: dict, fm: dict, base: str) -> str:
     if exc and conditions.evalue(str(exc.get("si") or ""), fm) is True:
         return base
     q = str(fm.get(champ) or "").strip()
-    return f"{base} {q}" if q else base
+    sep = str(colonne.get("separateur") or " ")
+    return f"{base}{sep}{q}" if q else base
 
 
-def cellules(mo: Modele, fm: dict) -> list[str]:
-    return [cellule(rendu_de_colonne(c, fm, mo), mo)
+def cellules(mo: Modele, fm: dict, externes: dict | None = None) -> list[str]:
+    return [cellule(rendu_de_colonne(c, fm, mo, externes), mo)
             for c in _decl(mo).get("colonnes") or []]
 
 
@@ -164,7 +202,8 @@ def colonnes_vides(mo: Modele, cells: list[str]) -> list[str]:
 # --------------------------------------------------------------------------- #
 #  La zone
 # --------------------------------------------------------------------------- #
-def zone_du_bandeau(mo: Modele, fm: dict, champ_resume: str) -> str:
+def zone_du_bandeau(mo: Modele, fm: dict, champ_resume: str,
+                    externes: dict | None = None) -> str:
     """La zone AUTO complete : le resume, puis les faits.
 
     Le resume est DANS la zone parce qu il vient lui aussi du frontmatter. Le
@@ -180,7 +219,7 @@ def zone_du_bandeau(mo: Modele, fm: dict, champ_resume: str) -> str:
             lignes += [f"> {resume}", ""]
     lignes += ["| " + " | ".join(titres) + " |",
                "|" + "---|" * len(titres),
-               "| " + " | ".join(cellules(mo, fm)) + " |",
+               "| " + " | ".join(cellules(mo, fm, externes)) + " |",
                bal[1]]
     return "\n".join(lignes)
 
@@ -195,18 +234,27 @@ def genere(corpus: _corpus.Corpus, s: Sortie,
         s.refuse("`bandeau.balises` ou `bandeau.porte_par` non déclaré — "
                  "aucun bandeau à générer")
         return
+    # Les faits externes sont lus UNE fois pour tout le vault, comme le corpus :
+    # un side-car relu par page rendrait le generateur quadratique, et surtout
+    # ferait dependre 337 rendus de 337 lectures d un fichier qui ne bouge pas.
+    # Un manifeste sans bloc `amont:` rend un dictionnaire vide, sans I/O.
+    faits = _amont.charge_faits(mo, corpus.racine)
+    defaut = _amont.faits_par_defaut(mo)
+
     for p in corpus.lisibles:
         if p.role not in porte_par:
             continue
         texte = p.absolu.read_text(encoding="utf-8")
-        cells = cellules(mo, p.fm)
+        externes = faits.get(p.chemin, defaut)
+        cells = cellules(mo, p.fm, externes)
         manque = colonnes_vides(mo, cells)
         if manque and trous is not None:
             # SIGNALE, jamais comble : une cellule vide dit qu un champ manque au
             # frontmatter, et c est une information. La remplir au juge l effacerait.
             trous.append(f"{p.chemin} — {', '.join(manque)}")
-        neuf, motif = zone.applique(texte, bal,
-                                    zone_du_bandeau(mo, p.fm, corpus.champ_resume))
+        neuf, motif = zone.applique(
+            texte, bal,
+            zone_du_bandeau(mo, p.fm, corpus.champ_resume, externes))
         if neuf is None:
             if motif:
                 s.refuse(f"{p.chemin} : {motif} — bandeau non posé")

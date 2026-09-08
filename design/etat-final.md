@@ -8,6 +8,13 @@
 >
 > Rien ici n'est une promesse : tout ce qui est écrit sous « ce que le kit fait »
 > a été **mesuré** par une commande, et la commande est nommée.
+>
+> **Un onzième lot a été mené après cette clôture, le 2026-09-08** : la
+> *fraîcheur*, c'est-à-dire l'amont d'une unité — `design/11-fraicheur.md`. Il
+> ajoute une commande (`sonder`), un bloc facultatif au manifeste (`amont:`),
+> une sixième forme de colonne de bandeau et une règle de socle, et il ferme la
+> remontée 1 de §4.3. Ce document a été mis à jour là où il devenait faux ; il
+> reste le document à relire d'abord.
 
 ---
 
@@ -34,6 +41,7 @@ Il a été **extrait** d'un brain de développement logiciel de 765 pages, puis
 | `valider` | les 10 règles de contenu et de structure, plus les contrôles de socle **que le manifeste déclare** (18 sur le DevBrain), chacun avec **sa** sévérité | `tests/epreuve.py` — égalité **règle par règle** avec les deux validateurs d'origine : 0 dure, 111 avertissements |
 | `generer` | 4 artefacts dérivés — index, hubs, liens, hauts de page. `--check` par défaut, code 2 sur écart | `tests/generation.py` — **413 artefacts sur 414 identiques à l'octet** sur le vault réel, le 414e étant un défaut corrigé |
 | `mesurer` | ce qu'une règle **coûterait** avant de la durcir, avec trois garde-fous qui l'interdisent trop tôt | `tests/mesure.py` — dont le **contrôle négatif** du plancher de 30 pages |
+| `sonder` | l'**amont** d'une unité : dernière version publiée, dernier commit, dépôt archivé. Sans jeton, avec reprise, et n'écrit que dans un side-car | `tests/amont.py` — dont le **contrôle négatif** : le même manifeste sans bloc `amont:` ne sonde rien, ne signale rien, n'affiche aucune colonne |
 | `re-seuiller` | change le seuil de promotion : une **migration**, par `git mv`, refusée sur un arbre sale | `tests/semis.py` scénario 5 — 3 renommages réels, un hub orphelin **signalé** et non supprimé |
 | `freeze` | copie le kit **dans** l'instance et coupe la dépendance | `tests/emballage.py` scénario 4 — l'instance figée rend le **même verdict, ligne pour ligne** |
 
@@ -123,10 +131,10 @@ l'argument.
 
 **Presque gratuites, et elles évitent une erreur silencieuse :**
 
-1. **Comparer les sha256** de `exemples/devbrain.brain.yml` et du `brain.yml` du
-   vault. Ils sont identiques à l'octet, tenus par attention seule, et le lot 10
-   a ajouté cinq documents qui les lisent. *(5 lignes, lot 9 remontée 4, lot 10
-   remontée 4)*
+1. ~~**Comparer les sha256** de `exemples/devbrain.brain.yml` et du `brain.yml`
+   du vault.~~ **FAIT au lot 11**, dans `outils/fidelite.py` (`passe_jumeau`) :
+   l'outil sort en 1 si les deux ont divergé, et imprime les deux empreintes.
+   *(lot 9 remontée 4, lot 10 remontée 4)*
 2. **Un contrôle de socle `mode_du_kit_concorde`**, en `a_mesurer`. *(10 lignes,
    lot 9 remontée 5, lot 10 remontée 2)*
 3. **Un contrôle du manifeste d'images**, dans les deux sens — une capture
@@ -215,6 +223,7 @@ uv run tests/generation.py      # les générateurs
 uv run tests/semis.py           # le semis, re-seuiller, freeze
 uv run tests/skills.py          # les skills, et leur généricité
 uv run tests/mesure.py          # la mesure et ses garde-fous
+uv run tests/amont.py           # la fraicheur : derivation, bandeau, regle, refus
 uv run tests/entretien.py       # les 49 questions, les 13 refus
 uv run tests/emballage.py       # l'emballage : docs, profils, ponts, figeage
 ```

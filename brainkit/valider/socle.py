@@ -550,6 +550,78 @@ def paire_inverse_bien_declaree(ctx: Contexte, r: Rapport) -> None:
 
 
 # --------------------------------------------------------------------------- #
+def amont_concorde(ctx: Contexte, r: Rapport) -> None:
+    """L amont sonde ne contredit pas ce que la page declare.
+
+    Trois desaccords, un par sous-cle, et ils ne se confondent pas :
+
+      - `archive`   — le proprietaire a ferme le depot, la page ne le dit pas ;
+      - `ancien`    — la derniere trace datee de l amont depasse le seuil ;
+      - `contredit` — l inverse, et il vaut autant : l amont publie encore alors
+                      que la page porte une valeur ELIMINATOIRE. Une brique
+                      declaree morte qui ressuscite est aussi trompeuse qu une
+                      brique declaree vive qui ne l est plus, et personne ne
+                      relit une fiche qu il croit enterree.
+
+    **Jamais dure, et ce n est pas provisoire.** Une violation ici n est pas une
+    faute de redaction : c est un desaccord entre le vault et un tiers, dont le
+    tiers peut avoir tort (un depot miroir archive, un projet dont le vrai
+    developpement a demenage). Le corriger appartient a l auteur ; l outil ne
+    sait pas laquelle des deux sources dit vrai. Un vault ne doit pas etre otage
+    de l amont — c est aussi pour cela que la sonde sort en 0 sur ses constats.
+
+    Le denominateur est le nombre de pages REELLEMENT sondees. Une page jamais
+    sondee n est pas conforme, elle est inconnue : la compter dans la population
+    ferait passer un side-car vide pour un vault sain, ce qui est exactement
+    « une regle absente ressemble a une regle satisfaite ».
+    """
+    rid = "amont_concorde"
+    from .. import amont as _amont
+
+    a = _amont.declaration(ctx.mo)
+    if not a.declare:
+        r.etat(rid, constat.NON_APPLICABLE)
+        return
+    sev = ctx.mo.severite(rid)
+    contenu = _amont.lit_side_car(a, ctx.racine)
+    champ = a.champ_confronte
+    mortes = {str(v) for v in (ctx.mo.champ(champ).get("eliminatoire") or [])} \
+        if champ else set()
+    pages = [p for p in ctx.lisibles if p.role in a.porte_par]
+
+    sondees = 0
+    jamais = 0
+    for p in pages:
+        rec = contenu.get(p.chemin) or {}
+        e = str(rec.get("etat") or "jamais_sonde")
+        if e == "jamais_sonde":
+            jamais += 1
+            continue
+        sondees += 1
+        val = str(p.fm.get(champ) or "") if champ else ""
+        dit = f"`{champ}: {val}`" if val else (f"`{champ}:` absent" if champ
+                                               else "la page")
+        quand = rec.get("date") or "date inconnue"
+        if e == "archive" and val not in mortes:
+            r.ajoute(rid, sev,
+                     f"amont ARCHIVÉ ({quand}) et {dit}", p.chemin,
+                     cle="archive")
+        elif e == "ancienne" and val not in mortes:
+            r.ajoute(rid, sev,
+                     f"dernière trace datée de l'amont : {quand}, au-delà du "
+                     f"seuil — {dit}", p.chemin, cle="ancien")
+        elif e == "recente" and val in mortes:
+            r.ajoute(rid, sev,
+                     f"amont vivant ({quand}) et {dit}", p.chemin,
+                     cle="contredit")
+    r.population(rid, sondees)
+    if jamais:
+        r.note(f"{rid} : {jamais} page(s) du périmètre jamais sondée(s) — hors "
+               f"population, parce qu'inconnu n'est pas conforme "
+               f"(`brainkit sonder`)")
+
+
+# --------------------------------------------------------------------------- #
 # L aiguillage : {id de regle : la fonction qui la porte}. Une regle du
 # manifeste sans entree ici n est pas implementee, et l inventaire le dit.
 # --------------------------------------------------------------------------- #
@@ -568,4 +640,5 @@ IMPLEMENTEES = {
     "couverture_de_section": couverture_de_section,
     "lien_vers_une_page_a_comprendre": lien_vers_une_page_a_comprendre,
     "paire_inverse_bien_declaree": paire_inverse_bien_declaree,
+    "amont_concorde": amont_concorde,
 }
