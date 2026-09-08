@@ -70,12 +70,19 @@ def prologue_des_commandes(mo: Modele) -> list[str]:
          "brainkit generer --ecrire        # régénère les artefacts dérivés",
          "```", ""]
     if mode == "branche":
-        L += ["> **Si `brainkit` n'est pas sur le PATH**, cette instance est en "
-              "`kit.mode: branche` : le kit vit ailleurs et n'est pas copié ici. "
-              "Préfixer alors chaque commande par "
-              "`uv run --project <racine du kit>`. Le vault ne sait pas où le "
-              "kit est installé — c'est une remontée connue du lot 7, pas une "
-              "erreur de cette instance.", ""]
+        scripts = str(((mo.m.get("agent") or {}).get("racine") or "AI/")).strip("/")
+        L += [f"> **Si `brainkit` n'est pas sur le PATH**, cette instance est en "
+              f"`kit.mode: branche` : le kit vit ailleurs et n'est pas copié "
+              f"ici. Deux issues, et aucune n'est une devinette :", "",
+              f"> - `export BRAINKIT_RACINE=<racine du dépôt BrainKit>` — c'est "
+              f"la première piste que `{scripts}/scripts/_pont_kit.py` essaie, "
+              f"et il est posé dans cette instance par le semis ;",
+              f"> - `uv run --project <racine du kit> brainkit …` — le kit "
+              f"lancé depuis son dépôt.", "",
+              f"> Si aucun kit n'est atteignable, le résolveur **sort en 2 et "
+              f"imprime les trois pistes** qu'il a essayées. Il ne devine pas : "
+              f"un kit deviné est un verdict rendu par un code qu'on n'a pas "
+              f"choisi.", ""]
     else:
         L += ["> Cette instance est **figée** (`kit.mode: fige`) : le kit a été "
               "copié dans `AI/scripts/`. Les commandes s'y lancent, et cette "

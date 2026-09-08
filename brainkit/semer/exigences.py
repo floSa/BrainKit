@@ -33,7 +33,11 @@ from ..valider.vocabulaires import _lecture_connue
 # d eux manque a cette liste, ses fichiers seront lus comme des pages, et un
 # gabarit de `Templates/` — qui porte volontairement des valeurs a trous — sera
 # compte comme une page fautive.
-DOSSIERS_HORS_PAGES = ("Templates", "Documentation")
+# `docs` a rejoint la liste au lot 10, parce que le semis y ecrit desormais les
+# trois guides. Ce n est pas un ajout de confort : un guide n a ni role ni
+# valeur d axe, donc lu comme une page il violerait le gabarit de tous les
+# roles a la fois.
+DOSSIERS_HORS_PAGES = ("Templates", "Documentation", "docs")
 
 
 def controle(mo: Modele) -> list[str]:
@@ -45,7 +49,19 @@ def controle(mo: Modele) -> list[str]:
     r += _transverses(mo)
     r += _racine(mo)
     r += _gouvernance(mo)
+    r += _ponts(mo)
     return r
+
+
+def _ponts(mo: Modele) -> list[str]:
+    """Les alias de `agent.ponts` visent-ils une cible que le kit sait ponter ?
+
+    Un pont vers une cible inventee serait un fichier qui ne tourne pas, pose
+    dans l espace de l agent, nomme par un skill. Le refuser AVANT d ecrire est
+    la seule facon de ne pas livrer ca.
+    """
+    from . import ponts as _p
+    return _p.manques(mo)
 
 
 # --------------------------------------------------------------------------- #

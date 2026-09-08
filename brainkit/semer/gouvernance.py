@@ -565,11 +565,12 @@ def seme_l_espace_agent(mo: Modele, prose: ProseSemis, plan: Plan) -> None:
                   "*(vide)*", ""]
             plan.pose(f"{racine}/{chemin}", "\n".join(L), "agent")
         else:
-            # `index/` est ecrit par les GENERATEURS, pas par le semis : y poser
-            # un garde ferait suivre par git un fichier que rien ne produit, a
-            # cote de trois artefacts qui, eux, sont produits a chaque cloture.
+            # `index/` est ecrit par les GENERATEURS, `scripts/` porte depuis le
+            # lot 10 la couche de ponts : dans les deux cas un `.gitkeep` ferait
+            # suivre par git un fichier inutile a cote de fichiers reels. Le
+            # garde ne sert qu aux dossiers que RIEN ne remplit au semis.
             plan.dossier(f"{racine}/{chemin}",
-                         garde=(chemin.strip("/") != "index"))
+                         garde=(chemin.strip("/") not in ("index", "scripts")))
 
     plan.pose(f"{racine}/migration/lot-1-amorcage.md",
               journal_de_lot(mo, prose), "agent")
@@ -583,30 +584,55 @@ def seme_l_espace_agent(mo: Modele, prose: ProseSemis, plan: Plan) -> None:
 
 def scripts_readme(mo: Modele, mode: str) -> str:
     """L outillage d une instance : BRANCHE sur le kit, ou FIGE dedans."""
+    from . import ponts as _ponts
     L = _entete("scripts")
     L += ["# Outillage", ""]
     if mode == "branche":
-        L += [f"> **Instance `kit.mode: branche`.** Ce dossier est **vide**, et "
-              f"c'est le contrat : l'instance ne contient pas de code. Les deux "
-              f"validateurs et les quatre générateurs vivent dans BrainKit, "
-              f"installé une fois, et lisent `brain.yml` — ils ne sont pas "
-              f"copiés ici.", "",
+        L += [f"> **Instance `kit.mode: branche`.** Ce dossier ne porte **aucune "
+              f"règle**, et c'est le contrat : l'instance ne contient pas de "
+              f"code. Les deux validateurs et les quatre générateurs vivent dans "
+              f"BrainKit, installé une fois, et lisent `brain.yml`. Ce qui est "
+              f"ici est une **couche d'adaptation**, et rien d'autre.", "",
               "```bash",
-              "brainkit valider --manifeste brain.yml --vault .",
-              "brainkit generer --manifeste brain.yml --vault .            # --check",
-              "brainkit generer --manifeste brain.yml --vault . --ecrire",
-              "brainkit re-seuiller --manifeste brain.yml --vault . --seuil <n>",
+              "brainkit valider                # depuis la racine du vault",
+              "brainkit generer                # --check, n'écrit rien",
+              "brainkit generer --ecrire",
+              "brainkit re-seuiller --vault . --seuil <n>",
               "```", "",
-              "Le jour où l'instance doit devenir autonome — un vault livré chez "
-              "un client qui ne peut pas installer un outil depuis internet — "
-              "`brainkit freeze` copie le kit **ici** et coupe la dépendance. "
-              "Une instance figée est explicitement une instance qui ne recevra "
-              "plus de correctif.", ""]
+              "## Ce que ce dossier porte", "",
+              f"- `{_ponts.RESOLVEUR}` — **où vit le kit**, résolu en trois "
+              f"pistes : `$BRAINKIT_RACINE`, puis un kit copié ici (instance "
+              f"figée), puis un `BrainKit/` chez un parent. Il s'arrête à la "
+              f"première qui répond et, si aucune ne répond, il sort en 2 en "
+              f"imprimant les trois — il ne devine pas. C'est le second bouchon "
+              f"du trou « une instance sait qu'elle dépend d'un kit, pas où il "
+              f"vit » ; le premier est de mettre `brainkit` sur le PATH, et une "
+              f"étape d'installation s'oublie."]
+        for nom, cible in sorted(_ponts.declares(mo).items()):
+            if cible in _ponts.CIBLES:
+                L.append(f"- `{nom}.py` — pont vers `{cible}` : "
+                         f"{_ponts.CIBLES[cible]}.")
+        L += ["", "Les ponts existent parce que les skills, les hooks et la "
+              "configuration de l'agent nomment **ces chemins** : ce sont des "
+              "contrats de travail lus à chaque session, qu'un changement "
+              "d'outillage n'a aucune raison de casser. Ils sont **générés** "
+              "depuis `agent.ponts` du manifeste — ne pas les éditer à la main.",
+              "",
+              "Le jour où l'instance doit devenir autonome — un vault livré là "
+              "où l'on n'installe rien depuis internet — `brainkit freeze` copie "
+              "le kit **ici** et coupe la dépendance. Une instance figée est "
+              "explicitement une instance qui ne recevra plus de correctif.", ""]
     else:
         L += ["> **Instance `kit.mode: fige`.** Le kit a été **copié ici**. "
               "L'instance est autonome et ne dépend plus d'aucune installation "
               "externe — et elle ne recevra plus aucun correctif du kit. Cf. "
-              "`FIGE.md`.", ""]
+              "`FIGE.md`.", "",
+              "```bash", "uv run valider.py", "uv run generer.py            # --check",
+              "uv run generer.py --ecrire", "```", "",
+              f"`{_ponts.RESOLVEUR}` est là aussi, et il résout le kit **copié "
+              f"ici** avant tout kit du dehors : une instance figée est une "
+              f"instance qui ne doit plus jamais lire un kit externe, c'est "
+              f"toute sa raison d'être.", ""]
     L += [f"- `{(mo.m.get('kit') or {}).get('version') or '?'}` — la version du "
           f"kit avec laquelle cette instance a été semée. Le kit refuse de "
           f"tourner sur un manifeste d'une version qu'il ne connaît pas, dans "

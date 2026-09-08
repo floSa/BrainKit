@@ -153,6 +153,48 @@ def promotions(pages, mo: Modele) -> tuple[dict[str, str], list[str]]:
     return promus, sans_libelle
 
 
+class _PageDeSeuil:
+    """Le MINIMUM que `poids_du_seuil` lit d une page. Pas une `Page` du vault.
+
+    Quatre attributs, et c est tout ce que la derivation du seuil consulte :
+    le frontmatter (pour la valeur d axe), le role (pour savoir s il pese), le
+    dossier (pour resoudre la valeur dominante) et la lisibilite.
+    """
+
+    __slots__ = ("fm", "role", "dossier", "illisible")
+
+    def __init__(self, fm: dict, role: str | None, dossier: str = "") -> None:
+        self.fm, self.role, self.dossier, self.illisible = fm, role, dossier, None
+
+
+def promotions_depuis_valeurs(valeurs, mo: Modele) -> tuple[dict[str, str], list[str]]:
+    """`promotions()`, pour un appelant qui n a que des VALEURS d axe.
+
+    # Pourquoi cette porte existe — remontee 2 du lot 9
+
+    `promotions(pages, mo)` prend des pages, et elle a raison : elle doit
+    pouvoir ecarter un role hors seuil (`pese_sur_le_seuil: false`) et resoudre
+    la valeur dominante d un axe non exclusif. Mais un appelant qui lit l index
+    plutot que le vault — un skill de capture, un pont d instance — n a que des
+    chaines. Le lot 9 lui a fait fabriquer huit lignes de pages factices, dans
+    l instance ; la prochaine instance les aurait reecrites.
+
+    Elles sont donc ici, une fois, a la bonne place. Chaque valeur devient une
+    page du role d UNITE — celui qui pese — ce qui n invente rien : compter des
+    valeurs d axe, c est exactement compter des unites.
+
+    Ce n est pas une correction du calcul : c est la reconnaissance que le kit a
+    une **API**, et pas seulement une ligne de commande.
+    """
+    unite = mo.role_de_fonction("unite")
+    champ = mo.champ_rangement
+    pages = [_PageDeSeuil(fm={champ: v}, role=unite,
+                          dossier=mo.dossier_de_prefixe.get(
+                              str(v).split("/")[0]) or "")
+             for v in valeurs]
+    return promotions(pages, mo)
+
+
 def hub_du_dossier(dossier: str) -> str:
     """Le chemin du hub qui porte un dossier : le dossier porte une page a son nom."""
     return f"{dossier}/{dossier.rsplit('/', 1)[-1]}.md"

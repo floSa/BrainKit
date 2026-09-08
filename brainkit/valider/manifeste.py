@@ -399,6 +399,28 @@ class Modele:
         return ((self.roles[rid].get("vue_embarquee") or {}).get("moteur"))
 
 
-def charge(chemin: Path) -> Modele:
+def charge(chemin: Path, controle: bool = True) -> Modele:
+    """Le manifeste, charge et CONFRONTE A SA VERSION.
+
+    C est le seul entonnoir de chargement du kit — les sept sous-commandes et
+    les ponts d une instance en passent tous par lui — donc c est ici, et
+    nulle part ailleurs, que se controle « ce kit sait-il lire ce manifeste ».
+    Poser le controle dans chaque `__main__` aurait donne sept endroits a tenir
+    a jour, donc six oublis en puissance.
+
+    Un refus sort en **2** immediatement : une version inconnue n est pas une
+    donnee douteuse dont on pourrait faire quelque chose, c est un contrat
+    absent, et un verdict rendu par un code qu on n a pas choisi est pire
+    qu une absence de verdict. `controle=False` existe pour le jeu d epreuve,
+    qui doit pouvoir observer le refus sans le subir.
+    """
     with chemin.open(encoding="utf-8") as f:
-        return Modele(yaml.safe_load(f), chemin)
+        brut = yaml.safe_load(f)
+    if controle:
+        from ..contrat import controle as _controle
+        dits, refuse = _controle(brut or {})
+        for ligne in dits:
+            print(ligne)
+        if refuse:
+            raise SystemExit(2)
+    return Modele(brut, chemin)

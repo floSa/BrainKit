@@ -1073,7 +1073,16 @@
             }
           }
         },
-        "hook_stop": { "type": "string" }
+        "hook_stop": { "type": "string" },
+        "ponts": {
+          "$comment": "AJOUTE AU LOT 10, remontee 1 du lot 9. Les ALIAS d outillage qu une instance veut garder : {nom de fichier sans .py : cible}. Le semis pose `<agent.racine>/scripts/<nom>.py`, un pont de vingt lignes qui resout le kit, charge `brain.yml` et l appelle. Le motif est mesure sur le DevBrain : ses skills, ses hooks et la configuration de son agent nomment `AI/scripts/<script>.py`, et ce sont des contrats de travail lus a chaque session — un changement d outillage n a aucune raison de les casser. Bloc FACULTATIF : une instance neuve n a aucune habitude a menager. Les cibles sont FERMEES ; une cible en chaine libre serait un mini-langage de commande dans un manifeste, donc une seconde facon de lancer le kit, et deux facons de lancer le meme code divergent.",
+          "type": "object",
+          "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+          "additionalProperties": {
+            "enum": ["valider", "structure", "generer", "index", "hubs",
+                     "liens", "bandeau", "chemins"]
+          }
+        }
       }
     },
 

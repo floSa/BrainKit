@@ -59,9 +59,10 @@ from ..generer.sortie import CHECK, ECRIRE, Sortie
 from ..valider.manifeste import Modele
 from . import depot as _depot
 from . import entretien as _entretien
-from . import exigences, gouvernance, pages
+from . import exigences, gouvernance, pages, ponts
 from .plan import Plan
 from .prose import ProseSemis
+from ..emballer import rendus as _documents
 
 RACINE_KIT = Path(__file__).resolve().parents[2]
 
@@ -117,6 +118,8 @@ def seme(mo: Modele, racine: Path, ecrire: bool = False,
     gouvernance.seme_le_routeur(mo, prose, plan)
     gouvernance.seme_l_espace_agent(mo, prose, plan)
     gouvernance.seme_les_skills(mo, plan)
+    ponts.seme_les_ponts(mo, plan)
+    _pose_les_documents(mo, plan)
     _entretien.seme_l_entretien(mo, plan, brouillon)
     _depot.seme_les_hooks(mo, plan)
     _pose_le_manifeste(mo, plan)
@@ -131,6 +134,23 @@ def seme(mo: Modele, racine: Path, ecrire: bool = False,
     if avec_git:
         s.depot = _depot.initialise(mo, plan.racine, message=message, ecrire=True)
     return s
+
+
+def _pose_les_documents(mo: Modele, plan: Plan) -> None:
+    """`INSTALL.md` et les trois guides — GENERES, comme les gabarits.
+
+    Ce sont des artefacts de SEMIS, pas d artefacts derives : ils s ecrivent une
+    fois, puis se relisent — aucun generateur ne les rafraichit a chaque
+    cloture, et `generer --check` ne les regarde pas. Le motif est celui de
+    `Home.md` (arbitrage 3.1 du lot 5) : un document que le proprietaire du
+    brain peut vouloir completer ne se regenere pas sous ses pieds.
+
+    Ils sont POSES ICI et pas ailleurs pour une raison de discipline : le semis
+    a un plan d ecriture unique, et un module qui ecrirait directement
+    contournerait ses quatre refus.
+    """
+    for chemin, texte in _documents(mo).items():
+        plan.pose(chemin, texte, "documents")
 
 
 def _pose_le_manifeste(mo: Modele, plan: Plan) -> None:

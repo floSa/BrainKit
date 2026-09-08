@@ -28,7 +28,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "brainkit"
-version = "0.1.0"                 # doit concorder avec `kit.version` d un manifeste
+dynamic = ["version"]             # LUE dans brainkit/__init__.py — une seule source
 description = "Le noyau generique d un second brain Obsidian, pilote par un manifeste brain.yml."
 requires-python = ">=3.10"
 dependencies = ["pyyaml>=6"]
@@ -41,6 +41,14 @@ epreuve = ["jsonschema>=4"]
 
 [project.scripts]
 brainkit = "brainkit.__main__:main"
+
+[tool.hatch.version]
+# La version vit dans le paquet, pas ici. `brainkit/contrat.py` la compare a
+# `kit.version` d un manifeste, dans les deux sens (remontee 6 du lot 5) : elle
+# doit donc etre lisible par le CODE, y compris dans une instance figee ou
+# `pyproject.toml` n est pas copie. Une valeur ecrite ici et recopiee la-bas
+# aurait fait deux sources pour un seul fait.
+path = "brainkit/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["brainkit"]
