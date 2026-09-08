@@ -60,6 +60,15 @@ Ces deux commandes n'écrivent rien et se lisent avant de commencer. La seconde
 mérite deux minutes : savoir d'avance ce qui ne se devinera pas évite de
 répondre au jugé.
 
+> **Le compte affiché n'est pas 49, et ce n'est pas une erreur.** Un brouillon
+> neuf annonce par exemple *« 0 réponse(s) sur 49 questions, 40 restante(s) »*, et
+> les passes portent la mention `sautée(s)`. Neuf des 49 questions sont
+> **conditionnelles** : elles ne se posent que si une réponse antérieure les rend
+> pertinentes — un axe qui qualifie qu'on n'a pas déclaré n'a pas de
+> sous-questions. Le nombre de questions **posables** bouge donc en cours
+> d'entretien, à la hausse comme à la baisse. Ce qui compte est la dernière ligne
+> du rappel : *« Toutes les questions posables ont une réponse. »*
+
 ### Ce n'est pas un formulaire, et c'est le point
 
 L'entretien **induit** l'axe de rangement à partir de **vingt titres réels**
@@ -246,6 +255,22 @@ brainkit valider
 brainkit generer
 git status --porcelain
 ```
+
+> **`brainkit` doit être sur le PATH pour que ces trois lignes marchent.** Si
+> l'installation s'est arrêtée à la façon **a** de
+> [03-installation.md](03-installation.md) §4 — `uv run brainkit` depuis le dépôt
+> du kit — la commande n'existe pas ici, et `uv run brainkit` lancé **depuis le
+> vault** échoue avec `Failed to spawn: brainkit`. C'est le trou nommé au §4 de
+> ce chapitre-là : y revenir et prendre la façon **b**.
+>
+> Le repli sans rien installer, si l'on ne veut pas toucher au PATH tout de
+> suite, est de rester dans le dépôt du kit et de viser le vault :
+>
+> ```bash
+> cd ~/BrainKit
+> uv run brainkit valider --vault ~/MonBrain
+> uv run brainkit generer --vault ~/MonBrain
+> ```
 
 | Commande | Attendu | Ce qu'une autre sortie veut dire |
 |---|---|---|

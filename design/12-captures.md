@@ -351,10 +351,32 @@ Par ordre de coût, comme dans les rapports précédents.
 
 Le lot 10 avait rejoué son installation à blanc sur l'`INSTALL.md` généré et
 trouvé **7 trous**. Celle-ci a été rejouée sur la nouvelle documentation, dans
-un dossier vierge, en ne lisant que `docs/`.
+`~/Documents/BrainKit-essais/blanc-lot12/`, en ne lisant que `docs/`.
+
+**Le protocole, pour qu'on puisse le refaire.** Le kit a été obtenu par la forme
+que `docs/03-installation.md` §2 recommande — un `git bundle`, cloné dans un
+dossier vierge — puis les chapitres ont été suivis dans l'ordre annoncé par
+`docs/README.md` : `03` (pré-requis, hooks, lancement, vérification) puis `05`
+(entretien, composition, semis, garde-fous, vérification). Chaque commande a été
+lancée telle qu'elle est écrite, et son code de sortie relevé. Le brain d'essai a
+été composé par la **porte de service** de l'entretien
+(`--reponses tests/blanc.reponses.yml`) : rejouer un entretien est le seul moyen
+de le faire sans conversation, et c'est l'usage que le document prescrit pour ce
+cas.
+
+Ce qui a **marché du premier coup**, et vaut d'être noté parce que le reste ne
+parle que des trous : la fabrication et le clonage du bundle, l'activation des
+hooks du kit puis de l'instance, `brainkit` qui liste ses huit sous-commandes,
+`schema/valider.py` et `tests/epreuve.py` verts, les onze passes de l'entretien,
+la composition du manifeste, sa relecture contre le contrat, le semis en mode
+lecture puis en écriture (48 fichiers, dépôt initialisé, premier commit), et le
+verdict final du vault — **aucune violation dure, 14 artefacts concordants, arbre
+propre**. Le chemin complet tient donc, et l'identité posée par le semis était la
+bonne.
 
 Les trous trouvés — et corrigés dans les documents avant l'écriture de ce
-rapport :
+rapport. Les huit premiers sont sortis de la rédaction, les trois derniers de
+l'exécution :
 
 | # | Trou | Où il est corrigé |
 |---|---|---|
@@ -366,7 +388,19 @@ rapport :
 | 6 | `BRAINKIT_RACINE` était nommée sans qu'on dise comment la poser durablement, ni comment sur Windows | `docs/03-installation.md` §4 |
 | 7 | masquer un dossier avec File Hider ne le sort **pas** de la recherche. Le lecteur croit l'espace de l'agent écarté, et le retrouve dans tous ses résultats | `docs/04-obsidian.md` §6, et une entrée de dépannage |
 | 8 | cinq des seize captures à prendre ne montrent rien sur un vault vide. Un opérateur qui suit le protocole sur un brain fraîchement semé prend cinq images inutiles | §4.1 de ce document, point 2, et colonne *Avant* de la table |
+| 9 | le document affirmait qu'un clone de bundle atterrit **en HEAD détachée** et disait de faire `git switch -c main`. **Faux pour un bundle `--all`** : le clone arrive sur `main`, et la commande prescrite échoue avec `fatal: a branch named 'main' already exists`. Une instruction qui échoue au deuxième pas d'un guide d'installation coûte cher en confiance | `docs/03-installation.md` §2 — le cas est devenu conditionnel, avec le contrôle `git status \| head -1` et les deux réponses |
+| 10 | **le trou le plus grave.** `docs/05` §6 donnait `brainkit valider` sans rappeler que la commande n'existe que si l'on a pris la façon **b** du §4. Un lecteur qui a pris la façon **a** obtient `Failed to spawn: brainkit — program not found` sur la commande qui devait couronner son installation | `docs/03-installation.md` §4 (la voie **a** dit maintenant qu'elle ne suffit pas depuis un vault, avec le message exact) et `docs/05-premier-brain.md` §6, qui donne en plus un repli `--vault` **vérifié** |
+| 11 | les deux bouchons du trou « une instance ne sait pas où vit le kit » étaient présentés comme **équivalents** (« les deux bouchons sont bons »). Ils ne le sont pas : le résolveur `_pont_kit.py` est une **bibliothèque**, importée par des scripts de pont que le semis ne pose **que** si le manifeste déclare `agent.ponts`. Sur le brain d'essai, `AI/scripts/` ne contenait que le résolveur et un fichier d'explication — **rien à lancer** | `docs/03-installation.md` §4, encadré réécrit : le bouchon 1 est celui dont tout brain a besoin, le bouchon 2 est un confort pour un brain qui déclare ses ponts |
+| 12 | le premier `uv run` construit le paquet et imprime deux lignes `Building brainkit @ …`, et il a besoin d'atteindre un index de paquets. « Obtenir le kit hors ligne » et « le lancer hors ligne » sont deux problèmes, et le document les confondait | `docs/03-installation.md` §4a |
+| 13 | un brouillon neuf annonce « 0 réponse(s) sur **49** questions, **40** restante(s) ». Neuf questions sont conditionnelles ; un lecteur qui compte croit à un défaut | `docs/05-premier-brain.md` §2 |
 
-**Huit trous, un de plus que le lot 10.** Les deux derniers ne pouvaient pas
-apparaître avant : le sixième n'existait pas dans le document généré, et le
-huitième naît du protocole de captures, qui est neuf.
+**Treize trous, contre sept au lot 10.** Le compte plus élevé n'est pas un signe
+de moindre soin : il vient de ce que la surface a grandi (neuf documents au lieu
+d'un) et surtout de ce que le lot 10 rejouait un document **généré**, dont les
+commandes avaient déjà été exercées par le jeu d'épreuve. Ici, quatre des cinq
+trous trouvés à l'exécution (9 à 12) portent sur des **affirmations de prose**
+qu'aucun test ne pouvait contredire : l'état de HEAD après un clone de bundle, la
+portée d'une commande selon la voie d'installation choisie, l'équivalence de deux
+bouchons. C'est précisément la raison d'être d'une installation à blanc, et la
+raison pour laquelle une doc écrite à la main en a plus besoin qu'une doc
+générée.

@@ -160,6 +160,20 @@ uv run brainkit
 La commande doit lister les **huit** sous-commandes et sortir en code 2 — elle
 ne choisit pas de défaut, et c'est voulu.
 
+> **Au premier appel seulement**, `uv` construit le paquet et imprime deux
+> lignes `Building brainkit @ …` avant la sortie utile. Ce n'est pas une erreur,
+> et cela n'arrive qu'une fois par arbre. En revanche, ce premier appel a besoin
+> d'atteindre un index de paquets : sur une machine réellement hors ligne, il
+> échoue. Obtenir le kit hors ligne (§2) et **le lancer** hors ligne sont deux
+> problèmes différents — le second se traite par un cache `uv` pré-rempli, ou
+> par `brainkit freeze` côté instance
+> ([07-livrer-une-instance.md](07-livrer-une-instance.md)).
+
+**Cette voie ne suffit pas** dès qu'un vault existe : `uv run brainkit`, lancé
+depuis un vault, échoue avec `Failed to spawn: brainkit — program not found`.
+`uv run` cherche la commande dans le projet **courant**, et un vault n'est pas un
+projet Python. Lire la voie **b**, et l'encadré qui la suit.
+
 ### b. Sur le PATH
 
 La commande devient disponible partout, y compris depuis le dossier d'une
@@ -182,19 +196,38 @@ terminal déjà ouvert.
 
 > **Pourquoi ce choix mérite une section.** Une instance sait qu'elle est
 > branchée sur un kit ; elle ne sait pas **où** ce kit vit. C'est un trou
-> mesuré, et il a deux bouchons :
+> mesuré, et il a deux bouchons — **qui ne se valent pas** :
 >
-> 1. mettre `brainkit` sur le PATH — la façon **b** ci-dessus ;
-> 2. laisser l'instance le chercher elle-même. Le semis pose pour cela un
->    résolveur dans l'espace de l'agent, qui essaie dans l'ordre la variable
+> 1. **mettre `brainkit` sur le PATH** — la façon **b** ci-dessus. C'est le seul
+>    bouchon qui marche sur **tous** les brains, et c'est donc celui à prendre en
+>    cas de doute ;
+> 2. **laisser l'instance chercher le kit elle-même.** Le semis pose un
+>    résolveur, `AI/scripts/_pont_kit.py`, qui essaie dans l'ordre la variable
 >    `BRAINKIT_RACINE`, puis un kit copié dans l'instance, puis un dossier
->    `BrainKit/` voisin.
+>    `BrainKit/` voisin. **Mais ce résolveur est une bibliothèque, pas une
+>    commande** : il est *importé* par les scripts de pont, et ces scripts ne
+>    sont posés que si le manifeste déclare un bloc `agent.ponts`. Sur un brain
+>    qui n'en déclare pas — le cas d'un brain neuf — `AI/scripts/` ne contient
+>    que le résolveur et un fichier d'explication : **il n'y a rien à lancer**.
 >
-> Les deux bouchons sont bons ; **aucun n'est facultatif**. Sans l'un ou
-> l'autre, les commandes lancées depuis un vault ne tournent pas.
+> Autrement dit : le bouchon 2 est un confort pour un brain qui déclare ses
+> ponts, notamment un vault migré depuis des scripts existants. Le bouchon 1 est
+> celui dont **tout** brain a besoin.
 
-Pour la seconde voie, poser la variable une fois pour toutes dans le profil du
-shell :
+Vérification, depuis la racine d'un vault :
+
+```bash
+brainkit valider
+```
+
+- un verdict : le bouchon 1 est en place ;
+- `brainkit : commande introuvable` : reprendre la façon **b**, puis rouvrir le
+  terminal ;
+- `Failed to spawn: brainkit` : la commande a été lancée avec `uv run` depuis le
+  vault. Retirer `uv run`.
+
+Pour le bouchon 2, quand le brain déclare des ponts, poser la variable une fois
+pour toutes dans le profil du shell :
 
 ```bash
 export BRAINKIT_RACINE=~/BrainKit

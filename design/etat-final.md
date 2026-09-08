@@ -3,7 +3,7 @@
 > Clôture écrite le 2026-09-08, à la fin du lot 10, dernier du plan. **C'est le
 > document à relire d'abord** : il dit ce que le kit fait, ce qu'il ne fait pas,
 > et ce qui reste ouvert. Le détail de chaque décision est dans le rapport de son
-> lot (`design/01-` à `design/10-`), et le cadrage d'origine dans
+> lot (`design/01-` à `design/12-`), et le cadrage d'origine dans
 > `design/00-cadrage.md`.
 >
 > Rien ici n'est une promesse : tout ce qui est écrit sous « ce que le kit fait »
@@ -15,6 +15,15 @@
 > une sixième forme de colonne de bandeau et une règle de socle, et il ferme la
 > remontée 1 de §4.3. Ce document a été mis à jour là où il devenait faux ; il
 > reste le document à relire d'abord.
+>
+> **Un douzième lot a suivi, le même jour** : la *documentation du kit* —
+> `design/12-captures.md`. Il n'ajoute aucun mécanisme sauf un contrôle
+> (`outils/captures.py`), et il tranche une confusion de natures : la doc d'une
+> instance dépend d'un manifeste, donc elle se **génère** ; la doc du kit n'en
+> dépend d'aucun, donc elle s'**écrit**. Neuf documents écrits à la main sous
+> `docs/`, **15 captures** reprises du vault d'origine et **16** nommées comme
+> trous à prendre en séance. Il ferme la remontée 3 de §4.3 et déplace la
+> remontée 4.
 
 ---
 
@@ -45,9 +54,10 @@ Il a été **extrait** d'un brain de développement logiciel de 765 pages, puis
 | `re-seuiller` | change le seuil de promotion : une **migration**, par `git mv`, refusée sur un arbre sale | `tests/semis.py` scénario 5 — 3 renommages réels, un hub orphelin **signalé** et non supprimé |
 | `freeze` | copie le kit **dans** l'instance et coupe la dépendance | `tests/emballage.py` scénario 4 — l'instance figée rend le **même verdict, ligne pour ligne** |
 
-Et deux outils de dépôt, pas de sous-commandes : `outils/fidelite.py` (la
-fidélité au vault d'origine) et `outils/emballer.py` (les documents du dépôt
-sont-ils ceux que le kit génère).
+Et **trois** outils de dépôt, pas de sous-commandes : `outils/fidelite.py` (la
+fidélité au vault d'origine), `outils/emballer.py` (les documents d'instance
+rendus en exemple sont-ils ceux que le kit génère) et `outils/captures.py` (les
+images de la doc du kit, dans les deux sens — lot 12).
 
 ## 2.1 Ce qui est généré, et ne s'écrit donc jamais à la main
 
@@ -63,7 +73,7 @@ décrivaient le même gabarit.
 
 | Instance | Ce qu'elle est | État |
 |---|---|---|
-| **DevBrain** | le vault réel, 765 pages, 337 unités, 47 vues | instance depuis le lot 9, sur une **branche non intégrée** — l'intégration appartient à floSa |
+| **DevBrain** | le vault réel, 765 pages, 337 unités, 47 vues | instance depuis le lot 9, **intégrée dans `main`** le 2026-09-08 (commit `c6e2400`), puis dotée de la fraîcheur (`8274072`). `brain.yml` est suivi à sa racine |
 | **HistoBrain** | un brain d'histoire, banc d'essai de référence | vierge puis rempli à 62 pages |
 | **CimeBrain** | un brain de montagne, né d'un entretien joué en entier | recomposé depuis ses réponses, jamais copié |
 | **DroitBrain** | un brain de droit du travail | né de l'installation à blanc du lot 10 |
@@ -86,7 +96,7 @@ compte plus que la limite.
 | **importer un corpus existant** | Hors plan, et assumé : c'est le vrai chantier d'amorçage, il dépend entièrement du sujet, et il mérite son propre cadrage. |
 | **une interface graphique pour l'entretien** | Hors plan. L'entretien est conversationnel par nature ; un formulaire ramènerait les listes à cocher que les treize refus interdisent. |
 | **évaluer une condition de section** | `existe_si:` est du français (« au moins une entrée datée »). Ni le validateur ni le semis ne peuvent l'évaluer ; `mesurer` compte à la place l'**usage réel** de la section. |
-| **fabriquer les captures d'écran** | 27 sont déclarées, aucune n'existe. Une capture inventée montrerait une interface qui n'existe pas. |
+| **fabriquer les captures d'écran** | Une capture inventée montrerait une interface qui n'existe pas. Depuis le lot 12, **15 existent** — reprises telles quelles du vault d'origine, dont l'interface d'Obsidian ne dépend d'aucun sujet — et **16 sont des trous nommés**, chacun avec l'écran, l'action à faire avant et la zone à cadrer (`design/12-captures.md` §4). Aucune n'est fabriquée. |
 | **confronter `kit.mode` au disque** | Une instance qui se déclare branchée avec un kit copié dedans passerait inaperçue. Remontée 2 du lot 10. |
 
 ---
@@ -98,8 +108,10 @@ compte plus que la limite.
 **La licence.** `LICENSE` porte **tous droits réservés**, et le fichier écrit
 pourquoi : ce n'est pas une décision, c'est l'absence de décision posée dans la
 forme la plus **réversible** qui soit. C'est le seul état depuis lequel on peut
-aller vers n'importe quelle licence ; l'inverse est faux. Le dépôt n'a pas de
-remote et n'a jamais été publié : **rien n'est joué**. La recommandation écrite
+aller vers n'importe quelle licence ; l'inverse est faux. **Le dépôt a désormais
+un remote** — il n'en avait pas à la clôture du lot 10 — mais un dépôt poussé
+n'est pas un dépôt publié : la licence reste celle du fichier, et elle reste
+fermée. La recommandation écrite
 au cadrage (§5.7) — et **non prise** — est d'ouvrir le *kit* et de garder fermées
 les *méthodes d'entretien*, parce que c'est là qu'est le savoir.
 
@@ -115,14 +127,25 @@ Aucun document du dépôt ne tranche ces deux points, et aucun ne porte de prix,
 d'offre, d'argumentaire ni de nom de tiers. Un contrôle du jeu d'épreuve le
 vérifie.
 
-## 4.2 La décision qui appartient à floSa sur le DevBrain
+## 4.2 Le DevBrain est une instance — la décision a été prise
 
-La branche `claude/brainkit-lot9-devbrain-8463bb` fait du DevBrain une instance
-du kit : `brain.yml` posé, les sept scripts réduits à des ponts, **aucun contenu
-de page modifié** (337 briques, 297 notions, 47 vues, 74 hubs, tous intacts).
-Elle est **locale et non intégrée**, `main` est restée à `8aaa257`, et rien n'a
-été poussé. L'intégrer est une décision, pas une formalité : le journal du vault
-en dit la commande.
+Le lot 9 faisait du DevBrain une instance du kit sur une branche **non
+intégrée**, et laissait l'intégration à floSa. **Elle a eu lieu** : `main` porte
+`c6e2400` (« le DevBrain devient une instance du kit, sans qu'une page bouge »),
+puis `8274072` pour la fraîcheur. `brain.yml` est suivi à la racine du vault, et
+les sept scripts sont réduits à des ponts — **aucun contenu de page modifié**
+(337 briques, 297 notions, 47 vues, 74 hubs, tous intacts).
+
+Vérifié au lot 12, en lecture seule sur le vault réel :
+
+```bash
+uv run brainkit valider --vault <racine du DevBrain>
+# OK — aucune violation dure. (127 avertissement(s))
+```
+
+Les 127 avertissements ne sont pas une dérive des 111 mesurés au lot 10 : le
+lot 11 a ajouté les contrôles `amont_concorde`, qui en apportent 16 à eux
+seuls.
 
 ## 4.3 Les remontées ouvertes, par ordre de coût
 
@@ -137,16 +160,29 @@ l'argument.
    *(lot 9 remontée 4, lot 10 remontée 4)*
 2. **Un contrôle de socle `mode_du_kit_concorde`**, en `a_mesurer`. *(10 lignes,
    lot 9 remontée 5, lot 10 remontée 2)*
-3. **Un contrôle du manifeste d'images**, dans les deux sens — une capture
-   déclarée qui manque, un fichier posé que personne ne déclare. *(10 lignes,
-   après la relecture devant l'écran)*
+3. ~~**Un contrôle du manifeste d'images**, dans les deux sens — une capture
+   déclarée qui manque, un fichier posé que personne ne déclare.~~ **FAIT au
+   lot 12**, dans `outils/captures.py`, et il regarde dans **quatre**
+   directions : image référée manquante, image posée orpheline, trou nommé dont
+   le fichier existe déjà (la séance a eu lieu et personne n'a converti), et
+   capture de portée kit déclarée mais non couverte (avertissement). Il sort
+   en 2 sur écart, et `tests/emballage.py` l'appelle.
+   *(lot 10 remontée 8)*
 
 **Un peu de travail, et un vrai gain :**
 
-4. **Relire les six sections Obsidian devant l'écran**, et prendre les 16
-   captures de portée kit dans le même geste. C'est la **seule** partie du
+4. **La séance de prise devant l'écran** : les **16** captures que la
+   documentation nomme sans les avoir. Le protocole est écrit, table par table,
+   dans `design/12-captures.md` §4 — il est fait pour être exécuté par quelqu'un
+   qui pilote la machine sans avoir lu le reste. C'est la **seule** partie du
    livrable dont la justesse repose sur une transcription et non sur une
-   exécution. *(≈ 1 heure, lot 10 remontée 1)*
+   exécution. *(≈ 1 heure, lot 10 remontée 1, reformulée au lot 12)*
+
+4 bis. **Le chemin `mo is None` de `brainkit/emballer/install.py` n'a plus
+   d'appelant** depuis que `rendus_du_kit()` est retiré : quatre sections et une
+   vingtaine de branches sont du code mort. Son retrait est un refactor
+   d'environ 250 lignes du générateur, à faire d'un seul geste avec le jeu
+   d'épreuve sous les yeux. *(lot 12 remontée 1)*
 5. **Le genre grammatical d'un libellé d'axe.** « le domaine » se lit, « le
    période » ne se lit pas. Deux issues : un `genre:` facultatif dans `libelles`
    (une question de plus à l'entretien), ou la discipline « aucun article devant
@@ -202,10 +238,12 @@ Et la phrase qui résume le tout, née d'une règle dure sur les hauts de page :
 
 | Quoi | Compte |
 |---|---|
-| lots du plan, tous avec leur critère tenu | **10** *(+1 après clôture)* |
+| lots du plan, tous avec leur critère tenu | **10** *(+2 après clôture)* |
 | modules du paquet · lignes | 76 · ~18 900 |
-| jeux d'épreuve · lignes de tests et d'outils | 10 · ~5 200 |
-| rapports de lot · lignes de conception | 12 · ~10 500 |
+| jeux d'épreuve · lignes de tests et d'outils | 10 · ~5 900 |
+| rapports de lot · lignes de conception | 13 · ~10 900 |
+| documents de la doc du kit · lignes | 10 · ~2 900 |
+| captures présentes · nommées à prendre | 15 · 16 |
 | commandes | 8 |
 | règles de §10 · contrôles de socle (DevBrain) | 10 · 19 |
 | questions d'entretien · refus de deviner | 49 · 13 |
@@ -217,7 +255,8 @@ Et la phrase qui résume le tout, née d'une règle dure sur les hauts de page :
 ```bash
 uv run schema/valider.py        # le contrat du manifeste
 uv run outils/fidelite.py       # la fidélité au vault d'origine
-uv run outils/emballer.py       # les documents du dépôt sont-ils à jour
+uv run outils/emballer.py       # les documents rendus sont-ils a jour
+uv run outils/captures.py       # les images de la doc, dans les deux sens
 uv run tests/epreuve.py         # la validation
 uv run tests/generation.py      # les générateurs
 uv run tests/semis.py           # le semis, re-seuiller, freeze
