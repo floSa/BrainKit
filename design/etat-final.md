@@ -202,12 +202,12 @@ Et la phrase qui résume le tout, née d'une règle dure sur les hauts de page :
 
 | Quoi | Compte |
 |---|---|
-| lots du plan, tous avec leur critère tenu | **10** |
-| modules du paquet · lignes | 69 · ~17 900 |
-| jeux d'épreuve · lignes de tests et d'outils | 9 · ~5 000 |
-| rapports de lot · lignes de conception | 11 · ~9 800 |
-| commandes | 7 |
-| règles de §10 · contrôles de socle (DevBrain) | 10 · 18 |
+| lots du plan, tous avec leur critère tenu | **10** *(+1 après clôture)* |
+| modules du paquet · lignes | 76 · ~18 900 |
+| jeux d'épreuve · lignes de tests et d'outils | 10 · ~5 200 |
+| rapports de lot · lignes de conception | 12 · ~10 500 |
+| commandes | 8 |
+| règles de §10 · contrôles de socle (DevBrain) | 10 · 19 |
 | questions d'entretien · refus de deviner | 49 · 13 |
 | manifestes complets, dont un contre-exemple | 3 |
 | instances | 4 |
