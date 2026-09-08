@@ -41,7 +41,7 @@ existe, et plusieurs de ses étapes demandent d'avoir le vault sous les yeux.
 
 ---
 
-## Les huit fichiers
+## Les neuf documents
 
 | Fichier | Ce qu'il couvre |
 |---|---|
