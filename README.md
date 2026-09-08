@@ -20,7 +20,8 @@ brainkit generer                                   # `--check` : les artefacts d
 ```
 
 Le guide complet, de rien à un brain vert : **[INSTALL.md](INSTALL.md)** — généré,
-comme tout ce qui décrit un brain.
+comme tout ce qui décrit un brain. L'état du chantier — ce que le kit fait, ce
+qu'il ne fait pas, ce qui reste ouvert : **[design/etat-final.md](design/etat-final.md)**.
 
 ## Ce qu'il fait
 
@@ -58,7 +59,7 @@ comme tout ce qui décrit un brain.
 | `exemples/` | trois manifestes complets, dont un **contre-exemple** qui doit échouer |
 | `tests/` | les neuf jeux d'épreuve, tous lançables par `uv run` |
 | `outils/` | les outils de développement du kit (fidélité, régénération des documents) |
-| `design/` | les onze rapports de lot — chaque arbitrage avec sa mesure |
+| `design/` | le cadrage, les dix rapports de lot — chaque arbitrage avec sa mesure — et **`etat-final.md`**, la clôture du chantier |
 | `docs/` | les documents générés, et un jeu de guides d'instance rendu en exemple |
 
 Ce dépôt **n'a pas de remote** : il se transmet par copie de dossier ou par

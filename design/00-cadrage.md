@@ -1,5 +1,21 @@
 # BrainKit — cadrage
 
+> **Le chantier est CLOS depuis le 2026-09-08.** Les dix lots de §6 sont faits,
+> chacun avec son critère tenu. Ce document reste ce qu'il était — le cadrage
+> d'origine — et il n'a pas été réécrit après coup : ce qui a été tranché
+> autrement l'est dans le rapport du lot qui l'a tranché, et la règle du projet
+> est *en cas de désaccord, le livrable le plus récent a raison*.
+>
+> **Pour l'état réel du kit — ce qu'il fait, ce qu'il ne fait pas, ce qui reste
+> ouvert — lire `design/etat-final.md`.** C'est le document court. Celui-ci est
+> long, et il sert à comprendre *pourquoi* le kit est ce qu'il est.
+>
+> Les douze points de §5 ne sont pas tranchés par ce document, et deux ne le sont
+> toujours pas : **§5.7** (la licence — `LICENSE` porte « tous droits réservés »,
+> le choix réversible) et **§5.8** (la propriété de la taxonomie d'un brain
+> construit pour quelqu'un d'autre, à trancher avant la première remise). Ils
+> appartiennent à floSa.
+
 > Conversation 41, « cadrage BrainKit », le 2026-09-07. Document de **cadrage** :
 > aucun vault, aucun script, aucun gabarit n'est écrit ici. Ce qui est écrit ici est
 > ce qu'il faudra écrire, dans quel ordre, et ce qui ne se transposera pas.
