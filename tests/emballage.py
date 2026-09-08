@@ -92,10 +92,10 @@ MOTS_BLANC = ["role: obligation", "role: check-list", "Embauche", "DroitBrain",
 # commercial qui ne soit deja pris par un autre motif. Un motif qui ne peut que
 # faire du bruit ne se garde pas.
 INTERDITS_COMMERCIAUX = [
-    r"\d\s*(?:€|EUR)", r"[$£]\s*\d", r"tarifs?", r"facturation",
-    r"devis", r"abonnement", r"honoraires", r"TJM",
-    r"prestation", r"offre", r"à vendre", r"nos clients",
-    r"licence commerciale",
+    r"\d\s*(?:€|EUR\b)", r"[$£]\s*\d", r"\btarifs?\b", r"\bfacturation\b",
+    r"\bdevis\b", r"\babonnement\b", r"\bhonoraires\b", r"\bTJM\b",
+    r"\bprestation\b", r"\boffre\b", r"\bà vendre\b", r"\bnos clients\b",
+    r"\blicence commerciale\b",
 ]
 # Les emplois LEGITIMES, dans un texte qui parle de licence et de livraison.
 TOLERES = [
@@ -171,14 +171,11 @@ def scenario_documents(j: Journal) -> None:
     a, b = emballer.rendus(mo), emballer.rendus(mo)
     j.verifie("la génération est idempotente (deux rendus identiques)", a == b,
               "\n".join(sorted(set(a) ^ set(b))))
-    k1, k2 = emballer.rendus_du_kit(), emballer.rendus_du_kit()
-    j.verifie("… y compris celle du document du dépôt", k1 == k2)
-
     # AUCUN wikilink dans un document. Le validateur lit tout `.md` de la
     # racine du vault comme une SOURCE d atteignabilite : un `[[hub]]` dans
     # `INSTALL.md` rendrait un hub atteignable sans que la porte d entree le
     # cite, donc elargirait une regle en silence.
-    for chemin, texte in {**a, **k1}.items():
+    for chemin, texte in a.items():
         if "/" in chemin:
             continue        # `docs/` est dans `genere.non_pages` : inerte
         liens = re.findall(r"\[\[[^\]]+\]\]", texte)
@@ -186,10 +183,18 @@ def scenario_documents(j: Journal) -> None:
                   not liens, str(liens[:5]))
 
     # Aucune promesse commerciale, nulle part dans le depot documente.
+    #
+    # Les motifs de `INTERDITS_COMMERCIAUX` portaient, jusqu au lot 12, des
+    # octets 0x08 (un retour arriere) la ou le code voulait des `\b` de
+    # frontiere de mot — sequelle d une ecriture par document interstitiel de
+    # shell. Aucun motif ne pouvait donc correspondre : le controle passait au
+    # vert sur n importe quel texte. Corrige, et la liste des cibles a grandi
+    # dans le meme geste.
     fautes: list[str] = []
-    cibles = ["README.md", "INSTALL.md", "LICENSE", "docs/README.md"]
-    cibles += [f"docs/histobrain/{p.name}"
-               for p in (RACINE_KIT / "docs" / "histobrain").glob("*.md")]
+    cibles = ["README.md", "LICENSE"]
+    cibles += [f"docs/{p.name}" for p in (RACINE_KIT / "docs").glob("*.md")]
+    cibles += [f"exemples/rendu-histobrain/{p.name}"
+               for p in (RACINE_KIT / "exemples" / "rendu-histobrain").glob("*.md")]
     for chemin in cibles:
         for ligne in (RACINE_KIT / chemin).read_text(
                 encoding="utf-8").splitlines():
@@ -201,17 +206,28 @@ def scenario_documents(j: Journal) -> None:
     j.verifie("aucune promesse commerciale dans les documents du dépôt",
               not fautes, "\n".join(fautes))
 
-    # Le manifeste d images DECLARE et n embarque rien.
+    # Le manifeste d images DECLARE et n embarque rien — dans un document
+    # GENERE. La nuance a compte au lot 12 : la doc DU KIT, elle, est ecrite a
+    # la main et porte ses captures. Le contrat « aucun appel d image en dur »
+    # ne vaut que la ou le fichier n existe pas encore a la generation, c est-a
+    # dire dans les documents qu une instance recoit.
     from brainkit.emballer import images
-    j.verifie(f"{len(images.CAPTURES)} captures déclarées, aucune embarquée",
-              not list((RACINE_KIT / "docs").glob("**/*.png")),
-              "des images sont dans le dépôt")
-    for chemin, texte in {**a, **k1}.items():
+    j.verifie(f"{len(images.CAPTURES)} captures déclarées par le manifeste "
+              f"d'instance", len(images.CAPTURES) > 0)
+    for chemin, texte in a.items():
         if "![" in texte:
             j.verifie(f"aucun appel d'image en dur dans `{chemin}`", False,
                       "une image absente s'afficherait cassée")
-    j.verifie("aucun appel d'image en dur, dans aucun document",
-              not any("![" in t for t in {**a, **k1}.values()))
+    j.verifie("aucun appel d'image en dur dans un document GÉNÉRÉ",
+              not any("![" in t for t in a.values()))
+
+    # Et le controle des images de la doc du kit, dans les deux sens. Il ferme
+    # la remontee 8 de ce lot : une capture declaree qui manque, un fichier pose
+    # que personne ne declare.
+    code, lignes = _lance(RACINE_KIT, sys.executable,
+                          str(RACINE_KIT / "outils" / "captures.py"))
+    j.verifie("`outils/captures.py` sort en 0 — aucune image manquante, "
+              "aucune orpheline", code == 0, "\n".join(lignes[-10:]))
 
 
 # --------------------------------------------------------------------------- #

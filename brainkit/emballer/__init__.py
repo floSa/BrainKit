@@ -41,7 +41,7 @@ from __future__ import annotations
 from ..valider.manifeste import Modele
 from . import guides, images, install
 
-__all__ = ["install", "guides", "images", "rendus", "rendus_du_kit",
+__all__ = ["install", "guides", "images", "rendus",
            "CHEMIN_INSTALL", "DOSSIER_GUIDES"]
 
 CHEMIN_INSTALL = "INSTALL.md"
@@ -56,10 +56,21 @@ def rendus(mo: Modele) -> dict[str, str]:
     return out
 
 
-def rendus_du_kit() -> dict[str, str]:
-    """L `INSTALL.md` du DEPOT DU KIT — celui qui parle a qui n a aucun brain.
-
-    Meme generateur, autre lecteur : `install.document(None)`. Cf. le docstring
-    de `install.py`, section « Deux documents ».
-    """
-    return {CHEMIN_INSTALL: install.document(None)}
+# Il y avait ici un `rendus_du_kit()` : le meme generateur, appele avec un
+# manifeste VIDE, pour produire l `INSTALL.md` du DEPOT DU KIT. Il est retire,
+# et le motif vaut d etre garde.
+#
+# Ce document ne lisait AUCUNE valeur de manifeste — la preuve etant qu il se
+# rendait sans en avoir un. Ce n etait donc pas de la generation, c etait de la
+# prose ecrite en Python : plus dure a modifier qu un fichier markdown, et
+# surtout incapable de porter une image, puisque `images.appel()` interdit
+# (a raison) toute balise `![]()` dans un document genere.
+#
+# La doc du kit est desormais ecrite a la main, dans `docs/`, et elle porte ses
+# captures. Ce module ne s adresse plus qu a UNE INSTANCE, ce qui est le seul
+# lecteur pour lequel la propriete 1 du manifeste ait quelque chose a dire.
+#
+# `install.document()` accepte encore `None` : ce chemin n a plus d appelant.
+# Son retrait est un refactor de ~250 lignes du generateur, hors du perimetre
+# d un lot de documentation — il est ecrit en remontee dans
+# `design/12-captures.md`.

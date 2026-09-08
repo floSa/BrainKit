@@ -1,26 +1,106 @@
-# `docs/` — les documents générés du kit
+# Documentation de BrainKit
 
-> **Dossier GÉNÉRÉ** par `uv run outils/emballer.py --ecrire`. Ne rien éditer à la main ici : tout se régénère depuis le code du kit et depuis un manifeste.
+**Ce dossier est écrit à la main, et il parle du kit.** Il ne parle d'aucun
+sujet, et il ne lit aucun manifeste.
 
-## Ce que tu cherches probablement
+C'est la première chose à savoir en arrivant, parce que le dépôt contient
+**deux** natures de documentation et qu'on ne les corrige pas de la même façon :
 
-| Tu veux | Va voir |
+| Nature | Où | Qui l'écrit | Comment on la corrige |
+|---|---|---|---|
+| **la doc du kit** | ici, `docs/` | à la main | on l'édite |
+| **la doc d'une instance** | à la racine du vault semé | **générée** par `brainkit/emballer/` depuis `brain.yml` | on corrige le **générateur** ou le **manifeste** — jamais le fichier |
+
+Un exemple complet de la seconde, rendu une fois depuis le manifeste de
+démonstration, est lisible dans
+[`../exemples/rendu-histobrain/`](../exemples/rendu-histobrain).
+
+---
+
+## Par où commencer
+
+| Vous voulez | Lisez |
 |---|---|
-| installer le kit et créer un brain | `../INSTALL.md`, à la racine du dépôt |
-| **voir** ce que le semis pose dans une instance | `histobrain/` |
-| comprendre les décisions de conception | `../design/`, lot par lot |
+| **installer le kit** sur une machine neuve | [03-installation.md](03-installation.md) |
+| **créer votre premier brain** | [05-premier-brain.md](05-premier-brain.md) |
+| **régler Obsidian** sur un vault existant | [04-obsidian.md](04-obsidian.md) |
+| vous en servir tous les jours | [06-manuel.md](06-manuel.md) |
+| comprendre pourquoi c'est fait comme ça | [01-cadrage.md](01-cadrage.md) |
+| comprendre comment c'est construit | [02-architecture.md](02-architecture.md) |
+| remettre un brain sur une machine sans accès internet | [07-livrer-une-instance.md](07-livrer-une-instance.md) |
+| régler un problème | [08-depannage.md](08-depannage.md) |
+| les secrets, l'identité git | [SECURITY.md](SECURITY.md) |
 
-## `histobrain/` — les documents d'une instance, rendus une fois
+**La route complète, de rien à un brain vert** :
+[03](03-installation.md) → [05](05-premier-brain.md) → [04](04-obsidian.md) →
+[06](06-manuel.md).
 
-Une instance porte **ses** documents, écrits par `brainkit semer` depuis **son** manifeste. Ils n'ont donc rien à faire dans le dépôt du kit — sauf qu'un dépôt qui annonce « le semis pose un guide d'installation et trois guides d'usage » sans qu'on puisse les lire demande de le croire sur parole.
+L'ordre peut surprendre : on installe, on sème, **puis** on règle Obsidian.
+C'est délibéré — la configuration d'Obsidian ne sert à rien avant qu'un vault
+existe, et plusieurs de ses étapes demandent d'avoir le vault sous les yeux.
 
-Ceux-ci sont rendus depuis `exemples/histobrain.brain.yml`, le manifeste de démonstration — un brain d'**histoire**, choisi parce que c'est le sujet le plus éloigné de celui dont le kit a été extrait. Un brain de développement logiciel aurait laissé planer le doute.
+---
 
-| Fichier | Ce que c'est |
+## Les huit fichiers
+
+| Fichier | Ce qu'il couvre |
 |---|---|
-| `histobrain/INSTALL.md` | installer **cette instance** sur une machine neuve |
-| `histobrain/enrichir.md` | écrire dedans, et ce que ça déclenche autour |
-| `histobrain/exploiter.md` | s'en servir depuis un travail, sans y écrire |
-| `histobrain/manuel.md` | lire le brain — ce qu'on a sous les yeux |
+| [01-cadrage.md](01-cadrage.md) | le **pourquoi** : le problème d'origine, les cinq principes et ce qui les a imposés, le périmètre, les hypothèses assumées, ce qui n'est pas tranché |
+| [02-architecture.md](02-architecture.md) | le **comment** : kit contre instance, le manifeste comme seule source, les huit paquets, les deux modes, les deux profils, le jeu d'épreuve, les licences |
+| [03-installation.md](03-installation.md) | pré-requis, obtenir le kit avec ou sans remote, les hooks git, les deux façons de le lancer, la vérification |
+| [04-obsidian.md](04-obsidian.md) | ouvrir le vault, les plugins et leurs homonymes, Templater, masquer un dossier, l'exclure de la recherche, replier les propriétés, colorer le graphe, brancher l'agent |
+| [05-premier-brain.md](05-premier-brain.md) | l'entretien et ses treize refus, composer le manifeste, semer, les quatre refus du semis, la première capture, clôturer |
+| [06-manuel.md](06-manuel.md) | les huit commandes, la boucle de tous les jours, chercher, capturer, mettre à jour, régénérer, valider, mesurer, sonder, re-seuiller |
+| [07-livrer-une-instance.md](07-livrer-une-instance.md) | `freeze` : ce qu'il copie, ce qu'il perd, pourquoi il n'y a pas de dégel, la liste avant remise |
+| [08-depannage.md](08-depannage.md) | problème / cause / solution, par domaine |
+| [SECURITY.md](SECURITY.md) | la clé du pont, l'identité git et ses trois garde-fous, ce qu'un dépôt de brain ne doit pas contenir |
 
-> Ce sont des documents d'**exemple**. Ton instance porte les siens, avec tes mots, tes axes et tes règles — et si les deux se ressemblent quelque part, c'est que cet endroit-là est vraiment générique.
+Plus `img/`, les captures d'écran.
+
+---
+
+## Les captures
+
+Cette documentation **référence** ses images, et n'en fabrique aucune.
+
+| État | Compte | Forme dans le texte |
+|---|---|---|
+| présentes dans `img/` | **15** | une balise d'image normale |
+| **à prendre en séance** | **16** | un bloc en citation, qui nomme le fichier, l'écran, l'action à faire avant, et la zone à cadrer |
+
+Une image absente est donc un **trou nommé**, jamais une balise cassée : un lien
+vers un fichier qui n'existe pas afficherait une image brisée, ce qui se lit
+comme un défaut du document plutôt que comme un travail à faire.
+
+Aucune n'est fabriquée, et c'est délibéré. Une capture inventée montrerait une
+interface qui n'existe pas — strictement pire qu'un trou nommé. C'est le même
+raisonnement que la règle du haut de page : *une cellule vide honnêtement vaut
+mieux qu'une cellule remplie au jugé*.
+
+Le protocole de prise — la liste ordonnée, avec pour chacune l'écran, l'action
+et le cadrage — est dans
+[`../design/12-captures.md`](../design/12-captures.md). Il est fait pour être
+exécuté par quelqu'un qui pilote la machine sans avoir lu le reste.
+
+### Le contrôle
+
+```bash
+uv run outils/captures.py
+```
+
+Il vérifie les deux sens : **aucune image référencée ne manque**, et **aucune
+image du dossier n'est orpheline**. Il sort en 2 sur écart, et il liste ce qui
+reste à prendre en séance sans le compter comme une faute.
+
+---
+
+## Ce qui n'est pas ici
+
+| Ce que vous cherchez | Où c'est |
+|---|---|
+| chaque arbitrage de conception, avec sa mesure | [`../design/`](../design), un fichier par lot |
+| l'état du chantier, ce qui reste ouvert | [`../design/etat-final.md`](../design/etat-final.md) |
+| le contrat du manifeste | [`../schema/brain.schema.json`](../schema/brain.schema.json) |
+| des manifestes complets, dont un contre-exemple | [`../exemples/`](../exemples) |
+| le skill qui mène l'entretien | [`../skills/entretien/SKILL.md`](../skills/entretien/SKILL.md) |
+| le manuel de **votre** brain | dans votre vault, généré par le semis |
