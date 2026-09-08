@@ -2067,8 +2067,11 @@ genere:
       cle `generated_by` du JSON. C est une valeur d instance, pas de kit : une
       instance `kit.mode: branche` annonce `brainkit generer`, une instance
       `kit.mode: fige` annonce le chemin ou ses scripts ont ete copies. Le
-      DevBrain annonce encore les siens, et c est exact tant que le lot 9 n a pas
-      remplace son outillage.
+      DevBrain annonce les siens, et c est TOUJOURS exact apres le lot 9 : ses
+      quatre generateurs sont devenus des PONTS de vingt lignes qui appellent le
+      kit, et `AI/scripts/build_index.py` reste le fichier qu on lance et donc
+      celui qui produit l artefact. La signature dit la commande, pas le paquet
+      qui fait le travail — c est pour cela qu elle est une valeur d instance.
     portee: "v2-only (réservoir v1 exclu)"
     motif_portee: >
       DETTE V1, declaree parce qu elle est dans le fichier du vault. La cle
@@ -2184,7 +2187,7 @@ agent:
     - { chemin: "migration/", role: "un fichier par lot, avec ses *Remontees*" }
     - { chemin: "index/", role: "genere, ne pas editer a la main" }
     - { chemin: "sessions/", role: "resumes automatiques par le hook Stop" }
-    - { chemin: "scripts/", role: "l outillage — vide sur une instance `kit.mode: branche`" }
+    - { chemin: "scripts/", role: "l outillage — sur une instance `kit.mode: branche`, les PONTS vers le kit plus les outils propres au vault ; sur une `kit.mode: fige`, le kit copie" }
     - { chemin: "backlog.md", role: "ce qui reste a faire" }
   motif_migration: >
     Le journal de lot n est PAS remplacable par de la configuration. `motif:`
