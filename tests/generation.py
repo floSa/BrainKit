@@ -331,21 +331,31 @@ def scenario_devbrain(j: Journal, vault: Path) -> None:
               "AI/index/brain-index.md" not in ecarts(s), str(sorted(ecarts(s))))
     j.verifie("zéro refus sur 765 pages", not s.refus, "\n".join(s.refus))
 
-    # Le SEUL ecart, et sa preuve. Le catalogue committe liste un dossier de
-    # sauvegarde qui n existe plus sur le disque : reinjecte EN MEMOIRE, le JSON
-    # redevient identique a l octet. L ecart est donc un fait du vault, pas un
-    # defaut du generateur.
-    j.verifie("un seul écart : le catalogue machine",
-              ecarts(s) == {"AI/index/brain-index.json"}, str(sorted(ecarts(s))))
+    # Au plus UN ecart, et sa preuve — la verification tient AVANT et APRES le
+    # lot 9, parce que c est le meme fait qu elle regarde des deux cotes.
+    #
+    #   AVANT  le catalogue committe annonce 26 dossiers balayes, dont deux qui
+    #          ne portent aucune page : `.githooks`, et un dossier de sauvegarde
+    #          qui n existe meme plus sur le disque. L ecart vaut 2 lignes.
+    #   APRES  le lot 9 a regenere le catalogue avec la cle corrigee, et l ecart
+    #          est nul.
+    #
+    # Dans les deux cas, la difference tient ENTIEREMENT a ces deux noms : les
+    # reinjecter en memoire rend l octet du fichier committe. C est ce que la
+    # seconde verification etablit, et c est ce qui prouve que le generateur
+    # n a change que la cle `scanned`.
+    j.verifie("au plus un écart : le catalogue machine",
+              ecarts(s) <= {"AI/index/brain-index.json"}, str(sorted(ecarts(s))))
     c = charge_corpus(mo, vault)
     reel = (vault / "AI" / "index" / "brain-index.json").read_text(encoding="utf-8")
-    j.verifie("et il tient à UN dossier fantôme : réinjecté, l'octet est identique",
-              catalogue(c) != reel
-              and _avec_fantome(c, catalogue, reel, "obsidian_outer_backup_20260907"))
+    j.verifie("et il tient aux SEULS dossiers sans page de `scanned`",
+              catalogue(c) == reel
+              or _avec_sans_page(c, catalogue, reel,
+                                 [".githooks", "obsidian_outer_backup_20260907"]))
 
 
-def _avec_fantome(corpus, fabrique, reel: str, nom: str) -> bool:
-    corpus.scannes = sorted(corpus.scannes + [nom])
+def _avec_sans_page(corpus, fabrique, reel: str, noms: list[str]) -> bool:
+    corpus.scannes = sorted(set(corpus.scannes) | set(noms))
     return fabrique(corpus) == reel
 
 

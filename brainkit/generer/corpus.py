@@ -62,15 +62,33 @@ class Corpus:
         self.champ_tags = _premier_champ_de_vocabulaire(mo)
         self.champs_transverses = list(mo.champs_transverses)
 
-        # Le perimetre s enumere PAR LA NEGATIVE : tout dossier de la racine qui
-        # n est pas de l outillage porte des pages. `scannes` est la liste TELLE
-        # QUELLE, sans le filtre technique des worktrees — c est elle que l index
-        # publie, et elle doit dire ce qui a ete parcouru.
-        self.scannes = sorted(d.name for d in self.racine.iterdir()
-                              if d.is_dir() and d.name not in mo.non_pages)
-
         self.pages = vault.lire_vault(self.racine, mo.non_pages)
         self.pages.sort(key=lambda p: p.chemin)
+
+        # Le perimetre s enumere PAR LA NEGATIVE — tout dossier de la racine qui
+        # n est pas de l outillage — mais `scannes` ne publie que ceux qui
+        # PORTENT AU MOINS UNE PAGE. Remontee 1 du lot 4, confirmee par la
+        # remontee 2 du lot 5, tranchee ici (lot 9) :
+        #
+        #   - un dossier present sur le disque sans etre suivi par git — une
+        #     sauvegarde, un `node_modules`, un dossier temporaire d editeur —
+        #     entrait dans un artefact VERSIONNE, et deux machines qui generent
+        #     le meme commit produisaient deux catalogues differents. Le vault
+        #     reel en portait la preuve : son catalogue committe annonce
+        #     `obsidian_outer_backup_20260907`, un dossier qui n existe plus ;
+        #   - une instance fraichement semee naissait avec un catalogue qui
+        #     annonce quatorze dossiers balayes dont trois ne portent rien
+        #     (`.githooks` et les deux dossiers d axe transverse).
+        #
+        # Se restreindre aux dossiers qui portent une page rend la cle EXACTE et
+        # REPRODUCTIBLE d un coup : ce qui n est pas suivi par git ne porte pas
+        # de page indexee, donc ne s annonce plus.
+        premiers = {p.chemin.split("/", 1)[0] for p in self.pages
+                    if "/" in p.chemin}
+        self.scannes = sorted(d.name for d in self.racine.iterdir()
+                              if d.is_dir() and d.name not in mo.non_pages
+                              and d.name in premiers)
+
         self.lisibles = [p for p in self.pages if p.illisible is None]
         self.illisibles = [p for p in self.pages if p.illisible is not None]
         self.par_chemin = {p.chemin: p for p in self.lisibles}
