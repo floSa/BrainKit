@@ -91,6 +91,8 @@ cd ~/HistoBrain
 
 > **S'il n'y a pas d'URL** — un vault remis hors ligne n'en a pas — un `git bundle` se clone exactement comme une URL (`git clone <fichier>.bundle`) et garde l'historique. Un dossier copié marche aussi ; une archive perd l'historique, et l'historique est ce qui distingue un vault d'un dossier de fichiers.
 
+> Un clone de bundle atterrit en **HEAD détachée**, et ici ça compte : un vault se remplit, donc on y committe. `git switch -c main` avant la première écriture — sans quoi les commits ne sont sur aucune branche, et le prochain `switch` les laisse derrière lui.
+
 ### Activer les hooks — **obligatoire**, une fois par clone
 
 ```bash
@@ -145,11 +147,13 @@ brainkit valider
 brainkit generer                # --check, n'écrit rien
 ```
 
-**Si le kit n'est pas sur le PATH**, le vault sait le chercher : `AI/scripts/_pont_kit.py` essaie, dans l'ordre, la variable `BRAINKIT_RACINE`, puis un kit copié dans ce vault (`AI/scripts/brainkit/`), puis un dossier `BrainKit/` chez un parent de la racine. Il **s'arrête au premier qui répond** et, si aucun ne répond, il sort en 2 et imprime les trois pistes — il ne devine pas. Un kit devine est un verdict rendu par un code qu'on n'a pas choisi.
+**Si le kit n'est pas sur le PATH**, le vault sait le chercher : `AI/scripts/_pont_kit.py` essaie, dans l'ordre, la variable `BRAINKIT_RACINE`, puis un kit copié dans ce vault (`AI/scripts/brainkit/`), puis un dossier `BrainKit/` chez un parent de la racine. Il **s'arrête au premier qui répond** et, si aucun ne répond, il sort en 2 et imprime les trois pistes — il ne devine pas. Un kit deviné est un verdict rendu par un code qu'on n'a pas choisi.
 
 ```bash
 export BRAINKIT_RACINE=~/BrainKit     # l'échappatoire explicite
 ```
+
+> **Ce que le résolveur ne fait pas.** Ce n'est pas une commande : c'est une bibliothèque, lue par les scripts DU VAULT — ses ponts d'outillage, son hook de fin de session, ses skills. Il rend `brainkit` atteignable pour eux, pas pour un humain à son terminal. Pour taper une commande sans avoir installé le kit sur le PATH, il reste `uv run --project <racine du kit> brainkit …`.
 
 ---
 
@@ -249,11 +253,9 @@ Panneau du graphe → **Groupes**. Ajouter les 8 requêtes **dans cet ordre**, a
 
 > Un `.base` NE SE COLORE PAS : il n a pas de frontmatter, donc pas de `role:`. Trois faits sur Obsidian, aucun sur le sujet — ils transposent tels quels.
 
-La cible (`.obsidian/graph.json, clé `colorGroups``) n’est pas versionnée : cette table est la **seule** source de vérité, et elle se réapplique à la main sur chaque poste. Elle est aussi dans le vault, en `Documentation/graphe.md`.
+La cible (.obsidian/graph.json, clé `colorGroups`) n’est pas versionnée : cette table est la **seule** source de vérité, et elle se réapplique à la main sur chaque poste. Elle est aussi dans le vault, en `Documentation/graphe.md`.
 
 > **Capture attendue** — `docs/install/img/16-graphe-groupes-reglages.png` (du kit, réutilisable) : le panneau du graphe, section Groupes, une requête et sa couleur en cours de saisie.
-
-> **Capture attendue** — `docs/install/img/17-snippet-css-actif.png` (du kit, réutilisable) : Apparence → Extraits CSS, l'extrait des rôles activé.
 
 > **Capture attendue** — `docs/install/img/25-graphe-colore.png` (DE CETTE INSTANCE) : le graphe du vault, une couleur par rôle, après application de la table.
 
@@ -310,7 +312,11 @@ uv run tests/skills.py          # les skills, et leur généricité
 uv run tests/mesure.py          # la mesure et ses garde-fous
 uv run tests/entretien.py       # les 49 questions, les 13 refus
 uv run tests/emballage.py       # l'emballage : docs, profils, figeage
+uv run outils/fidelite.py       # la fidélité au vault d'origine
+uv run outils/emballer.py       # les documents du dépôt sont-ils à jour
 ```
+
+> Deux d'entre eux lisent un vault RÉEL s'il est là, et le sautent sinon. Sur un vault que quelqu'un est en train d'éditer, `tests/generation.py` peut signaler un écart de zone générée : ce n'est pas une régression du kit, c'est `--check` qui fait son travail. Régénérer, ou relancer sur une copie du dernier commit.
 
 > **Capture attendue** — `docs/install/img/26-verdict-valider.png` (DE CETTE INSTANCE) : le terminal, sortie de la commande de validation sur ce vault.
 
@@ -403,9 +409,9 @@ C'est le résolveur du vault qui refuse de deviner. Les trois pistes qu'il impri
 
 Les captures se rangent sous `docs/install/img/`.
 
-Ce guide appelle **28 captures** et n'en embarque aucune. Elles se rangent en deux tas, et la coupure décide qui les refait :
+Ce guide appelle **27 captures** et n'en embarque aucune. Elles se rangent en deux tas, et la coupure décide qui les refait :
 
-- **17 captures du kit** — elles montrent l'interface d'Obsidian et rien du contenu. Prises une fois, elles valent pour toutes les instances.
+- **16 captures du kit** — elles montrent l'interface d'Obsidian et rien du contenu. Prises une fois, elles valent pour toutes les instances.
 - **11 captures de l'instance** — elles montrent le vault lui-même. Elles sont fausses dès la deuxième instance, donc elles se reprennent à chaque brain.
 
 | Fichier | Portée | Ce qu'elle doit montrer |
@@ -426,7 +432,6 @@ Ce guide appelle **28 captures** et n'en embarque aucune. Elles se rangent en de
 | `14-file-hider-menu-contextuel.png` | kit | le menu du clic droit dans l'explorateur, entrée « Hide folder » |
 | `15-file-hider-apres.png` | kit | l'explorateur après masquage : l'espace de l'agent a disparu de la barre latérale |
 | `16-graphe-groupes-reglages.png` | kit | le panneau du graphe, section Groupes, une requête et sa couleur en cours de saisie |
-| `17-snippet-css-actif.png` | kit | Apparence → Extraits CSS, l'extrait des rôles activé |
 | `18-selecteur-dossier-du-vault.png` | instance | le sélecteur de dossier pointé sur CE vault — c'est son nom qui est montré, donc la capture ne se réutilise pas |
 | `19-arbre-du-vault.png` | instance | la barre latérale, l'arbre des dossiers de l'axe de rangement déplié sur un niveau |
 | `20-porte-d-entree.png` | instance | la porte d'entrée du vault ouverte à côté de l'arbre |

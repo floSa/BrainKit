@@ -72,7 +72,7 @@ cd ~/BrainKit
 > **Et s'il n'y a pas d'URL ?** C'est le cas normal, pas une exception : ce dépôt peut n'avoir aucun remote, et une livraison hors ligne n'en a jamais. Le kit arrive alors sous une autre forme, et les trois se valent :
 
 > - **un dossier copié** — `cp -r`, une clé, un partage réseau. L'historique git vient avec s'il est dans le dossier ;
-> - **un `git bundle`** — un fichier unique qui se clone comme une URL : `git clone brainkit.bundle ~/BrainKit`. C'est la forme à préférer, parce qu'elle garde l'historique **et** se vérifie ;
+> - **un `git bundle`** — un fichier unique qui se clone comme une URL : `git clone brainkit.bundle ~/BrainKit`. C'est la forme à préférer, parce qu'elle garde l'historique **et** se vérifie. Un clone de bundle atterrit en **HEAD détachée** : sur le kit c'est sans conséquence — on n'y committe pas — mais faire tout de suite `git switch -c main` évite d'avoir à se le demander ;
 > - **une archive** — `.zip`, `.tar.gz`. L'historique est perdu, donc `git log` ne dira plus de quelle version le kit vient : la seule trace restante est `__version__` dans `brainkit/__init__.py`.
 
 > Dans les trois cas, la suite de ce guide est identique — rien ci-dessous ne suppose un remote.
@@ -335,7 +335,11 @@ uv run tests/skills.py          # les skills, et leur généricité
 uv run tests/mesure.py          # la mesure et ses garde-fous
 uv run tests/entretien.py       # les 49 questions, les 13 refus
 uv run tests/emballage.py       # l'emballage : docs, profils, figeage
+uv run outils/fidelite.py       # la fidélité au vault d'origine
+uv run outils/emballer.py       # les documents du dépôt sont-ils à jour
 ```
+
+> Deux d'entre eux lisent un vault RÉEL s'il est là, et le sautent sinon. Sur un vault que quelqu'un est en train d'éditer, `tests/generation.py` peut signaler un écart de zone générée : ce n'est pas une régression du kit, c'est `--check` qui fait son travail. Régénérer, ou relancer sur une copie du dernier commit.
 
 > **Capture attendue** — `docs/install/img/26-verdict-valider.png` (DE CETTE INSTANCE) : le terminal, sortie de la commande de validation sur ce vault.
 
@@ -428,9 +432,9 @@ C'est le résolveur du vault qui refuse de deviner. Les trois pistes qu'il impri
 
 Les captures se rangent sous `docs/install/img/`.
 
-Ce guide appelle **28 captures** et n'en embarque aucune. Elles se rangent en deux tas, et la coupure décide qui les refait :
+Ce guide appelle **27 captures** et n'en embarque aucune. Elles se rangent en deux tas, et la coupure décide qui les refait :
 
-- **17 captures du kit** — elles montrent l'interface d'Obsidian et rien du contenu. Prises une fois, elles valent pour toutes les instances.
+- **16 captures du kit** — elles montrent l'interface d'Obsidian et rien du contenu. Prises une fois, elles valent pour toutes les instances.
 - **11 captures de l'instance** — elles montrent le vault lui-même. Elles sont fausses dès la deuxième instance, donc elles se reprennent à chaque brain.
 
 | Fichier | Portée | Ce qu'elle doit montrer |
@@ -451,7 +455,6 @@ Ce guide appelle **28 captures** et n'en embarque aucune. Elles se rangent en de
 | `14-file-hider-menu-contextuel.png` | kit | le menu du clic droit dans l'explorateur, entrée « Hide folder » |
 | `15-file-hider-apres.png` | kit | l'explorateur après masquage : l'espace de l'agent a disparu de la barre latérale |
 | `16-graphe-groupes-reglages.png` | kit | le panneau du graphe, section Groupes, une requête et sa couleur en cours de saisie |
-| `17-snippet-css-actif.png` | kit | Apparence → Extraits CSS, l'extrait des rôles activé |
 | `18-selecteur-dossier-du-vault.png` | instance | le sélecteur de dossier pointé sur CE vault — c'est son nom qui est montré, donc la capture ne se réutilise pas |
 | `19-arbre-du-vault.png` | instance | la barre latérale, l'arbre des dossiers de l'axe de rangement déplié sur un niveau |
 | `20-porte-d-entree.png` | instance | la porte d'entrée du vault ouverte à côté de l'arbre |

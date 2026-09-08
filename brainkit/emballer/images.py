@@ -7,7 +7,10 @@ comptees en deux tas, et la coupure n est pas esthetique :
 
   - **17 montrent l interface d Obsidian** — panneaux de reglages, navigateur de
     plugins, options de plugin. Elles ne montrent rien du DevBrain, donc elles
-    valent pour n importe quelle instance : ce sont des captures DU KIT (N2) ;
+    valent pour n importe quelle instance : ce sont des captures DU KIT (N2).
+    Le kit en declare **16** : celle de l extrait CSS est tombee, parce
+    qu aucun mecanisme du kit ne produit d extrait CSS — demander la capture
+    d une chose qui n existe pas serait le bruit que ce module doit eviter ;
   - **11 montrent du contenu de dev** — l arbre du vault, une fiche, deux
     comparatifs, le graphe colore. Elles sont fausses des la deuxieme instance :
     ce sont des captures D INSTANCE (N3).
@@ -108,8 +111,11 @@ CAPTURES: tuple[Capture, ...] = (
     Capture("16-graphe-groupes-reglages.png", "obsidian.couleurs",
             "le panneau du graphe, section Groupes, une requête et sa couleur "
             "en cours de saisie", KIT),
-    Capture("17-snippet-css-actif.png", "obsidian.couleurs",
-            "Apparence → Extraits CSS, l'extrait des rôles activé", KIT),
+    # Pas de capture d extrait CSS, et c est un retrait du lot 10 : le
+    # DevBrain en a un (`.obsidian/snippets/roles.css`, ecrit a la main), mais
+    # AUCUN mecanisme du kit ne produit un extrait CSS. Demander la capture
+    # d une chose que le kit ne cree pas serait exactement le bruit que ce
+    # manifeste existe pour eviter.
 
     # --- portee INSTANCE : le contenu, faux des la deuxieme instance ---------
     Capture("18-selecteur-dossier-du-vault.png", "obsidian.ouvrir",

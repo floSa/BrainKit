@@ -246,7 +246,10 @@ def _installer_le_kit(mo: Modele | None) -> Section:
         "L'historique git vient avec s'il est dans le dossier ;",
         "> - **un `git bundle`** — un fichier unique qui se clone comme une "
         "URL : `git clone brainkit.bundle ~/BrainKit`. C'est la forme à "
-        "préférer, parce qu'elle garde l'historique **et** se vérifie ;",
+        "préférer, parce qu'elle garde l'historique **et** se vérifie. Un "
+        "clone de bundle atterrit en **HEAD détachée** : sur le kit c'est sans "
+        "conséquence — on n'y committe pas — mais faire tout de suite "
+        "`git switch -c main` évite d'avoir à se le demander ;",
         "> - **une archive** — `.zip`, `.tar.gz`. L'historique est perdu, donc "
         "`git log` ne dira plus de quelle version le kit vient : la seule trace "
         "restante est `__version__` dans `brainkit/__init__.py`.", "",
@@ -320,10 +323,16 @@ def _atteindre_le_kit(mo: Modele) -> Section:
         f"(`{agent}/scripts/brainkit/`), puis un dossier `BrainKit/` chez un "
         f"parent de la racine. Il **s'arrête au premier qui répond** et, si "
         f"aucun ne répond, il sort en 2 et imprime les trois pistes — il ne "
-        f"devine pas. Un kit devine est un verdict rendu par un code qu'on n'a "
-        f"pas choisi.", "", "```bash",
+        f"devine pas. Un kit deviné est un verdict rendu par un code qu'on "
+        f"n'a pas choisi.", "", "```bash",
         f"export BRAINKIT_RACINE=~/BrainKit     # l'échappatoire explicite",
-        "```", ""]
+        "```", "",
+        f"> **Ce que le résolveur ne fait pas.** Ce n'est pas une commande : "
+        f"c'est une bibliothèque, lue par les scripts DU VAULT — ses ponts "
+        f"d'outillage, son hook de fin de session, ses skills. Il rend "
+        f"`brainkit` atteignable pour eux, pas pour un humain à son terminal. "
+        f"Pour taper une commande sans avoir installé le kit sur le PATH, il "
+        f"reste `uv run --project <racine du kit> brainkit …`.", ""]
     return s
 
 
@@ -463,6 +472,11 @@ def _cloner(mo: Modele | None) -> Section | None:
                  "dossier copié marche aussi ; une archive perd l'historique, "
                  "et l'historique est ce qui distingue un vault d'un dossier de "
                  "fichiers.", "",
+                 f"> Un clone de bundle atterrit en **HEAD détachée**, et ici ça "
+                 f"compte : un vault se remplit, donc on y committe. "
+                 f"`git switch -c {branche}` avant la première écriture — sans "
+                 f"quoi les commits ne sont sur aucune branche, et le prochain "
+                 f"`switch` les laisse derrière lui.", "",
                  "### Activer les hooks — **obligatoire**, une fois par clone", "",
                  "```bash", "git config core.hooksPath .githooks",
                  "git config core.hooksPath        # doit répondre : .githooks",
@@ -685,7 +699,7 @@ def _couleurs(mo: Modele | None) -> Section | None:
     if g.get("note_base"):
         s.lignes += [f"> {_l(g['note_base'])}", ""]
     s.lignes += [
-        f"La cible (`{g.get('cible') or '.obsidian/graph.json'}`) "
+        f"La cible ({g.get('cible') or '`.obsidian/graph.json`'}) "
         f"{'n’est pas versionnée' if not g.get('versionne') else 'est versionnée'}"
         f" : cette table est la **seule** source de vérité, et elle se "
         f"réapplique à la main sur chaque poste. Elle est aussi dans le vault, "
@@ -804,7 +818,15 @@ def _verifier(mo: Modele | None) -> Section:
                  "uv run tests/mesure.py          # la mesure et ses garde-fous",
                  "uv run tests/entretien.py       # les 49 questions, les 13 refus",
                  "uv run tests/emballage.py       # l'emballage : docs, profils, figeage",
-                 "```", ""]
+                 "uv run outils/fidelite.py       # la fidélité au vault d'origine",
+                 "uv run outils/emballer.py       # les documents du dépôt sont-ils à jour",
+                 "```", "",
+                 "> Deux d'entre eux lisent un vault RÉEL s'il est là, et le "
+                 "sautent sinon. Sur un vault que quelqu'un est en train "
+                 "d'éditer, `tests/generation.py` peut signaler un écart de "
+                 "zone générée : ce n'est pas une régression du kit, c'est "
+                 "`--check` qui fait son travail. Régénérer, ou relancer sur "
+                 "une copie du dernier commit.", ""]
     s.lignes += _figures("verifier", profil)
     return s
 
