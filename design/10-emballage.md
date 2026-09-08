@@ -720,16 +720,20 @@ paresseux au jeu d'épreuve — aucun document généré ne porte deux accents g
 consécutifs.
 
 **7 — Les instances d'essai s'accumulent, et rien ne dit lesquelles sont
-vivantes.** *(essais, pas kit)* `BrainKit-essais/` porte maintenant HistoBrain,
-CimeBrain, `devbrain-controle`, plus les cinq dossiers de ce lot
-(`lot10-histo`, `lot10-blanc2`, `lot10-blanc3`, `devbrain-croise`,
-`devbrain-pristine`). Deux sont **figés**, donc portent une copie du kit de ce
-jour ; deux sont des copies d'un vault de 765 pages. Aucun n'est versionné, aucun
-n'est un livrable, et la remontée 7 du lot 9 signalait déjà que leurs artefacts
-ont pris du retard. Ce n'est pas un défaut du kit : c'est du ménage, et il vaut
-mieux qu'il soit décidé que subi. Proposition : garder HistoBrain (le banc
-d'essai de référence) et `lot10-blanc3` (l'installation à blanc, rejouable), jeter
-le reste — les deux copies de DevBrain surtout, qui pèsent le vault entier chacune.
+vivantes.** *(essais, pas kit)* `BrainKit-essais/` porte maintenant dix
+dossiers : `histobrain`, `cimebrain`, `cimebrain-entretien`,
+`devbrain-controle`, plus les six de ce lot — `lot10-histo`, `lot10-blanc`
+(un premier essai avorté), `lot10-blanc2` et `lot10-blanc3` (les deux passages de
+l'installation à blanc), `devbrain-croise` et `devbrain-pristine`. Trois sont
+**figés**, donc portent chacun une copie du kit du jour où ils l'ont été ; les
+deux copies du vault pèsent **75 Mo chacune**. Aucun n'est versionné, aucun n'est
+un livrable, et la remontée 7 du lot 9 signalait déjà que leurs artefacts ont
+pris du retard. Ce n'est pas un défaut du kit : c'est du ménage, et il vaut mieux
+qu'il soit décidé que subi. Proposition : garder `histobrain` (le banc d'essai de
+référence) et `lot10-blanc3` (l'installation à blanc, rejouable et figée), jeter
+le reste — les deux copies de DevBrain d'abord. Ce lot ne les jette pas
+lui-même : ce sont les pièces du test croisé de §2, et les supprimer rendrait la
+mesure invérifiable le jour même où elle est écrite.
 
 **8 — Le manifeste d'images pourrait se vérifier, et il ne se vérifie pas.**
 *(petit, et il grossira)* Le jeu d'épreuve contrôle qu'aucune image n'est
