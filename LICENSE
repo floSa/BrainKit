@@ -1,0 +1,54 @@
+Tous droits réservés — All rights reserved
+==========================================
+
+Copyright (c) 2026 floSa
+
+Ce logiciel et sa documentation ne sont pas publiés sous licence libre. Aucune
+autorisation de copie, de modification, de distribution, de publication ni
+d'usage n'est accordée, en dehors de celles que le titulaire des droits donne
+par écrit.
+
+This software and its documentation are not released under an open source
+license. No permission to copy, modify, distribute, publish or use is granted,
+other than what the copyright holder grants in writing.
+
+
+Pourquoi ce choix-là, et ce qu'il n'est pas
+-------------------------------------------
+
+Ce n'est pas une décision : c'est l'absence de décision, posée dans la forme la
+plus **réversible** qui soit.
+
+« Tous droits réservés » est le seul état depuis lequel on peut aller vers
+n'importe quelle licence — permissive, copyleft, commerciale, double. L'inverse
+n'est pas vrai : une fois du code publié sous licence permissive, les copies
+faites sous cette licence le restent, et on ne les rappelle pas.
+
+Le dépôt n'a pas de remote et n'a jamais été publié. Rien n'est donc joué, et
+c'est exactement l'état voulu tant que le choix n'est pas fait.
+
+
+Ce qui reste à trancher — et par qui
+------------------------------------
+
+Le point est ouvert dans `design/00-cadrage.md` §5.7 et §5.8. La recommandation
+qui y est écrite — et qui n'est PAS prise — tient en une phrase : ouvrir le
+**kit** et garder fermées les **méthodes d'entretien** (les 49 questions, les 13
+refus de deviner, la mesure), parce que c'est là qu'est le savoir et que c'est ce
+qu'on ne retrouve pas en lisant le code.
+
+Deux questions vont ensemble, et la seconde est plus urgente que la première :
+
+1. **La licence du kit.** Ouvrir, garder fermé, ou séparer le noyau des
+   méthodes. Ce fichier ne tranche pas.
+2. **La propriété de la taxonomie d'un brain.** Le `brain.yml` d'un brain
+   construit pour quelqu'un d'autre contient l'ontologie de son métier : ses
+   axes, ses natures de page, ses règles de départage. C'est un livrable, et
+   c'est en même temps une description de son organisation. À qui appartient-il,
+   et peut-il être réutilisé ailleurs ? §5.8 recommande de le céder et de ne
+   jamais le réemployer, même « anonymisé » — un arbre de décision est signant.
+   Cette question se tranche **avant** la première remise, pas après.
+
+Ces deux points appartiennent au titulaire des droits. Le lot 10 a posé le
+fichier le moins engageant possible et l'a écrit en toutes lettres dans son
+rapport, plutôt que de choisir à sa place.

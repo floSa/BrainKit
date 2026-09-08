@@ -244,7 +244,14 @@ def seme_la_gouvernance(mo: Modele, prose: ProseSemis, plan: Plan) -> None:
             plan.pose(fichier, taxonomie(mo, prose), "gouvernance")
         elif not decl.get("genere"):
             plan.pose(fichier, vocabulaire(mo, nom, decl, prose), "gouvernance")
-    plan.pose(DOC_GRAPHE, graphe(mo, prose), "gouvernance")
+    # La table de couleurs du graphe est une ETAPE D INSTALLATION d Obsidian.
+    # Sur un brain `profil: nu`, il n y a pas de graphe a colorer : poser le
+    # document quand meme donnerait une page de gouvernance qui decrit une
+    # interface que ce brain n a pas — un mensonge de plus a lire, pas un
+    # document de plus a avoir. Ce que le profil `nu` PERD est ecrit dans son
+    # `INSTALL.md` genere, avec le reste.
+    if str(mo.brain.get("profil") or "obsidian") == "obsidian":
+        plan.pose(DOC_GRAPHE, graphe(mo, prose), "gouvernance")
 
 
 # --------------------------------------------------------------------------- #

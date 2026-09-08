@@ -1,0 +1,326 @@
+# ==============================================================================
+# blanc.reponses.yml — l entretien de l INSTALLATION A BLANC du lot 10.
+# ------------------------------------------------------------------------------
+# Le critere d acceptation du lot 10 est une installation faite « comme sur une
+# machine neuve », en suivant l `INSTALL.md` genere et RIEN D AUTRE. Un critere
+# de ce genre ne vaut que s il est rejouable : ce fichier est la transcription
+# des reponses de cette installation, et `tests/emballage.py` la rejoue.
+#
+# Sujet : le droit du travail vu par un employeur de petite structure — ce qu il
+# doit faire, sous quel delai, et ce qu il risque s il ne le fait pas.
+#
+# Le sujet n est pas choisi pour depayser une quatrieme fois, il est choisi
+# parce qu il est le CAS D USAGE VISE : un domaine metier, apporte par
+# quelqu un qui le connait et qui n a jamais entendu parler de ce kit. C est
+# aussi le sujet qui casse le plus franchement l analogie avec les trois
+# premiers :
+#
+#   · l unite n est ni un outil, ni une source, ni un itineraire — c est une
+#     OBLIGATION, une chose qu on doit et qui a une echeance ;
+#   · l axe qui range n est ni un domaine, ni une periode, ni un massif — c est
+#     un MOMENT de la relation de travail, et l ordre des paquets est
+#     chronologique, ce qu aucun tri alphabetique ne rendrait ;
+#   · deux pages debordent leur paquet et une n a aucun centre de gravite, donc
+#     l axe non exclusif ET le prefixe transversal se rejouent sur un troisieme
+#     cas de figure.
+#
+# Rejouer :
+#
+#     uv run brainkit entretien --brouillon <b.yml> --reponses tests/blanc.reponses.yml
+#     uv run brainkit entretien --brouillon <b.yml> --verifier
+#     uv run brainkit entretien --brouillon <b.yml> --composer <brain.yml>
+#
+# Le deroule de l installation, et les endroits ou le document etait muet, sont
+# dans `design/10-emballage.md` §1.
+# ==============================================================================
+
+reponses:
+
+  # --- Passe 0 — identite et depot ---------------------------------------- #
+  "0.1": >-
+    Ce que je dois faire quand j'emploie quelqu'un : l'obligation, son délai, le
+    texte qui la porte, et ce que je risque si je ne la tiens pas.
+  "0.2": DroitBrain
+  "0.3": perso
+  "0.4":
+    name: floSa
+    email: florian_horellou@laposte.net
+  "0.5": [aosis.net]
+  "0.6": "C:/Users/FlorianHorellou/Documents/BrainKit-essais/lot10-blanc/DroitBrain"
+
+  # --- Passe 1 — l unite --------------------------------------------------- #
+  "1.1": >-
+    Je vais chercher ce que je dois faire dans une situation précise, sous quel
+    délai, et ce que je risque si je ne le fais pas.
+  "1.2": { s: obligation, p: obligations }
+  "1.3":
+    s: principe
+    p: principes
+    protege: true
+  "1.4": [principe]
+  "1.5":
+    - libelle: { s: modèle, p: modèles }
+      dossier: "Modèles"
+      prefixe_nom: "Modèle - "
+      champs: [objet, quand]
+
+  # --- Passe 2 — l axe qui range ------------------------------------------- #
+  "2.1":
+    - "Déclaration préalable à l'embauche"
+    - "Remise du contrat de travail écrit"
+    - "Registre unique du personnel"
+    - "Visite d'information et de prévention"
+    - "Mention de la convention collective sur le bulletin"
+    - "Entretien professionnel tous les deux ans"
+    - "Suivi du temps de travail des salariés"
+    - "Repos quotidien de onze heures"
+    - "Majoration des heures supplémentaires"
+    - "Respect du salaire minimum conventionnel"
+    - "Égalité de rémunération entre les femmes et les hommes"
+    - "Document unique d'évaluation des risques"
+    - "Affichage obligatoire dans les locaux"
+    - "Mise en place du CSE au-delà de onze salariés"
+    - "Consultation du CSE avant une décision"
+    - "Entretien préalable au licenciement"
+    - "Notification du licenciement"
+    - "Solde de tout compte et documents de fin de contrat"
+    - "Portabilité de la mutuelle après le départ"
+    - "Conservation des preuves en cas de contentieux"
+
+  # Le rangement, DE SA MAIN. Neuf paquets, nommes par lui, dans l ordre ou il
+  # les a nommes — l ordre de la vie d un contrat, et « Transversal » cree en
+  # dernier pour la vingtieme page, qui ne tombait nulle part.
+  "2.2":
+    Embauche:
+      - "Déclaration préalable à l'embauche"
+      - "Remise du contrat de travail écrit"
+      - "Registre unique du personnel"
+      - "Visite d'information et de prévention"
+    Contrat:
+      - "Mention de la convention collective sur le bulletin"
+      - "Entretien professionnel tous les deux ans"
+    Temps de travail:
+      - "Suivi du temps de travail des salariés"
+      - "Repos quotidien de onze heures"
+      - "Majoration des heures supplémentaires"
+    Rémunération:
+      - "Respect du salaire minimum conventionnel"
+      - "Égalité de rémunération entre les femmes et les hommes"
+      - "Mention de la convention collective sur le bulletin"
+    Santé et sécurité:
+      - "Document unique d'évaluation des risques"
+      - "Affichage obligatoire dans les locaux"
+      - "Visite d'information et de prévention"
+    Représentation du personnel:
+      - "Mise en place du CSE au-delà de onze salariés"
+      - "Consultation du CSE avant une décision"
+    Rupture:
+      - "Entretien préalable au licenciement"
+      - "Notification du licenciement"
+      - "Solde de tout compte et documents de fin de contrat"
+      - "Portabilité de la mutuelle après le départ"
+    Contentieux:
+      - "Conservation des preuves en cas de contentieux"
+    Transversal:
+      - "Conservation des preuves en cas de contentieux"
+
+  "2.3": non
+  "2.4":
+    regle_de_majorite: true
+    prefixe_transversal: "Transversal"
+    motif: >-
+      Deux pages débordent et un paquet domine quand même : la mention de la
+      convention collective est une obligation de paie avant d'être une clause
+      du contrat, et la visite d'information est une obligation de santé avant
+      d'être une formalité d'embauche. La conservation des preuves, elle, n'a
+      aucun centre de gravité : elle vaut à chaque moment de la relation, et la
+      ranger dans « Contentieux » parce que c'est là qu'elle sert serait la
+      ranger à l'endroit où il est trop tard.
+  "2.5": { s: moment, p: moments }
+  "2.6": 400
+  "2.7":
+    ordre_de_l_utilisateur: true
+    branches:
+      - n: D1
+        question: "L'obligation vaut-elle à TOUS les moments de la relation, sans qu'aucun ne domine ?"
+        si_oui: [transversal]
+        motif: >-
+          HORS chronologie, et EN PREMIER — c'est le rang qui compte. Sans elle,
+          une obligation permanente tomberait dans le premier moment où elle
+          s'applique, c'est-à-dire au hasard de l'ordre de lecture.
+      - { n: D2,  question: "Naît-elle du fait de recruter, avant le premier jour travaillé ?", si_oui: [embauche] }
+      - { n: D3,  question: "Porte-t-elle sur l'écrit du contrat ou son suivi dans le temps ?", si_oui: [contrat] }
+      - { n: D4,  question: "Porte-t-elle sur les heures — leur décompte, leurs limites, leur repos ?", si_oui: ["temps-de-travail"] }
+      - { n: D5,  question: "Porte-t-elle sur ce qui est payé ?", si_oui: [remuneration] }
+      - { n: D6,  question: "Vise-t-elle à éviter une atteinte à la santé du salarié ?", si_oui: ["sante-et-securite"] }
+      - { n: D7,  question: "Concerne-t-elle une instance qui représente les salariés ?", si_oui: ["representation-du-personnel"] }
+      - { n: D8,  question: "Se déclenche-t-elle parce que le contrat s'arrête ?", si_oui: [rupture] }
+      - { n: D9,  question: "Ne sert-elle qu'une fois le litige né ?", si_oui: [contentieux] }
+      - n: D10
+        question: "Aucun des précédents"
+        si_oui: []
+        arret: true
+        motif: >-
+          ARRÊT — demander. Un moment manquant se nomme, il ne s'invente pas :
+          une obligation rangée dans le mauvais moment est une obligation qu'on
+          lira trop tard.
+
+  # --- Passe 3 — l axe qui qualifie ---------------------------------------- #
+  "3.1": oui
+  "3.2":
+    champ: nature
+    libelle: { s: nature, p: natures }
+    valeurs:
+      - cle: formalite
+        definition: "Un acte à accomplir, à une date, auprès d'un tiers."
+        frontiere: "Distincte d'une tenue-de-document parce qu'elle s'adresse à quelqu'un : elle part."
+      - cle: document
+        definition: "Un document à tenir et à pouvoir produire."
+        frontiere: "Distinct d'une formalité parce qu'il reste : ce qui est contrôlé est son existence, pas son envoi."
+      - cle: seuil
+        definition: "Une obligation qui n'existe qu'au-delà d'un effectif ou d'un montant."
+        frontiere: "Distincte des autres par le fait qu'elle peut ne pas s'appliquer du tout — et c'est la première chose à vérifier."
+      - cle: interdiction
+        definition: "Une chose qu'on ne doit pas faire."
+        frontiere: "Distincte d'une formalité par la polarité : il n'y a rien à accomplir, seulement à ne pas franchir."
+      - cle: procedure
+        definition: "Une suite d'actes ordonnés, dont l'ordre est lui-même la règle."
+        frontiere: "Distincte d'une formalité parce qu'elle a plusieurs étapes et que sauter l'une vicie les suivantes."
+  "3.3":
+    ordre_de_l_utilisateur: true
+    branches:
+      - { n: N1, question: "L'obligation disparaît-elle sous un certain effectif ou un certain montant ?", si_oui: seuil }
+      - { n: N2, question: "S'agit-il de ne PAS faire quelque chose ?",                                   si_oui: interdiction }
+      - { n: N3, question: "Y a-t-il plusieurs actes dont l'ordre est prescrit ?",                        si_oui: procedure }
+      - { n: N4, question: "Faut-il pouvoir PRODUIRE un document au contrôle ?",                          si_oui: document }
+      - { n: N5, question: "Aucun des précédents", si_oui: formalite, defaut: true }
+  "3.4":
+    - { champ: effectif_minimal, si: "nature == seuil" }
+    - { champ: etapes,           si: "nature == procedure" }
+
+  # --- Passe 4 — les axes transverses -------------------------------------- #
+  # UN seul axe. « Le risque » a été proposé puis retiré : c'est un champ
+  # (`sanction`), et un champ n'est pas un axe — on ne veut pas d'un hub par
+  # niveau d'amende.
+  "4.1":
+    - champ: acteurs
+      libelle: { s: acteur, p: acteurs }
+      valeurs:
+        - { cle: employeur,   libelle: "Employeur" }
+        - { cle: salarie,     libelle: "Salarié" }
+        - { cle: inspection,  libelle: "Inspection du travail" }
+        - { cle: urssaf,      libelle: "URSSAF" }
+        - { cle: medecine,    libelle: "Médecine du travail" }
+        - { cle: cse,         libelle: "CSE" }
+  "4.2": { acteurs: true }
+  "4.3": { acteurs: "Acteurs" }
+
+  # --- Passe 5 — le haut de page ------------------------------------------- #
+  "5.1": ["Nature", "Délai", "Texte", "Risque"]
+  "5.2":
+    Nature:
+      source: nature
+      table:
+        formalite: Formalité
+        document: Document à tenir
+        seuil: Obligation de seuil
+        interdiction: Interdiction
+        procedure: Procédure
+    Délai:
+      source: delai
+      type: ligne
+    Texte:
+      source: texte
+      type: ligne
+    Risque:
+      source: sanction
+      type: ligne
+  "5.3": "—"
+
+  # --- Passe 6 — le corps --------------------------------------------------- #
+  "6.1":
+    - { titre: "Ce que c'est",                        niveau: 2 }
+    - { titre: "Ce qui déclenche / Ce qui dispense",  niveau: 2 }
+    - { titre: "Comment on la tient",                 niveau: 2 }
+    - { titre: "Autour",                              niveau: 2 }
+    - { titre: "Conditionne",                         niveau: 3 }
+    - { titre: "Conditionnée par",                    niveau: 3 }
+    - { titre: "Va avec",                             niveau: 3 }
+    - { titre: "Voir aussi",                          niveau: 2 }
+    - titre: "Cas rencontrés"
+      niveau: 2
+      existe_si: "au moins un cas daté"
+      forme: "- YYYY-MM-DD — <la situation, ce qui a été fait, ce que ça a donné>."
+  "6.2": "Ce que c'est"
+  "6.3":
+    titre: "Ce qui déclenche / Ce qui dispense"
+    positive: "Déclenche"
+    negative: "Dispense"
+  "6.4":
+    - { titre: "Conditionne",       niveau: 3, champ: conditionne }
+    - { titre: "Conditionnée par",  niveau: 3, champ: conditionnee_par }
+    - { titre: "Va avec",           niveau: 3, champ: va_avec }
+    - { titre: "Voir aussi",        niveau: 2, champ: null }
+  "6.5":
+    titre: "Comment on la tient"
+    obligatoires: ["Qui", "Quand", "Preuve", "Outil"]
+    permises: ["Qui", "Quand", "Preuve", "Outil", "Coût"]
+
+  # --- Passe 7 — les liens et le resume ------------------------------------- #
+  "7.1":
+    - { champ: va_avec,      section: "Va avec" }
+    - { champ: conditionne,  section: "Conditionne" }
+  "7.2":
+    va_avec: true
+    conditionne: false
+  "7.3":
+    conditionne:
+      champ: conditionnee_par
+      section: "Conditionnée par"
+  "7.4": { champ: resume }
+
+  # --- Passe 8 — ce qui rassemble ------------------------------------------- #
+  "8.1": non
+  "8.2":
+    libelle: { s: check-list, p: check-lists }
+    prefixe_nom: "Check-list - "
+    tri_par: delai
+    direction: asc
+    colonnes: [nom, resume, nature, delai, sanction, acteurs]
+  "8.3":
+    dossier: "Check-lists"
+    lien_retour: "Voir aussi"
+
+  # --- Passe 9 — gouvernance et frontieres ---------------------------------- #
+  "9.1": ferme
+  "9.2": demander
+  "9.3": non
+  "9.4":
+    - "AI/index/"
+    - "les zones AUTO des hubs"
+    - "Acteurs/"
+    - "Check-lists/Check-lists.md"
+    - "les bandeaux des obligations"
+    - "Documentation/moments/taxonomie.md"
+    - "Templates/"
+    - "docs/"
+  "9.5":
+    porte_d_entree: Home.md
+    pages:
+      - { fichier: Home.md,  titre: Accueil, aiguille: true,  role_editorial: porte }
+      - { fichier: Inbox.md, titre: Inbox,   aiguille: false, role_editorial: capture }
+  "9.6": []
+
+  # --- Passe 10 — l exploitation --------------------------------------------- #
+  "10.1": >-
+    Une note d'action pour une situation donnée : ce qu'il faut faire, dans quel
+    ordre, sous quel délai, avec quelle preuve à garder.
+  "10.2":
+    - "une embauche"
+    - "un licenciement"
+    - "un contrôle"
+  "10.3":
+    - "quel effectif, et depuis quand ?"
+    - "quelle convention collective s'applique ?"
+    - "y a-t-il un CSE ?"
+    - "la situation est-elle déjà contentieuse ?"

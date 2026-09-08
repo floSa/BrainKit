@@ -265,6 +265,18 @@ def _section_de_gabarit(mo: Modele, prose: ProseSemis, s: dict) -> list[str]:
             return [bal[0], bal[1], ""]
         # Une place `auto` sans balises est un EMBED (la vue d une page de vue) :
         # la forme est declaree par le role, pas ici.
+        #
+        # Sauf en `profil: nu`, ou aucun moteur n evalue une requete : poser le
+        # lien d embed y donnerait un gabarit qui promet une table vivante que
+        # rien ne rendra. Le gabarit dit alors ce qu il en est — c est le meme
+        # arbitrage que le jeton de Templater quelques lignes plus haut, et le
+        # meme que la regle du bandeau : mieux vaut un trou nomme qu une
+        # promesse qui ne tient pas.
+        if str(mo.brain.get("profil") or "obsidian") != "obsidian":
+            return ["<!-- profil `nu` : pas de vue vivante ici. La table, si "
+                    "elle est voulue, se tient à la main — et la section "
+                    "écrite ci-dessous reste la partie qui a de la valeur. -->",
+                    ""]
         embed = ((mo.roles.get(mo.role_de_fonction("vue") or "") or {})
                  .get("vue_embarquee") or {}).get("embed")
         return ([f"<!-- {embed} -->", ""] if embed else [])

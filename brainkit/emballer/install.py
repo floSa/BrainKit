@@ -238,6 +238,20 @@ def _installer_le_kit(mo: Modele | None) -> Section:
         "fourche le jour du clone.", "", "```bash",
         "git clone <url du dépôt BrainKit> ~/BrainKit",
         "cd ~/BrainKit", "```", "",
+        "> **Et s'il n'y a pas d'URL ?** C'est le cas normal, pas une "
+        "exception : ce dépôt peut n'avoir aucun remote, et une livraison hors "
+        "ligne n'en a jamais. Le kit arrive alors sous une autre forme, et les "
+        "trois se valent :", "",
+        "> - **un dossier copié** — `cp -r`, une clé, un partage réseau. "
+        "L'historique git vient avec s'il est dans le dossier ;",
+        "> - **un `git bundle`** — un fichier unique qui se clone comme une "
+        "URL : `git clone brainkit.bundle ~/BrainKit`. C'est la forme à "
+        "préférer, parce qu'elle garde l'historique **et** se vérifie ;",
+        "> - **une archive** — `.zip`, `.tar.gz`. L'historique est perdu, donc "
+        "`git log` ne dira plus de quelle version le kit vient : la seule trace "
+        "restante est `__version__` dans `brainkit/__init__.py`.", "",
+        "> Dans les trois cas, la suite de ce guide est identique — rien "
+        "ci-dessous ne suppose un remote.", "",
         "Deux façons de le lancer, et il faut choisir **maintenant** — c'est le "
         "pas qu'on oublie, et un outillage qu'on ne sait pas lancer est un "
         "outillage qui ne tourne pas :", "",
@@ -336,14 +350,48 @@ def _entretien(mo: Modele | None) -> Section | None:
         "parce qu'une identité devinée entre dans l'historique du dépôt et n'en "
         "sort plus. Un refus nomme le champ et rend la question ; il ne pose pas "
         "une valeur plausible.", "",
+        "**Qui pose les questions.** L'entretien est une conversation, et c'est "
+        "un **skill** qui la mène : `skills/entretien/SKILL.md`, dans ce dépôt. "
+        "On le charge dans l'agent, depuis le dépôt du kit, et on répond. La "
+        "commande ci-dessous est ce que le skill appelle — elle tient le "
+        "brouillon, applique les refus, compose, puis sème. On peut aussi s'en "
+        "servir à la main, et c'est ce que la suite décrit.", "",
         "L'entretien écrit un **brouillon** au fil des passes, puis compose le "
-        "manifeste :", "", "```bash",
+        "manifeste. Six commandes, dans cet ordre :", "", "```bash",
+        "# 1. où on en est — c'est le mode par défaut, il ne touche rien",
         "brainkit entretien --brouillon mon-brain.entretien.yml",
-        "brainkit entretien --brouillon mon-brain.entretien.yml --etat",
+        "",
+        "# 2. répondre, une question à la fois. La valeur est lue en YAML :",
+        "#    une chaîne, une liste, un dictionnaire — selon ce que la question attend.",
+        "brainkit entretien --brouillon mon-brain.entretien.yml \\",
+        "    --repondre '0.2=MonBrain' --repondre '0.3=perso'",
+        "",
+        "# 3. ou par lot : un fichier YAML `reponses: {<id>: <valeur>}`",
+        "brainkit entretien --brouillon mon-brain.entretien.yml --reponses lot.yml",
+        "",
+        "# 4. relire ce qui a déjà été dit, avant de reprendre",
+        "brainkit entretien --brouillon mon-brain.entretien.yml --rappel",
+        "",
+        "# 5. passer les treize refus sur l'état courant",
         "brainkit entretien --brouillon mon-brain.entretien.yml --verifier",
+        "",
+        "# 6. composer le manifeste — REFUSÉ s'il reste un grief",
+        "brainkit entretien --brouillon mon-brain.entretien.yml --composer mon-brain.brain.yml",
+        "```", "",
+        "Puis semer, soit avec la commande de la section suivante, soit "
+        "directement depuis le brouillon :", "", "```bash",
         "brainkit entretien --brouillon mon-brain.entretien.yml --semer ~/MonBrain",
         "brainkit entretien --brouillon mon-brain.entretien.yml --semer ~/MonBrain --ecrire",
         "```", "",
+        "Une question rouverte se rejoue : `--oublier 2.2` efface la réponse et "
+        "la repose. C'est la bonne façon de changer d'avis — écraser une "
+        "réponse par une autre laisserait le brouillon en dire deux choses.", "",
+        "> **À quoi ressemble un fichier de réponses.** Deux exemples complets "
+        "sont dans `tests/` : `cimebrain.reponses.yml` (un brain de montagne) et "
+        "`blanc.reponses.yml` (un brain de droit du travail — c'est l'entretien "
+        "de l'installation à blanc qui a validé ce guide). Chacun porte, en "
+        "tête, le raisonnement du sujet ; c'est la forme à copier, pas le "
+        "contenu.", "",
         "> **La porte de service, et ce qu'elle coûte.** `--reponses <fichier>` "
         "accepte un lot entier de réponses d'un coup, sans conversation. C'est "
         "ce qui rend le jeu d'épreuve possible — rejouer un entretien complet "
@@ -409,6 +457,12 @@ def _cloner(mo: Modele | None) -> Section | None:
     s = Section("cloner", "Cloner ce vault, et activer ses garde-fous")
     s.lignes += ["```bash", f"git clone <url de ce vault> ~/{mo.brain.get('nom')}",
                  f"cd ~/{mo.brain.get('nom')}", "```", "",
+                 "> **S'il n'y a pas d'URL** — un vault remis hors ligne n'en a "
+                 "pas — un `git bundle` se clone exactement comme une "
+                 "URL (`git clone <fichier>.bundle`) et garde l'historique. Un "
+                 "dossier copié marche aussi ; une archive perd l'historique, "
+                 "et l'historique est ce qui distingue un vault d'un dossier de "
+                 "fichiers.", "",
                  "### Activer les hooks — **obligatoire**, une fois par clone", "",
                  "```bash", "git config core.hooksPath .githooks",
                  "git config core.hooksPath        # doit répondre : .githooks",
