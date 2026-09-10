@@ -76,7 +76,7 @@ Les pages, elles, ne sont pas dans cette liste : un brain neuf n'en porte **aucu
 | [git](https://git-scm.com/downloads) | — | `git --version` | l'historique du vault, et les trois garde-fous d'identité |
 | [Python](https://www.python.org/downloads/) | 3.10+ | `python --version` | le kit est écrit en Python |
 | [`uv`](https://docs.astral.sh/uv/getting-started/installation/) | — | `uv --version` | lance le kit sans installer quoi que ce soit dans l'environnement Python du poste |
-| un agent de code (Claude Code ou équivalent) | — | `claude --version` | les skills du vault sont écrits pour un agent ; le vault se lit et se valide sans lui |
+| **un agent de code** (Claude Code, Cursor, Antigravity, Windsurf…) | — | la commande de l'agent choisi | **la voie normale** : les skills de ce vault sont écrits pour lui, et aucune clé d'API n'est requise. Repli explicite : tout se lit, se valide et se génère dans un terminal nu |
 
 > `uv` n'est pas Python : c'est un lanceur et un installateur de paquets. Le kit s'en sert pour tourner sans rien salir — et une instance **figée** s'en sert pour tourner sans rien installer du tout.
 

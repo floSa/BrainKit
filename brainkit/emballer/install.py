@@ -210,9 +210,12 @@ def _prerequis(mo: Modele | None) -> Section:
         "`uv --version` | lance le kit sans installer quoi que ce soit dans "
         "l'environnement Python du poste |"]
     if mode == "branche":
-        s.lignes.append("| un agent de code (Claude Code ou équivalent) | — | "
-                        "`claude --version` | les skills du vault sont écrits "
-                        "pour un agent ; le vault se lit et se valide sans lui |")
+        s.lignes.append("| **un agent de code** (Claude Code, Cursor, "
+                        "Antigravity, Windsurf…) | — | la commande de l'agent "
+                        "choisi | **la voie normale** : les skills de ce vault "
+                        "sont écrits pour lui, et aucune clé d'API n'est "
+                        "requise. Repli explicite : tout se lit, se valide et "
+                        "se génère dans un terminal nu |")
     s.lignes += ["", "> `uv` n'est pas Python : c'est un lanceur et un "
                  "installateur de paquets. Le kit s'en sert pour tourner sans "
                  "rien salir — et une instance **figée** s'en sert pour tourner "

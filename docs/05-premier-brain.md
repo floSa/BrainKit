@@ -93,7 +93,7 @@ réécriture. Un refus **nomme le champ** et rend la question.
 ### Qui pose les questions
 
 L'entretien est une conversation, et c'est un **skill** qui la mène :
-[`../skills/entretien/SKILL.md`](../skills/entretien/SKILL.md), dans ce dépôt.
+[`../recettes/mener-l-entretien.md`](../recettes/mener-l-entretien.md), dans ce dépôt.
 On le charge dans l'agent, depuis le dépôt du kit, et on répond.
 
 Les commandes ci-dessous sont celles que le skill appelle. On peut aussi s'en
@@ -142,12 +142,12 @@ perd, c'est le moment où une question ouverte fait changer d'avis — et c'est 
 qu'est la valeur de l'entretien. À employer pour **rejouer**, pas pour se
 dispenser de réfléchir.
 
-Deux fichiers de réponses complets servent d'exemples de forme :
-[`../tests/deuxieme.reponses.yml`](../tests/deuxieme.reponses.yml) (un brain
-de montagne) et [`../tests/troisieme.reponses.yml`](../tests/troisieme.reponses.yml) (un
-brain de droit du travail, né de l'installation à blanc qui a validé cette
-documentation). Chacun porte en tête le raisonnement de son sujet : c'est la
-**forme** à copier, pas le contenu.
+Deux fichiers de réponses complets servent d'exemples de **forme** :
+[`../tests/deuxieme.reponses.yml`](../tests/deuxieme.reponses.yml) et
+[`../tests/troisieme.reponses.yml`](../tests/troisieme.reponses.yml) — le second
+est né de l'installation à blanc qui a validé cette documentation. Ils portent
+deux vocabulaires **volontairement vides de sens**, et disjoints l'un de
+l'autre : ce qu'on copie est la forme de chaque réponse, jamais son contenu.
 
 ---
 
@@ -162,9 +162,11 @@ Le manifeste peut ensuite être relu contre son contrat :
 uv run schema/valider.py mon-brain.brain.yml
 ```
 
-Trois manifestes complets servent de référence dans
-[`../exemples/`](../exemples), dont un **contre-exemple** qui doit échouer —
-c'est lui qui prouve que le contrat contrôle vraiment quelque chose.
+Le manifeste de **référence** — rempli en entier, et qui ne nomme aucun sujet —
+est [`../gabarit/brain.yml`](../gabarit/brain.yml). À côté vit un
+**contre-exemple** volontairement faux,
+[`../tests/invalide.brain.yml`](../tests/invalide.brain.yml) : c'est lui qui
+prouve que le contrat contrôle vraiment quelque chose.
 
 > **Un manifeste se relit à la main, et se modifie à la main.** C'est le seul
 > fichier du système dans ce cas. Les `motif:` qu'on y écrit — la raison pour

@@ -13,8 +13,8 @@ l autre, et un brain neuf nait en `a_mesurer`.
 
 Trente est ecrit dans le cadrage, et le chiffre importe moins que ce qu il
 protege : sous le plancher, zero violation ne dit pas « la regle est
-respectee », il dit « la regle n a rien vu ». BrainRef, avec dix pages de son
-unite, est le controle negatif de ce lot — et il est aussi important que le
+respectee », il dit « la regle n a rien vu ». Une petite instance reelle, avec
+dix pages de son unite, est le controle negatif de ce lot — et il est aussi important que le
 positif : un outil qui durcirait un brain de dix pages transformerait chaque
 regle en superstition.
 
@@ -32,8 +32,8 @@ Le plancher se lit DEUX fois, et la seconde est un arbitrage de ce lot :
 
 Une regle dont le denominateur n est pas un volume de corpus — verifiable sur le
 MANIFESTE, sans lire une page — echappe au plancher, et c est le seul cas.
-`paire_inverse_bien_declaree` est de celles-la : elle est dure d emblee dans
-BrainRef, et ce n est pas une entorse, c est un trou qu on refuse d ouvrir.
+`paire_inverse_bien_declaree` est de celles-la : elle est dure d emblee dans le
+manifeste de reference, et ce n est pas une entorse, c est un trou qu on refuse d ouvrir.
 
 # Garde-fou 2 — le motif obligatoire
 

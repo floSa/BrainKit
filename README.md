@@ -77,8 +77,15 @@ Le détail — les huit paquets, les deux modes, les deux profils — est dans
 
 ## Démarrage
 
-Pré-requis : `git`, Python 3.10+, [`uv`](https://docs.astral.sh/uv/). Obsidian
-et un agent de code sont facultatifs.
+**La voie normale est un agent de code** — Claude Code, Cursor, Antigravity,
+Windsurf ou un autre : on lui donne les consignes, il pose les questions et il
+suit les recettes. Il n'y a **aucune clé d'API à fournir**, nulle part. Le point
+d'entrée d'un agent est [AGENTS.md](AGENTS.md), et les recettes sont dans
+[recettes/](recettes/README.md).
+
+Tout le kit s'utilise aussi à la main, dans un terminal — c'est ce que fait la
+suite de cette section. Pré-requis : `git`, Python 3.10+,
+[`uv`](https://docs.astral.sh/uv/). Obsidian est facultatif.
 
 ```bash
 git clone <url du dépôt BrainKit> ~/BrainKit
@@ -119,6 +126,7 @@ savoir :
 
 | Vous voulez | Lisez |
 |---|---|
+| piloter le kit avec un agent de code | [AGENTS.md](AGENTS.md), puis [recettes/](recettes/README.md) |
 | installer le kit | [docs/03-installation.md](docs/03-installation.md) |
 | créer votre premier brain | [docs/05-premier-brain.md](docs/05-premier-brain.md) |
 | régler Obsidian, avec les captures | [docs/04-obsidian.md](docs/04-obsidian.md) |
@@ -130,7 +138,7 @@ savoir :
 
 L'index complet est dans [docs/README.md](docs/README.md). Un exemple des
 documents qu'une instance porte est dans
-[`exemples/rendu-reference/`](exemples/rendu-reference). L'état du chantier —
+[`gabarit/rendu/`](gabarit/rendu). L'état du chantier —
 ce que le kit fait, ce qu'il ne fait pas, ce qui reste ouvert — est dans
 [design/etat-final.md](design/etat-final.md).
 
@@ -212,11 +220,13 @@ brainkit/            le kit — 8 paquets, 76 modules, ~18 900 lignes
   emballer/            les documents D UNE INSTANCE, generes, et le manifeste d images
   amont/               la fraicheur : sonder, dater, signaler
 schema/              le contrat de brain.yml, en JSON Schema, et son validateur
-exemples/            trois manifestes complets, dont un CONTRE-EXEMPLE qui doit echouer
-  rendu-reference/    les documents d une instance, rendus une fois en exemple
+gabarit/             LE MANIFESTE DE REFERENCE — tous les mecanismes, aucun sujet
+  rendu/               les documents d une instance, rendus une fois pour lecture
 tests/               les dix jeux d epreuve
 outils/              les outils de developpement du kit
-skills/              le skill qui mene l entretien, charge depuis ce depot
+recettes/            LES RECETTES — une par tache, markdown pur, tout agent
+skills/              des enveloppes minces pour Claude Code, qui pointent vers recettes/
+AGENTS.md            ce que ce depot est, pour un agent de code
 design/              le cadrage, les onze rapports de lot, l etat final, le protocole de captures
 docs/                LA DOCUMENTATION DU KIT — ecrite a la main
   img/                 les captures d ecran

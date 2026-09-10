@@ -1,5 +1,24 @@
 # Installer le kit
 
+**La voie normale d'usage de ce kit est un agent de code, pas une clé d'API.**
+Claude Code, Cursor, Antigravity, Windsurf ou un autre : on lui donne les
+consignes, il pose les questions à l'humain, et il suit des recettes. Son point
+d'entrée est [`../AGENTS.md`](../AGENTS.md), et les recettes sont dans
+[`../recettes/`](../recettes/README.md) — du Markdown pur, sans dépendance à un
+format propriétaire.
+
+**Aucune clé, aucun jeton, aucun compte n'est requis nulle part.** Le sondage de
+fraîcheur lui-même (`brainkit sonder`) tape sur des URL publiques anonymes, et
+il est écrit pour ne jamais lire ni écrire un jeton : un jeton dans un vault
+versionné est un secret publié.
+
+Tout le kit s'utilise aussi **à la main**, dans un terminal, sans agent : c'est
+ce que décrit ce chapitre, et les deux tiers de ce qu'il fait se vérifient
+comme ça. L'agent n'est pas une couche au-dessus, c'est le lecteur pour lequel
+les skills et les recettes sont écrits.
+
+---
+
 **Ce chapitre s'arrête quand `brainkit` répond.** Créer un premier brain est le
 chapitre suivant : [05-premier-brain.md](05-premier-brain.md). Configurer
 Obsidian est [04-obsidian.md](04-obsidian.md), et cela ne sert qu'une fois qu'un
@@ -28,15 +47,16 @@ vault existe.
 | [Python](https://www.python.org/downloads/) | 3.10+ | `python --version` | le kit est écrit en Python |
 | [`uv`](https://docs.astral.sh/uv/getting-started/installation/) | — | `uv --version` | lance le kit sans rien installer dans l'environnement Python du poste |
 | [Obsidian](https://obsidian.md/download) | 1.10+ | l'app s'ouvre | le lecteur du vault, et le moteur des vues natives. **Facultatif** : un brain en profil `nu` n'en a pas besoin |
-| un agent de code (Claude Code ou équivalent) | — | `claude --version` | les skills d'un vault sont écrits pour un agent. **Facultatif** : le vault se lit, se valide et se génère sans lui |
+| **un agent de code** (Claude Code, Cursor, Antigravity, Windsurf…) | — | la commande de l'agent choisi | **la voie normale** : les recettes et les skills d'un vault sont écrits pour lui. Aucune clé d'API. **Repli explicite** : tout se lit, se valide et se génère dans un terminal nu |
 
 `uv` **n'est pas** Python : c'est un lanceur et un installateur de paquets. Le
 kit s'en sert pour tourner sans rien salir — et une instance **figée** s'en sert
 pour tourner sans rien installer du tout.
 
-> Les deux dernières lignes sont marquées facultatives, et ce n'est pas une
-> politesse : les deux tiers de ce que fait le kit se vérifient dans un terminal
-> nu. Ce qu'on perd sans elles est écrit à
+> Obsidian est marqué facultatif, et ce n'est pas une politesse : un brain en
+> profil `nu` s'en passe entièrement. L'agent de code, lui, n'est pas facultatif
+> au même titre — c'est la voie normale, et le terminal nu est le **repli**.
+> Ce qu'on perd sans Obsidian est écrit à
 > [02-architecture.md](02-architecture.md) §7.
 
 Une seule dépendance d'exécution, **PyYAML**. `uv` l'installe tout seul au
@@ -245,7 +265,7 @@ Trois commandes, depuis le dépôt du kit. Aucune n'écrit.
 
 ```bash
 uv run brainkit                 # les huit sous-commandes, code 2
-uv run schema/valider.py        # le contrat du manifeste, sur les trois exemples
+uv run schema/valider.py        # le contrat, sur les quatre manifestes du depot
 uv run tests/epreuve.py         # les regles de validation
 ```
 

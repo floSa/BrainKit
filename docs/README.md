@@ -13,7 +13,7 @@ C'est la première chose à savoir en arrivant, parce que le dépôt contient
 
 Un exemple complet de la seconde, rendu une fois depuis le manifeste de
 démonstration, est lisible dans
-[`../exemples/rendu-reference/`](../exemples/rendu-reference).
+[`../gabarit/rendu/`](../gabarit/rendu).
 
 ---
 
@@ -101,6 +101,6 @@ reste à prendre en séance sans le compter comme une faute.
 | chaque arbitrage de conception, avec sa mesure | [`../design/`](../design), un fichier par lot |
 | l'état du chantier, ce qui reste ouvert | [`../design/etat-final.md`](../design/etat-final.md) |
 | le contrat du manifeste | [`../schema/brain.schema.json`](../schema/brain.schema.json) |
-| des manifestes complets, dont un contre-exemple | [`../exemples/`](../exemples) |
-| le skill qui mène l'entretien | [`../skills/entretien/SKILL.md`](../skills/entretien/SKILL.md) |
+| le manifeste de référence, et un contre-exemple | [`../gabarit/brain.yml`](../gabarit/brain.yml) · [`../tests/invalide.brain.yml`](../tests/invalide.brain.yml) |
+| les recettes, pour n'importe quel agent de code | [`../AGENTS.md`](../AGENTS.md) · [`../recettes/README.md`](../recettes/README.md) |
 | le manuel de **votre** brain | dans votre vault, généré par le semis |
