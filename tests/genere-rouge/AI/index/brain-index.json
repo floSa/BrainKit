@@ -1,274 +1,274 @@
 {
   "generated_by": "brainkit generer --quoi index",
   "scanned": [
-    "Antiquité",
-    "Chronologies",
-    "Espaces",
-    "Méthodes",
-    "Thèmes",
-    "Transversal",
-    "XXe siècle"
+    "Consignes",
+    "Domaine A",
+    "Domaine B",
+    "Marqueurs",
+    "Secteurs",
+    "Séquences",
+    "Transverse"
   ],
   "count": 18,
   "tags_index": {},
   "pages": [
     {
-      "path": "Antiquité/Antiquité.md",
-      "nom": "Antiquité",
+      "path": "Consignes/Consigne - Sourcer.md",
+      "nom": "Consigne - Sourcer",
       "alias": null,
-      "role": "hub",
-      "periode": null,
+      "role": "consigne",
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Jusqu'à 476 : ce que les contemporains ont écrit, et ce qu'on en tire.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Antiquité/Herodote - Histoires.md",
-      "nom": "Herodote - Histoires",
-      "alias": null,
-      "role": "source",
-      "periode": "antiquite",
-      "nature": "source-primaire",
-      "auteur": "Hérodote",
-      "apport": "Le premier récit d'enquête sur les guerres médiques.",
-      "themes": [
-        "guerre",
-        "politique"
-      ],
-      "espaces": [
-        "mediterranee"
-      ],
-      "mots": null
-    },
-    {
-      "path": "Antiquité/Rome/Chronologie - Rome.md",
-      "nom": "Chronologie - Rome",
-      "alias": null,
-      "role": "chronologie",
-      "periode": "antiquite/rome",
-      "nature": null,
-      "auteur": null,
+      "origine": null,
       "apport": null,
-      "themes": null,
-      "espaces": null,
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "Antiquité/Rome/Empire romain.md",
-      "nom": "Empire romain",
+      "path": "Consignes/Consignes.md",
+      "nom": "Consignes",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Les règles transverses, groupées par leur rôle et non par un domaine.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Domaine A/Domaine A.md",
+      "nom": "Domaine A",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Le premier domaine : une unité à son niveau, le reste dans son segment.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Domaine A/Segment 1/Notion A1.md",
+      "nom": "Notion A1",
       "alias": null,
       "role": "notion",
-      "periode": "antiquite/rome",
+      "domaine": "domaine-a/segment-1",
       "nature": null,
-      "auteur": null,
-      "apport": "Un régime qui garde les mots de la république et en change la substance.",
-      "themes": [
-        "politique"
+      "origine": null,
+      "apport": "La notion du segment du premier domaine.",
+      "marqueurs": [
+        "m1"
       ],
-      "espaces": [
-        "mediterranee"
-      ],
-      "mots": null
-    },
-    {
-      "path": "Antiquité/Rome/Rome.md",
-      "nom": "Rome",
-      "alias": null,
-      "role": "hub",
-      "periode": null,
-      "nature": null,
-      "auteur": null,
-      "apport": "La cité, la république, l'empire — et ce qu'il en reste d'écrit.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Antiquité/Rome/Tacite - Annales.md",
-      "nom": "Tacite - Annales",
-      "alias": null,
-      "role": "source",
-      "periode": "antiquite/rome",
-      "nature": "ouvrage",
-      "auteur": "Tacite",
-      "apport": "Le récit hostile du principat, par un sénateur du siècle suivant.",
-      "themes": [
-        "politique"
-      ],
-      "espaces": [
-        "mediterranee",
-        "europe"
+      "secteurs": [
+        "s1"
       ],
       "mots": null
     },
     {
-      "path": "Chronologies/Chronologies.md",
-      "nom": "Chronologies",
+      "path": "Domaine A/Segment 1/Segment 1.md",
+      "nom": "Segment 1",
       "alias": null,
       "role": "hub",
-      "periode": null,
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Le point de ralliement des chronologies, dispersées dans l'arbre.",
-      "themes": null,
-      "espaces": null,
+      "origine": null,
+      "apport": "Le segment promu du premier domaine, et la séquence qui l'ordonne.",
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "Espaces/Europe.md",
-      "nom": "Europe",
+      "path": "Domaine A/Segment 1/Séquence - Segment 1.md",
+      "nom": "Séquence - Segment 1",
       "alias": null,
-      "role": "hub",
-      "periode": null,
+      "role": "sequence",
+      "domaine": "domaine-a/segment-1",
       "nature": null,
-      "auteur": null,
-      "apport": "Axe espace **Europe** (`europe`) — explorer par sous-période, puis descendre via le graphe local.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Espaces/Méditerranée.md",
-      "nom": "Méditerranée",
-      "alias": null,
-      "role": "hub",
-      "periode": null,
-      "nature": null,
-      "auteur": null,
-      "apport": "Axe espace **Méditerranée** (`mediterranee`) — explorer par sous-période, puis descendre via le graphe local.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Méthodes/Méthode - Citer sa source.md",
-      "nom": "Méthode - Citer sa source",
-      "alias": null,
-      "role": "methode",
-      "periode": null,
-      "nature": null,
-      "auteur": null,
+      "origine": null,
       "apport": null,
-      "themes": null,
-      "espaces": null,
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "Méthodes/Méthodes.md",
-      "nom": "Méthodes",
+      "path": "Domaine A/Segment 1/Unité A2.md",
+      "nom": "Unité A2",
+      "alias": null,
+      "role": "unite",
+      "domaine": "domaine-a/segment-1",
+      "nature": "nature-2",
+      "origine": "Origine B",
+      "apport": "La deuxième unité du premier domaine.",
+      "marqueurs": [
+        "m1"
+      ],
+      "secteurs": [
+        "s1",
+        "s2"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Domaine A/Unité A1.md",
+      "nom": "Unité A1",
+      "alias": null,
+      "role": "unite",
+      "domaine": "domaine-a",
+      "nature": "nature-1",
+      "origine": "Origine A",
+      "apport": "La première unité du premier domaine.",
+      "marqueurs": [
+        "m2",
+        "m1"
+      ],
+      "secteurs": [
+        "s1"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Domaine B/Domaine B.md",
+      "nom": "Domaine B",
       "alias": null,
       "role": "hub",
-      "periode": null,
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Les règles transverses, groupées par leur rôle et non par une période.",
-      "themes": null,
-      "espaces": null,
+      "origine": null,
+      "apport": "Le second domaine : aucun sous-domaine à promouvoir.",
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "Thèmes/Guerres et armées.md",
-      "nom": "Guerres et armées",
-      "alias": null,
-      "role": "hub",
-      "periode": null,
-      "nature": null,
-      "auteur": null,
-      "apport": "Axe thème **Guerres et armées** (`guerre`) — explorer par sous-période, puis descendre via le graphe local.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Thèmes/Pouvoir et institutions.md",
-      "nom": "Pouvoir et institutions",
-      "alias": null,
-      "role": "hub",
-      "periode": null,
-      "nature": null,
-      "auteur": null,
-      "apport": "Axe thème **Pouvoir et institutions** (`politique`) — explorer par sous-période, puis descendre via le graphe local.",
-      "themes": null,
-      "espaces": null,
-      "mots": null
-    },
-    {
-      "path": "Transversal/Historiographie.md",
-      "nom": "Historiographie",
+      "path": "Domaine B/Notion B1.md",
+      "nom": "Notion B1",
       "alias": null,
       "role": "notion",
-      "periode": null,
+      "domaine": "domaine-b",
       "nature": null,
-      "auteur": null,
-      "apport": "L'histoire de la façon dont l'histoire a été écrite.",
-      "themes": [
-        "politique"
+      "origine": null,
+      "apport": "La notion du second domaine.",
+      "marqueurs": [
+        "m2"
       ],
-      "espaces": null,
+      "secteurs": [
+        "s2"
+      ],
       "mots": null
     },
     {
-      "path": "Transversal/Transversal.md",
-      "nom": "Transversal",
+      "path": "Domaine B/Unité B1.md",
+      "nom": "Unité B1",
+      "alias": null,
+      "role": "unite",
+      "domaine": "domaine-b",
+      "nature": "nature-1",
+      "origine": "Origine C",
+      "apport": "La première unité du second domaine.",
+      "marqueurs": [
+        "m1",
+        "m2"
+      ],
+      "secteurs": [
+        "s2"
+      ],
+      "mots": null
+    },
+    {
+      "path": "Marqueurs/Marqueur 1.md",
+      "nom": "Marqueur 1",
       "alias": null,
       "role": "hub",
-      "periode": null,
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Ce qui n'a aucun centre de gravité chronologique.",
-      "themes": null,
-      "espaces": null,
+      "origine": null,
+      "apport": "Axe marqueur **Marqueur 1** (`m1`) — explorer par sous-domaine, puis descendre via le graphe local.",
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "XXe siècle/Guerre froide.md",
-      "nom": "Guerre froide",
+      "path": "Marqueurs/Marqueur 2.md",
+      "nom": "Marqueur 2",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Axe marqueur **Marqueur 2** (`m2`) — explorer par sous-domaine, puis descendre via le graphe local.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Secteurs/Secteur 1.md",
+      "nom": "Secteur 1",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Axe secteur **Secteur 1** (`s1`) — explorer par sous-domaine, puis descendre via le graphe local.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Secteurs/Secteur 2.md",
+      "nom": "Secteur 2",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Axe secteur **Secteur 2** (`s2`) — explorer par sous-domaine, puis descendre via le graphe local.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Séquences/Séquences.md",
+      "nom": "Séquences",
+      "alias": null,
+      "role": "hub",
+      "domaine": null,
+      "nature": null,
+      "origine": null,
+      "apport": "Le point de ralliement des séquences, dispersées dans l'arbre.",
+      "marqueurs": null,
+      "secteurs": null,
+      "mots": null
+    },
+    {
+      "path": "Transverse/Notion T1.md",
+      "nom": "Notion T1",
       "alias": null,
       "role": "notion",
-      "periode": "xxe",
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Un affrontement qui se tient partout sauf entre ses deux protagonistes.",
-      "themes": [
-        "guerre"
+      "origine": null,
+      "apport": "La notion qui ne porte aucune valeur d'axe.",
+      "marqueurs": [
+        "m1"
       ],
-      "espaces": [
-        "europe"
-      ],
+      "secteurs": null,
       "mots": null
     },
     {
-      "path": "XXe siècle/Kennan - Le long telegramme.md",
-      "nom": "Kennan - Le long telegramme",
-      "alias": null,
-      "role": "source",
-      "periode": "xxe",
-      "nature": "source-primaire",
-      "auteur": "George Kennan",
-      "apport": "La doctrine du containment, écrite avant d'avoir un nom.",
-      "themes": [
-        "politique",
-        "guerre"
-      ],
-      "espaces": [
-        "europe"
-      ],
-      "mots": null
-    },
-    {
-      "path": "XXe siècle/XXe siècle.md",
-      "nom": "XXe siècle",
+      "path": "Transverse/Transverse.md",
+      "nom": "Transverse",
       "alias": null,
       "role": "hub",
-      "periode": null,
+      "domaine": null,
       "nature": null,
-      "auteur": null,
-      "apport": "Après 1914 : les archives s'ouvrent, les récits se disputent.",
-      "themes": null,
-      "espaces": null,
+      "origine": null,
+      "apport": "Ce qui n'a aucun centre de gravité sur l'axe de rangement.",
+      "marqueurs": null,
+      "secteurs": null,
       "mots": null
     }
   ]

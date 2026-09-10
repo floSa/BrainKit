@@ -3,47 +3,47 @@
 > Généré par `brainkit generer --quoi index`. Ne pas éditer à la main.
 > 18 pages actives.
 
-## Sources — ce sur quoi on appuie une affirmation
+## Unités — ce sur quoi on appuie une affirmation
 
-### antiquite
-- **Herodote - Histoires** — Le premier récit d'enquête sur les guerres médiques.
+### domaine-a
+- **Unité A1** — La première unité du premier domaine.
 
-### antiquite/rome
-- **Tacite - Annales** — Le récit hostile du principat, par un sénateur du siècle suivant.
+### domaine-a/segment-1
+- **Unité A2** — La deuxième unité du premier domaine.
 
-### xxe
-- **Kennan - Le long telegramme** — La doctrine du containment, écrite avant d'avoir un nom.
+### domaine-b
+- **Unité B1** — La première unité du second domaine.
 
 ## Notions — ce qu'il faut comprendre
 
-### (sans période)
-- **Historiographie** — L'histoire de la façon dont l'histoire a été écrite.
+### (sans domaine)
+- **Notion T1** — La notion qui ne porte aucune valeur d'axe.
 
-### antiquite/rome
-- **Empire romain** — Un régime qui garde les mots de la république et en change la substance.
+### domaine-a/segment-1
+- **Notion A1** — La notion du segment du premier domaine.
 
-### xxe
+### domaine-b
 
-## Chronologies — ce que la séquence montre
+## Séquences — ce que la séquence montre
 
-### antiquite/rome
-- **Chronologie - Rome** — —
+### domaine-a/segment-1
+- **Séquence - Segment 1** — —
 
-## Méthodes — les règles transverses
+## Consignes — les règles transverses
 
-### (sans période)
-- **Méthode - Citer sa source** — —
+### (sans domaine)
+- **Consigne - Sourcer** — —
 
 ## hub
 
-### (sans période)
-- **Antiquité** — Jusqu'à 476 : ce que les contemporains ont écrit, et ce qu'on en tire.
-- **Chronologies** — Le point de ralliement des chronologies, dispersées dans l'arbre.
-- **Europe** — Axe espace **Europe** (`europe`) — explorer par sous-période, puis descendre via le graphe local.
-- **Guerres et armées** — Axe thème **Guerres et armées** (`guerre`) — explorer par sous-période, puis descendre via le graphe local.
-- **Méditerranée** — Axe espace **Méditerranée** (`mediterranee`) — explorer par sous-période, puis descendre via le graphe local.
-- **Méthodes** — Les règles transverses, groupées par leur rôle et non par une période.
-- **Pouvoir et institutions** — Axe thème **Pouvoir et institutions** (`politique`) — explorer par sous-période, puis descendre via le graphe local.
-- **Rome** — La cité, la république, l'empire — et ce qu'il en reste d'écrit.
-- **Transversal** — Ce qui n'a aucun centre de gravité chronologique.
-- **XXe siècle** — Après 1914 : les archives s'ouvrent, les récits se disputent.
+### (sans domaine)
+- **Consignes** — Les règles transverses, groupées par leur rôle et non par un domaine.
+- **Domaine A** — Le premier domaine : une unité à son niveau, le reste dans son segment.
+- **Domaine B** — Le second domaine : aucun sous-domaine à promouvoir.
+- **Marqueur 1** — Axe marqueur **Marqueur 1** (`m1`) — explorer par sous-domaine, puis descendre via le graphe local.
+- **Marqueur 2** — Axe marqueur **Marqueur 2** (`m2`) — explorer par sous-domaine, puis descendre via le graphe local.
+- **Secteur 1** — Axe secteur **Secteur 1** (`s1`) — explorer par sous-domaine, puis descendre via le graphe local.
+- **Secteur 2** — Axe secteur **Secteur 2** (`s2`) — explorer par sous-domaine, puis descendre via le graphe local.
+- **Segment 1** — Le segment promu du premier domaine, et la séquence qui l'ordonne.
+- **Séquences** — Le point de ralliement des séquences, dispersées dans l'arbre.
+- **Transverse** — Ce qui n'a aucun centre de gravité sur l'axe de rangement.

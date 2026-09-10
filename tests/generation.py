@@ -76,16 +76,16 @@ VERT_LOT3 = RACINE_KIT / "tests" / "vert"
 # --------------------------------------------------------------------------- #
 VERT_ARTEFACTS = 16
 HUBS_TRANSVERSES = {
-    "Thèmes/Pouvoir et institutions.md",
-    "Thèmes/Guerres et armées.md",
-    "Espaces/Méditerranée.md",
-    "Espaces/Europe.md",
+    "Marqueurs/Marqueur 1.md",
+    "Marqueurs/Marqueur 2.md",
+    "Secteurs/Secteur 1.md",
+    "Secteurs/Secteur 2.md",
 }
-HUBS_DU_SECOND_AXE = {"Espaces/Méditerranée.md", "Espaces/Europe.md"}
-# `religieux` est DECLAREE dans le manifeste et portee par aucune page : aucun
+HUBS_DU_SECOND_AXE = {"Secteurs/Secteur 1.md", "Secteurs/Secteur 2.md"}
+# `m3` est DECLAREE dans le manifeste et portee par aucune page : aucun
 # hub ne doit naitre pour elle. Un hub vide dans un graphe est un noeud de plus
 # qui ne rassemble rien.
-HUB_INTERDIT = "Thèmes/Croyances et religions.md"
+HUB_INTERDIT = "Marqueurs/Marqueur 3.md"
 
 # --------------------------------------------------------------------------- #
 # Le vault ROUGE : sept ecarts, et il faut savoir lequel des sept n a pas ete
@@ -93,20 +93,20 @@ HUB_INTERDIT = "Thèmes/Croyances et religions.md"
 # --------------------------------------------------------------------------- #
 ROUGE_ECARTS = {
     # 1 — forme ARBRE : la sous-section des vues a disparu de la zone
-    "Antiquité/Rome/Rome.md",
+    "Domaine A/Segment 1/Segment 1.md",
     # 2 — forme RALLIEMENT : groupe par le sous-dossier au lieu du premier segment
-    "Chronologies/Chronologies.md",
-    # 3 — forme TRANSVERSE, axe 1 (`themes`) : un compte faux
-    "Thèmes/Guerres et armées.md",
-    # 4 — forme TRANSVERSE, axe 2 (`espaces`) : une puce manquante
-    "Espaces/Europe.md",
+    "Séquences/Séquences.md",
+    # 3 — forme TRANSVERSE, axe 1 (`marqueurs`) : un compte faux
+    "Marqueurs/Marqueur 2.md",
+    # 4 — forme TRANSVERSE, axe 2 (`secteurs`) : une puce manquante
+    "Secteurs/Secteur 2.md",
     # 5 — BANDEAU : une cellule qui ne derive plus du frontmatter
-    "XXe siècle/Kennan - Le long telegramme.md",
+    "Domaine B/Unité B1.md",
     # 6 — INDEX humain : une entree retiree
     "AI/index/brain-index.md",
     # 7 — DERIVE, et c est le seul interessant : personne ne l a pose a la main.
     #     Le defaut 1 a retire un WIKILINK d une zone AUTO, donc les liens
-    #     sortants du hub « Rome » ont change, donc la carte des liens est
+    #     sortants du hub « Segment 1 » ont change, donc la carte des liens est
     #     perimee — sans qu on y ait touche. C est exactement la raison pour
     #     laquelle l orchestration tourne jusqu a un POINT FIXE en ecriture : une
     #     zone AUTO porte des liens, et la carte des liens les compte.
@@ -115,10 +115,10 @@ ROUGE_ECARTS = {
 ROUGE_REFUS = {
     # 8 — un hub SANS zone AUTO : un REFUS, pas un ecart. La zone ne s invente
     #     pas dans un hub qui n en declare pas.
-    "Transversal/Transversal.md",
+    "Transverse/Transverse.md",
     # 9 — une page SANS titre de niveau 1 : un REFUS. La place d une zone dans
     #     une page sans titre n est pas devinable, et l inventer casse la page.
-    "Antiquité/Herodote - Histoires.md",
+    "Domaine A/Unité A1.md",
 }
 # Les deux pages que le generateur REFUSE de reparer : le scenario 5 les exclut
 # de sa comparaison, et c est le comportement voulu.
@@ -193,17 +193,17 @@ def scenario_vert(j: Journal) -> None:
 
     # Les trois FORMES, verifiees sur leur contenu et non sur leur seul compte :
     # une forme qui regresserait en une autre concorderait encore avec elle-meme.
-    arbre = (VERT / "Antiquité/Rome/Rome.md").read_text(encoding="utf-8")
+    arbre = (VERT / "Domaine A/Segment 1/Segment 1.md").read_text(encoding="utf-8")
     j.verifie("forme ARBRE : les sous-sections déclarées, dans l'ordre déclaré",
-              arbre.index("### Notions") < arbre.index("### Sources")
-              < arbre.index("### Chronologies"))
-    ralliement = (VERT / "Chronologies/Chronologies.md").read_text(encoding="utf-8")
+              arbre.index("### Notions") < arbre.index("### Unités")
+              < arbre.index("### Séquences"))
+    ralliement = (VERT / "Séquences/Séquences.md").read_text(encoding="utf-8")
     j.verifie("forme RALLIEMENT : groupée par le PREMIER segment du chemin",
-              "### Antiquité" in ralliement and "### Rome" not in ralliement)
-    transverse = (VERT / "Thèmes/Pouvoir et institutions.md").read_text(
+              "### Domaine A" in ralliement and "### Segment 1" not in ralliement)
+    transverse = (VERT / "Marqueurs/Marqueur 1.md").read_text(
         encoding="utf-8")
     j.verifie("forme TRANSVERSE : une phrase d'intro, puis une puce par groupe",
-              "Axe thème **Pouvoir et institutions** (`politique`)" in transverse
+              "Axe marqueur **Marqueur 1** (`m1`)" in transverse
               and "— 3 page(s)" in transverse
               and "###" not in transverse.split("<!-- AUTO:START -->")[1])
 
@@ -231,7 +231,7 @@ def scenario_un_axe(j: Journal) -> None:
     print("\n3. UN AXE — le second axe transverse retiré en mémoire")
     brut = charge_dict()
     retire = brut["axes"]["transverses"].pop()          # LA mutation, une clé
-    j.verifie("c'est bien le second axe qui est retiré", retire["champ"] == "espaces")
+    j.verifie("c'est bien le second axe qui est retiré", retire["champ"] == "secteurs")
     s = genere_tout(Modele(brut, MANIFESTE), VERT, mode=CHECK)
     # Le test porte sur la FORME de la pose, pas sur sa presence : les deux pages
     # existent toujours sur le disque, et l axe retire, elles retombent dans la

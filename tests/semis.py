@@ -332,9 +332,9 @@ def scenario_reseuiller(j: Journal, mo: Modele, dossier: Path) -> None:
     _git(copie, "add", "-A")
     _git(copie, "commit", "-m", "état de départ")
 
-    # Seuil 2 -> 3 : `antiquite/rome` pese 2, donc il se DEPROMEUT.
+    # Seuil 2 -> 3 : `domaine-a/segment-1` pese 2, donc il se DEPROMEUT.
     r = reseuiller.calcule(mo_v, copie, 3)
-    j.verifie("seuil 2 → 3 : une dépromotion", r.depromotions == ["antiquite/rome"],
+    j.verifie("seuil 2 → 3 : une dépromotion", r.depromotions == ["domaine-a/segment-1"],
               f"promotions={r.promotions} dépromotions={r.depromotions}")
     # TROIS pages, pas deux : la chronologie du dossier suit, alors qu elle ne
     # PESE pas sur le seuil. Les deux notions ne se confondent pas —
@@ -346,14 +346,14 @@ def scenario_reseuiller(j: Journal, mo: Modele, dossier: Path) -> None:
               len(r.mouvements) == 3,
               str([(m.depuis, m.vers) for m in r.mouvements]))
     j.verifie("le hub du dossier dépromu est SIGNALÉ, pas supprimé",
-              r.hubs_orphelins == ["Antiquité/Rome/Rome.md"],
+              r.hubs_orphelins == ["Domaine A/Segment 1/Segment 1.md"],
               str(r.hubs_orphelins))
 
     r = reseuiller.applique(mo_v, copie, r)
     j.verifie("les `git mv` passent", r.applique and not r.refus, str(r.refus))
-    j.verifie("les pages ont bougé", (copie / "Antiquité" / "Tacite - Annales.md")
-              .is_file() and not (copie / "Antiquité" / "Rome" /
-                                  "Tacite - Annales.md").is_file())
+    j.verifie("les pages ont bougé", (copie / "Domaine A" / "Unité A2.md")
+              .is_file() and not (copie / "Domaine A" / "Segment 1" /
+                                  "Unité A2.md").is_file())
     # `git status` voit un RENOMMAGE (`R`), pas une suppression suivie d un
     # ajout. C est ce qui prouve le `git mv` : `--follow` ne dirait rien avant
     # le commit, et l operation ne committe pas — la cloture n est pas son
@@ -363,7 +363,7 @@ def scenario_reseuiller(j: Journal, mo: Modele, dossier: Path) -> None:
     j.verifie("git voit trois RENOMMAGES, pas des suppressions + créations",
               len(renommages) == 3, statut)
     j.verifie("le hub orphelin est TOUJOURS là",
-              (copie / "Antiquité" / "Rome" / "Rome.md").is_file())
+              (copie / "Domaine A" / "Segment 1" / "Segment 1.md").is_file())
 
     # Sur un arbre SALE, `applique` refuse.
     (copie / "sale.txt").write_text("x", encoding="utf-8")

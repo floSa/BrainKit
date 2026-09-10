@@ -7,7 +7,7 @@ hubs de premier niveau n'ont aucun parent pour les citer, et que sans elle ils
 seraient orphelins. C'est la remontée 6 du lot 3, et elle reste ouverte : rien
 dans le manifeste ne déclare la porte d'entrée d'un vault.
 
-Les périodes : [[Antiquité]] · [[XXe siècle]] · [[Transversal]].
+Les domaines : [[Domaine A]] · [[Domaine B]] · [[Transverse]].
 
-Le reste : [[Méthodes]] · [[Chronologies]] · [[Pouvoir et institutions]] ·
-[[Guerres et armées]] · [[Méditerranée]] · [[Europe]].
+Le reste : [[Consignes]] · [[Séquences]] · [[Marqueur 1]] ·
+[[Marqueur 2]] · [[Secteur 1]] · [[Secteur 2]].

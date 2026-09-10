@@ -5,95 +5,95 @@
 
 ## Par page
 
-### Chronologie - Rome  ·  chronologie
+### Consigne - Sourcer  ·  consigne
 - tags : —
-- liens sortants : [[Chronologie - Rome.base]], [[Chronologies]], [[Rome]]
-- liens entrants : [[Chronologies]], [[Rome]]
+- liens sortants : [[Consignes]]
+- liens entrants : [[Consignes]]
 
-### Antiquité  ·  hub
+### Consignes  ·  hub
 - tags : —
-- liens sortants : [[Herodote - Histoires]], [[Rome]]
-- liens entrants : [[Europe]], [[Guerres et armées]], [[Herodote - Histoires]], [[Méditerranée]], [[Pouvoir et institutions]]
+- liens sortants : [[Consigne - Sourcer]]
+- liens entrants : [[Consigne - Sourcer]]
 
-### Chronologies  ·  hub
+### Domaine A  ·  hub
 - tags : —
-- liens sortants : [[Chronologie - Rome]]
-- liens entrants : [[Chronologie - Rome]]
+- liens sortants : [[Segment 1]], [[Unité A1]]
+- liens entrants : [[Marqueur 1]], [[Marqueur 2]], [[Secteur 1]], [[Secteur 2]], [[Unité A1]]
 
-### Europe  ·  hub
+### Domaine B  ·  hub
 - tags : —
-- liens sortants : [[Antiquité]], [[XXe siècle]]
+- liens sortants : [[Notion B1]], [[Unité B1]]
+- liens entrants : [[Marqueur 1]], [[Marqueur 2]], [[Secteur 2]], [[Unité B1]]
+
+### Marqueur 1  ·  hub
+- tags : —
+- liens sortants : [[Domaine A]], [[Domaine B]], [[Transverse]]
 - liens entrants : —
 
-### Guerres et armées  ·  hub
+### Marqueur 2  ·  hub
 - tags : —
-- liens sortants : [[Antiquité]], [[XXe siècle]]
+- liens sortants : [[Domaine A]], [[Domaine B]]
 - liens entrants : —
 
-### Méditerranée  ·  hub
+### Secteur 1  ·  hub
 - tags : —
-- liens sortants : [[Antiquité]]
+- liens sortants : [[Domaine A]]
 - liens entrants : —
 
-### Méthodes  ·  hub
+### Secteur 2  ·  hub
 - tags : —
-- liens sortants : [[Méthode - Citer sa source]]
-- liens entrants : [[Méthode - Citer sa source]]
-
-### Pouvoir et institutions  ·  hub
-- tags : —
-- liens sortants : [[Antiquité]], [[Transversal]], [[XXe siècle]]
+- liens sortants : [[Domaine A]], [[Domaine B]]
 - liens entrants : —
 
-### Rome  ·  hub
+### Segment 1  ·  hub
 - tags : —
-- liens sortants : [[Chronologie - Rome]], [[Empire romain]], [[Tacite - Annales]]
-- liens entrants : [[Antiquité]], [[Chronologie - Rome]], [[Tacite - Annales]]
+- liens sortants : [[Notion A1]], [[Séquence - Segment 1]], [[Unité A2]]
+- liens entrants : [[Domaine A]], [[Séquence - Segment 1]], [[Unité A2]]
 
-### Transversal  ·  hub
+### Séquences  ·  hub
 - tags : —
-- liens sortants : [[Historiographie]]
-- liens entrants : [[Historiographie]], [[Pouvoir et institutions]]
+- liens sortants : [[Séquence - Segment 1]]
+- liens entrants : [[Séquence - Segment 1]]
 
-### XXe siècle  ·  hub
+### Transverse  ·  hub
 - tags : —
-- liens sortants : [[Guerre froide]], [[Kennan - Le long telegramme]]
-- liens entrants : [[Europe]], [[Guerres et armées]], [[Kennan - Le long telegramme]], [[Pouvoir et institutions]]
+- liens sortants : [[Notion T1]]
+- liens entrants : [[Marqueur 1]], [[Notion T1]]
 
-### Méthode - Citer sa source  ·  methode
+### Notion A1  ·  notion
 - tags : —
-- liens sortants : [[Méthodes]]
-- liens entrants : [[Méthodes]]
+- liens sortants : [[Unité A2]]
+- liens entrants : [[Segment 1]]
 
-### Empire romain  ·  notion
+### Notion B1  ·  notion
 - tags : —
-- liens sortants : [[Tacite - Annales]]
-- liens entrants : [[Rome]]
+- liens sortants : [[Unité B1]]
+- liens entrants : [[Domaine B]]
 
-### Guerre froide  ·  notion
+### Notion T1  ·  notion
 - tags : —
-- liens sortants : [[Kennan - Le long telegramme]]
-- liens entrants : [[XXe siècle]]
+- liens sortants : [[Transverse]]
+- liens entrants : [[Transverse]]
 
-### Historiographie  ·  notion
+### Séquence - Segment 1  ·  sequence
 - tags : —
-- liens sortants : [[Transversal]]
-- liens entrants : [[Transversal]]
+- liens sortants : [[Segment 1]], [[Séquence - Segment 1.base]], [[Séquences]]
+- liens entrants : [[Segment 1]], [[Séquences]]
 
-### Herodote - Histoires  ·  source
+### Unité A1  ·  unite
 - tags : —
-- liens sortants : [[Antiquité]]
-- liens entrants : [[Antiquité]]
+- liens sortants : [[Domaine A]]
+- liens entrants : [[Domaine A]]
 
-### Kennan - Le long telegramme  ·  source
+### Unité A2  ·  unite
 - tags : —
-- liens sortants : [[XXe siècle]]
-- liens entrants : [[Guerre froide]], [[XXe siècle]]
+- liens sortants : [[Segment 1]]
+- liens entrants : [[Notion A1]], [[Segment 1]]
 
-### Tacite - Annales  ·  source
+### Unité B1  ·  unite
 - tags : —
-- liens sortants : [[Rome]]
-- liens entrants : [[Empire romain]], [[Rome]]
+- liens sortants : [[Domaine B]]
+- liens entrants : [[Domaine B]], [[Notion B1]]
 
 ## Tags → pages
 

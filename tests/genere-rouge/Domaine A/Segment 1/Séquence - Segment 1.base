@@ -1,0 +1,11 @@
+filters:
+  and:
+    - role == "unite"
+    - domaine == "domaine-a/segment-1"
+views:
+  - type: table
+    name: Unités
+    order:
+      - nom
+      - origine
+      - date_origine

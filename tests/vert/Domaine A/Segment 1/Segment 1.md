@@ -16,6 +16,6 @@ en garde une au niveau supérieur — les trois conditions de la promotion.
 - [[Notion A1]] — La notion du premier domaine.
 
 ### Unités
-- [[Unité A3]] — La troisième unité du premier domaine.
 - [[Unité A2]] — La deuxième unité du premier domaine.
+- [[Unité A3]] — La troisième unité du premier domaine.
 <!-- AUTO:END -->

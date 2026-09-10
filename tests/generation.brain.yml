@@ -1,6 +1,10 @@
 # ==============================================================================
 # generation.brain.yml — le manifeste du jeu d epreuve des GENERATEURS (lot 4).
 # ------------------------------------------------------------------------------
+# Comme `tests/epreuve.brain.yml`, il ne parle de RIEN : « Domaine A »,
+# « Marqueur 1 », « nature-2 ». Un jeu d epreuve qui porterait un sujet ferait
+# croire que le kit en a un.
+#
 # Distinct de `tests/epreuve.brain.yml`, et il faut dire pourquoi : celui-la
 # eprouve le validateur, et son critere d acceptation est un ensemble EXACT de
 # sept violations. Y ajouter deux axes transverses et un hub de ralliement
@@ -10,24 +14,24 @@
 #
 # Ce que ce manifeste eprouve, et rien d autre :
 #
-#   1. DEUX axes transverses (`themes` et `espaces`), la ou le DevBrain n en a
-#      qu un et ou `epreuve.brain.yml` n en a AUCUN. C est la rupture 4 du test
-#      a blanc, et les trois comptes — 0, 1, 2 — sont couverts par les trois
+#   1. DEUX axes transverses (`marqueurs` et `secteurs`), la ou un brain courant
+#      n en a qu un et ou `epreuve.brain.yml` n en a AUCUN. C est la rupture 4 du
+#      test a blanc, et les trois comptes — 0, 1, 2 — sont couverts par les trois
 #      manifestes ensemble.
 #   2. Les TROIS formes de zone AUTO, chacune presente : la forme ARBRE (les
-#      hubs des periodes), la forme TRANSVERSE (les hubs de « Thèmes/ » et de
-#      « Espaces/ »), la forme RALLIEMENT (« Chronologies/ », le hub du role
+#      hubs des domaines), la forme TRANSVERSE (les hubs de « Marqueurs/ » et de
+#      « Secteurs/ »), la forme RALLIEMENT (« Séquences/ », le hub du role
 #      `fonction: vue`).
 #   3. Un bandeau a DEUX colonnes, dont une avec `qualifie_par:` — pour que le
-#      moteur de bandeau tourne sur un contenu qui n a pas une valeur en commun
-#      avec celui du DevBrain.
+#      moteur de bandeau tourne sur un contenu qui n a aucune valeur en commun
+#      avec celui d un vault reel.
 #
 # Les DIX regles sortent en `a_mesurer` : principe 1 du cadrage, aucune severite
 # n est portable. Ce jeu d epreuve n en mesure aucune — c est le lot 3 qui le
 # fait, sur son propre vault.
 #
 # Les accents sont ecrits partout SAUF dans les commentaires et les `motif:`,
-# comme dans les trois autres manifestes du depot.
+# comme dans les autres manifestes du depot.
 # ==============================================================================
 
 manifeste: 1
@@ -55,31 +59,31 @@ git:
   branche_principale: main
 
 libelles:
-  unite:         { s: source,      p: sources }
-  notion:        { s: notion,      p: notions }
-  vue:           { s: chronologie, p: chronologies }
-  hub:           { s: hub,         p: hubs }
-  prescription:  { s: méthode,     p: méthodes }
-  axe_rangement: { s: période,     p: périodes }
-  axe_nature:    { s: nature,      p: natures }
+  unite:         { s: unité,    p: unités }
+  notion:        { s: notion,   p: notions }
+  vue:           { s: séquence, p: séquences }
+  hub:           { s: hub,      p: hubs }
+  prescription:  { s: consigne, p: consignes }
+  axe_rangement: { s: domaine,  p: domaines }
+  axe_nature:    { s: nature,   p: natures }
   axe_transverse:
-    themes:  { s: thème,  p: thèmes }
-    espaces: { s: espace, p: espaces }
+    marqueurs: { s: marqueur, p: marqueurs }
+    secteurs:  { s: secteur,  p: secteurs }
 
 # ------------------------------------------------------------------------------
 roles:
 
-  - id: source
+  - id: unite
     fonction: unite
-    libelle: { s: source, p: sources }
+    libelle: { s: unité, p: unités }
     range_par: axe
     protege: false
     pese_sur_le_seuil: true
     apparait_dans_le_hub: true
     champs:
-      requis: [role, nom, apport, periode]
-      autorises: [role, nom, alias, apport, periode, nature, auteur,
-                  date_publication, themes, espaces, mots]
+      requis: [role, nom, apport, domaine]
+      autorises: [role, nom, alias, apport, domaine, nature, origine,
+                  date_origine, marqueurs, secteurs, mots]
     corps:
       - { titre: "<bandeau>",    niveau: 0, genre: bandeau }
       - { titre: "Ce que c'est", niveau: 2, genre: prose }
@@ -94,42 +98,42 @@ roles:
     apparait_dans_le_hub: true
     champs:
       requis: [role, nom, apport]
-      autorises: [role, nom, alias, apport, periode, themes, espaces, mots]
+      autorises: [role, nom, alias, apport, domaine, marqueurs, secteurs, mots]
     corps:
       - { titre: "Aperçu",     niveau: 2, genre: libre }
       - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
 
-  - id: chronologie
+  - id: sequence
     fonction: vue
-    libelle: { s: chronologie, p: chronologies }
+    libelle: { s: séquence, p: séquences }
     range_par: axe
-    prefixe_nom: "Chronologie - "
+    prefixe_nom: "Séquence - "
     vue_embarquee: { extension: ".base", moteur: "obsidian-bases" }
     regle_de_categorie: majorite
     pese_sur_le_seuil: false
     apparait_dans_le_hub: true
     hub_de_ralliement:
-      dossier: "Chronologies"
+      dossier: "Séquences"
       lien_retour: "Voir aussi"
       groupe_par: "premier segment du chemin"
       motif: >
         C est le lien retour qui fait la grappe. Le dossier ne porte QUE sa page :
-        les chronologies restent dans le dossier des sources qu elles mettent en
+        les sequences restent dans le dossier des unites qu elles mettent en
         sequence, et la regle de propagation en depend.
     champs:
-      requis: [role, nom, periode]
-      autorises: [role, nom, periode, mots]
+      requis: [role, nom, domaine]
+      autorises: [role, nom, domaine, mots]
     corps:
       - { titre: "<accroche>", niveau: 0, genre: prose, forme: "> La séquence : …" }
       - { titre: "<embed>",    niveau: 0, genre: auto }
       - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
 
-  - id: methode
+  - id: consigne
     fonction: prescription
-    libelle: { s: méthode, p: méthodes }
+    libelle: { s: consigne, p: consignes }
     range_par: role
-    dossier: "Méthodes"
-    prefixe_nom: "Méthode - "
+    dossier: "Consignes"
+    prefixe_nom: "Consigne - "
     champs:
       requis: [role, question]
       autorises: [role, question, mots]
@@ -144,7 +148,7 @@ roles:
     apparait_dans_le_hub: false
     champs:
       requis: [role, nom, apport]
-      autorises: [role, nom, apport, themes, espaces]
+      autorises: [role, nom, apport, marqueurs, secteurs]
     corps:
       - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre,
           ecrit_a_la_main: true, existe_si: "le hub porte un corps d'aiguillage" }
@@ -159,78 +163,78 @@ roles:
           `axes.transverses[].dossier` pour la forme transverse,
           `roles[].hub_de_ralliement.dossier` pour la forme ralliement.
         sections:
-          - { titre: "Sous-périodes", source: "sous-dossiers portant un hub",
+          - { titre: "Sous-domaines", source: "sous-dossiers portant un hub",
               depuis: sous_dossiers, separateur: " · " }
           - { titre: "Notions",       source: "role: notion du dossier",
               depuis: role, role: notion }
-          - { titre: "Sources",       source: "role: source du dossier",
-              depuis: role, role: source }
-          - { titre: "Méthodes",      source: "role: methode du dossier",
-              depuis: role, role: methode }
-          - { titre: "Chronologies",  source: "fichiers *.base du dossier",
+          - { titre: "Unités",        source: "role: unite du dossier",
+              depuis: role, role: unite }
+          - { titre: "Consignes",     source: "role: consigne du dossier",
+              depuis: role, role: consigne }
+          - { titre: "Séquences",     source: "fichiers *.base du dossier",
               depuis: vues }
 
 # ------------------------------------------------------------------------------
 axes:
 
   rangement:
-    champ: periode
+    champ: domaine
     exclusif: true
     seuil_promotion: 2
     motif_seuil: "volume_cible 40 / 3 prefixes -> un seuil bas, pour que deux pages promeuvent."
     plafond_promotion: true
     valeur_courte_autorisee: true
     prefixes:
-      - cle: antiquite
-        dossier: "Antiquité"
+      - cle: domaine-a
+        dossier: "Domaine A"
         sous:
-          rome: { libelle: "Rome" }
-      - cle: xxe
-        dossier: "XXe siècle"
+          segment-1: { libelle: "Segment 1" }
+      - cle: domaine-b
+        dossier: "Domaine B"
         sous: {}
-      - cle: transversal
-        dossier: "Transversal"
+      - cle: transverse
+        dossier: "Transverse"
         sous: {}
     rattachements: {}
     arbre_de_decision:
-      - { n: D1, question: "Porte-t-elle sur plus de deux périodes ?", si_oui: ["transversal"] }
-      - { n: D2, question: "Son objet est-il antérieur à 476 ?", si_oui: ["antiquite/*"] }
-      - { n: D3, question: "Son objet est-il postérieur à 1914 ?", si_oui: ["xxe"] }
+      - { n: D1, question: "Porte-t-elle sur plus de deux domaines ?", si_oui: ["transverse"] }
+      - { n: D2, question: "Relève-t-elle du premier domaine ?", si_oui: ["domaine-a/*"] }
+      - { n: D3, question: "Relève-t-elle du second domaine ?", si_oui: ["domaine-b"] }
       - { n: D4, question: "Aucun des précédents", si_oui: [], arret: true }
     departages: []
     frontieres: []
 
   nature:
     champ: nature
-    porte_par: [source]
-    interdit_sur: [notion, hub, chronologie, methode]
+    porte_par: [unite]
+    interdit_sur: [notion, hub, sequence, consigne]
     vide_autorise: true
     valeurs:
-      - { cle: source-primaire, definition: "Produite par les contemporains du fait." }
-      - { cle: ouvrage,         definition: "Livre d'auteur, appareil critique." }
+      - { cle: nature-1, definition: "La première nature." }
+      - { cle: nature-2, definition: "La seconde nature, celle par défaut." }
     arbre_de_decision:
-      - { n: N1, question: "Son auteur est-il contemporain du fait ?", si_oui: source-primaire }
-      - { n: N2, question: "Aucun des précédents", si_oui: ouvrage, defaut: true }
+      - { n: N1, question: "La page relève-t-elle du premier cas ?", si_oui: nature-1 }
+      - { n: N2, question: "Aucun des précédents", si_oui: nature-2, defaut: true }
     departages: []
 
   # ---------------------------- DEUX, et c est le point ----------------------
   transverses:
-    - champ: themes
-      dossier: "Thèmes"
+    - champ: marqueurs
+      dossier: "Marqueurs"
       multivalue: true
       hub_par_valeur: true
       groupe_par: premier_segment_du_chemin
       motif: >
-        Premier des deux. Le DevBrain n en a qu un et son generateur le codait en
-        dur ; `epreuve.brain.yml` n en a aucun. Les trois comptes — 0, 1, 2 —
-        sont donc couverts par les trois manifestes ensemble.
+        Premier des deux. Un brain courant n en a qu un et son generateur le
+        codait en dur ; `epreuve.brain.yml` n en a aucun. Les trois comptes —
+        0, 1, 2 — sont donc couverts par les trois manifestes ensemble.
       valeurs:
-        - { cle: politique, libelle: "Pouvoir et institutions" }
-        - { cle: guerre,    libelle: "Guerres et armées" }
-        - { cle: religieux, libelle: "Croyances et religions",
+        - { cle: m1, libelle: "Marqueur 1" }
+        - { cle: m2, libelle: "Marqueur 2" }
+        - { cle: m3, libelle: "Marqueur 3",
             motif: "DECLAREE et portee par AUCUNE page : aucun hub ne doit naitre pour elle." }
-    - champ: espaces
-      dossier: "Espaces"
+    - champ: secteurs
+      dossier: "Secteurs"
       multivalue: true
       hub_par_valeur: true
       groupe_par: premier_segment_du_chemin
@@ -239,8 +243,8 @@ axes:
         EN MEMOIRE : ses hubs cessent alors d etre poses, ce qui prouve que la
         boucle porte sur la liste declaree et non sur une constante.
       valeurs:
-        - { cle: mediterranee, libelle: "Méditerranée" }
-        - { cle: europe,       libelle: "Europe" }
+        - { cle: s1, libelle: "Secteur 1" }
+        - { cle: s2, libelle: "Secteur 2" }
 
 # ------------------------------------------------------------------------------
 champs:
@@ -249,19 +253,19 @@ champs:
   alias:     { type: liste, fonction: alias }
   apport:    { type: ligne, fonction: resume_court }
   question:  { type: ligne, fonction: aucune }
-  periode:   { type: enum, source: axes.rangement, fonction: aucune }
+  domaine:   { type: enum, source: axes.rangement, fonction: aucune }
   nature:    { type: enum, source: axes.nature, fonction: aucune }
-  themes:    { type: liste_enum, source: "axes.transverses[themes]", fonction: aucune }
-  espaces:   { type: liste_enum, source: "axes.transverses[espaces]", fonction: aucune }
-  auteur:    { type: ligne, fonction: aucune }
-  date_publication: { type: date, fonction: aucune }
+  marqueurs: { type: liste_enum, source: "axes.transverses[marqueurs]", fonction: aucune }
+  secteurs:  { type: liste_enum, source: "axes.transverses[secteurs]", fonction: aucune }
+  origine:   { type: ligne, fonction: aucune }
+  date_origine: { type: date, fonction: aucune }
   mots:      { type: liste_enum, source: "vocabulaires.mots", fonction: aucune }
 
 # ------------------------------------------------------------------------------
-# bandeau — DEUX colonnes, aucune valeur en commun avec celles du DevBrain.
+# bandeau — DEUX colonnes, aucune valeur en commun avec celles d un vault reel.
 # ------------------------------------------------------------------------------
 bandeau:
-  porte_par: [source]
+  porte_par: [unite]
   vide: "—"
   balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"]
   position: "juste sous le titre H1 ; une page sans H1 est SAUTEE et signalee"
@@ -271,11 +275,11 @@ bandeau:
     - titre: Nature
       source: nature
       table:
-        source-primaire: "Source primaire"
-        ouvrage: Ouvrage
-    - titre: "Auteur et date"
-      source: auteur
-      qualifie_par: date_publication
+        nature-1: "Nature 1"
+        nature-2: "Nature 2"
+    - titre: "Origine et date"
+      source: origine
+      qualifie_par: date_origine
 
 # ------------------------------------------------------------------------------
 # regles — LES DIX, toutes en `a_mesurer`. Principe 1 : aucune severite n est
@@ -284,7 +288,7 @@ bandeau:
 regles:
   - { id: reciprocite,           enonce: "Réciprocité des champs de liens.",      active: false, severite: a_mesurer }
   - { id: chemin_categorie,      enonce: "Le chemin concorde avec la valeur d'axe.", active: true, severite: a_mesurer }
-  - { id: completude_du_hub,     enonce: "Toute page du dossier apparaît dans son hub.", active: true, severite: a_mesurer, roles: [source] }
+  - { id: completude_du_hub,     enonce: "Toute page du dossier apparaît dans son hub.", active: true, severite: a_mesurer, roles: [unite] }
   - { id: voisinage_declare,     enonce: "Le voisinage est déclaré.",             active: false, severite: a_mesurer }
   - { id: redirection_sourcee,   enonce: "Une redirection porte son wikilink.",   active: false, severite: a_mesurer }
   - { id: reinjection_du_resume, enonce: "Le résumé est recopié, jamais retapé.", active: false, severite: a_mesurer }
@@ -342,25 +346,25 @@ genere:
     - { chemin: "AI/index/", par: build_index }
     - { chemin: "zones AUTO des hubs", par: build_mocs,
         balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"] }
-    - { chemin: "Thèmes/", par: build_mocs }
-    - { chemin: "Espaces/", par: build_mocs }
-    - { chemin: "Chronologies/Chronologies.md", par: build_mocs }
+    - { chemin: "Marqueurs/", par: build_mocs }
+    - { chemin: "Secteurs/", par: build_mocs }
+    - { chemin: "Séquences/Séquences.md", par: build_mocs }
     - { chemin: "AI/index/liens.md", par: build_links }
-    - { chemin: "bandeaux des sources", par: build_bandeau,
+    - { chemin: "bandeaux des unités", par: build_bandeau,
         balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"] }
   non_pages: [.git, .claude, .obsidian, AI, Documentation, Templates]
   index:
     fichiers: ["AI/index/brain-index.json", "AI/index/brain-index.md"]
-    champs: [nom, alias, role, periode, nature, auteur, apport, themes, espaces, mots]
+    champs: [nom, alias, role, domaine, nature, origine, apport, marqueurs, secteurs, mots]
     plus: [path]
     tri: stable
     horodatage: false
     signature: "brainkit generer --quoi index"
     groupes:
-      - { role: source,      titre: "Sources — ce sur quoi on appuie une affirmation" }
-      - { role: notion,      titre: "Notions — ce qu'il faut comprendre" }
-      - { role: chronologie, titre: "Chronologies — ce que la séquence montre" }
-      - { role: methode,     titre: "Méthodes — les règles transverses" }
+      - { role: unite,    titre: "Unités — ce sur quoi on appuie une affirmation" }
+      - { role: notion,   titre: "Notions — ce qu'il faut comprendre" }
+      - { role: sequence, titre: "Séquences — ce que la séquence montre" }
+      - { role: consigne, titre: "Consignes — les règles transverses" }
     motif_pas_de_portee: >
       AUCUNE `portee:` declaree, et c est le cas qui passe : la cle `scope` du
       catalogue ne doit alors PAS etre emise. Un brain neuf n a aucune reserve
@@ -372,7 +376,7 @@ genere:
   motif_pas_de_prose: >
     AUCUNE surcharge `prose:`, et c est le second cas qui passe : les
     vingt-quatre gabarits par defaut du kit doivent suffire a un brain neuf.
-    Le DevBrain en surcharge quatre, et les quatre sont de la dette v1 —
+    Le vault d origine en surcharge quatre, et les quatre sont de la dette v1 —
     `design/04-generation.md`, arbitrage 3.
 
 agent:
