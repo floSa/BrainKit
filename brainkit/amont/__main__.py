@@ -160,9 +160,9 @@ def main() -> int:
     if not amont.declare:
         print(f"`{manifeste.name}` ne déclare aucun bloc `amont:` — ce brain n'a "
               f"pas d'amont à sonder.")
-        print("    Ce n'est pas une faute : une source d'histoire n'a pas de "
-              "dépôt. Sans ce bloc, le kit ne sonde rien, ne signale rien et "
-              "n'affiche aucune colonne de fraîcheur.")
+        print("    Ce n'est pas une faute : toutes les unités n'ont pas un "
+              "amont qui vit. Sans ce bloc, le kit ne sonde rien, ne signale "
+              "rien et n'affiche aucune colonne de fraîcheur.")
         return 2
 
     ecrit = sidecar.ecrit_side_car(amont, racine, contenu) if contenu else None

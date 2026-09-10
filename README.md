@@ -10,10 +10,11 @@ qui se valide, se génère et se propage tout seul — sur n'importe quel sujet.
 ![Licence](https://img.shields.io/badge/licence-tous_droits_r%C3%A9serv%C3%A9s-lightgrey)
 
 Tout ce qui est propre à un sujet vit dans un seul fichier, `brain.yml` ; rien
-dans le code ne nomme un domaine. Le kit a été **extrait** d'un brain de
-développement logiciel de 765 pages, puis éprouvé sur trois autres sujets —
-l'histoire, la montagne, le droit du travail — pour vérifier qu'il n'en avait
-rien gardé.
+dans le code ne nomme un domaine — et **rien dans ce dépôt non plus** : ses
+fixtures s'appellent « Domaine A » et « Unité A1 », et son manifeste de
+référence est un gabarit abstrait. Le kit a été **extrait** d'un brain réel de
+765 pages, puis éprouvé sur trois autres sujets pour vérifier qu'il n'en avait
+rien gardé. Un contrôle le prouve : `bash outils/neutralite.sh`.
 
 ---
 

@@ -2,7 +2,7 @@
 
 C est la brique la plus nettement separee de tout le kit, et le test a blanc du
 cadrage l a prouvee : le bandeau du vault d'origine est
-`Nature | Licence | Execution | Maturite`, celui d un brain d histoire
+`Nature | Licence | Execution | Maturite`, celui d un autre brain
 `Nature | Auteur et date | Langue | Fiabilite`. Quatre colonnes, chacune derivee
 d un champ, chacune avec sa table de rendu. **Le moteur ne change pas d une
 ligne** — c est ce qui rend I4 (generique) et I5 (a reecrire) deux briques

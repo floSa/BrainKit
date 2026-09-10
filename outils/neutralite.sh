@@ -17,7 +17,7 @@
 set -u
 cd "$(dirname "$0")/.." || exit 1
 
-MOTIF='DevBrain|HistoBrain|CimeBrain|DroitBrain|Antiquité|Antiquite|XXe siècle|Herodote|Hérodote|Thucydide|Tacite|Suétone|Suetone|Braudel|Kennan|Duby|Bloch|Paxton|Kershaw|Hobsbawm|Le Roy Ladurie|Montaillou|Vichy|Guerre froide|Historiographie|Méditerranée|Mediterranee|Mont[- ]Blanc|Vanoise|Écrins|Ecrins|Vercors|Queyras|Ubaye|Pyrénées|Pyrenees|Chambeyron|Meije|Moucherolle|Veymont|Vignemale|Ossau|Gavarnie|URSSAF|CSE|convention collective|licenciement|salarié|salarie|Postgres|WrenAI|polars|pola-rs|scikit|sklearn|PyTorch|FastAPI|MLflow'
+MOTIF='DevBrain|HistoBrain|CimeBrain|DroitBrain|Antiquité|Antiquite|XXe siècle|Herodote|Hérodote|Thucydide|Tacite|Suétone|Suetone|Braudel|Kennan|Duby|Bloch|Paxton|Kershaw|Hobsbawm|Le Roy Ladurie|Montaillou|Vichy|Guerre froide|Historiographie|Méditerranée|Mediterranee|Mont[- ]Blanc|Vanoise|Écrins|Ecrins|Vercors|Queyras|Ubaye|Pyrénées|Pyrenees|Chambeyron|Meije|Moucherolle|Veymont|Vignemale|Ossau|Gavarnie|URSSAF|CSE|convention collective|licenciement|salarié|salarie|Postgres|WrenAI|polars|pola-rs|scikit|sklearn|PyTorch|FastAPI|MLflow|brain d.?histoire|brain de montagne|brain de droit|brain de courses|de developpement logiciel|de développement logiciel'
 
 echo "=== fichiers SUIVIS par git, hors design/ et hors ce script ==="
 FICHIERS=$(git ls-files | grep -v '^design/' | grep -v '^outils/neutralite.sh$')

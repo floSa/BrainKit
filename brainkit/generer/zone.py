@@ -9,7 +9,7 @@ sait de quoi il parle.
 C est le decoupage que l inventaire du cadrage a mesure — I4 « le moteur »
 GENERIQUE contre I5 « le contenu » A REECRIRE — et le test a blanc l a
 confirme : le bandeau du vault d'origine (`Nature | Licence | Execution | Maturite`) et
-celui d un brain d histoire (`Nature | Auteur et date | Langue | Fiabilite`)
+celui d un autre (`Nature | Auteur et date | Langue | Fiabilite`)
 n ont pas une valeur en commun, et le moteur ne change pas d une ligne.
 
 # Les balises sont declarees, jamais supposees

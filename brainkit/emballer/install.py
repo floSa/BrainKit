@@ -141,9 +141,9 @@ def _apercu(mo: Modele | None) -> Section:
             "- **un manifeste**, `brain.yml`, à la racine. Il porte les mots du "
             "sujet, ses axes, ses gabarits, ses règles et leur sévérité. Le kit "
             "ne sait rien d'autre du brain que ce fichier.", "",
-            "Le sujet, lui, est libre : le kit a été extrait d'un brain de "
-            "développement logiciel, éprouvé sur un brain d'histoire et sur un "
-            "brain de montagne. Aucun de ses mécanismes ne nomme un sujet.", ""]
+            "Le sujet, lui, est libre : le kit a été extrait d'un brain réel, "
+            "puis éprouvé sur trois autres sujets pour vérifier qu'il n'en avait "
+            "rien gardé. Aucun de ses mécanismes ne nomme un sujet.", ""]
         return s
 
     nom = mo.brain.get("nom") or "?"
@@ -400,8 +400,8 @@ def _entretien(mo: Modele | None) -> Section | None:
         "réponse par une autre laisserait le brouillon en dire deux choses.", "",
         "> **À quoi ressemble un fichier de réponses.** Deux exemples complets "
         "sont dans `tests/` : `deuxieme.reponses.yml` (un second vocabulaire, disjoint du premier) et "
-        "`troisieme.reponses.yml` (un brain de droit du travail — c'est l'entretien "
-        "de l'installation à blanc qui a validé ce guide). Chacun porte, en "
+        "`troisieme.reponses.yml` (celui de l'installation à blanc qui a "
+        "validé ce guide). Chacun porte, en "
         "tête, le raisonnement du sujet ; c'est la forme à copier, pas le "
         "contenu.", "",
         "> **La porte de service, et ce qu'elle coûte.** `--reponses <fichier>` "
@@ -736,8 +736,11 @@ def _agent(mo: Modele | None) -> Section:
             "trop tard.", ""]
         if profil == "obsidian":
             s.lignes += [
-                "Pour que l'agent lise le vault **vivant** et pas seulement ses "
-                "fichiers, brancher le plugin de pont : ses options donnent "
+                "**Ce qui suit est un confort, pas un prérequis.** L'agent "
+                "travaille sur les fichiers seuls, et aucune clé n'est requise "
+                "pour se servir de ce brain. Le pont n'ajoute qu'une chose : le "
+                "vault **vivant**, vues évaluées comprises.", "",
+                "Pour l'avoir, brancher le plugin de pont : ses options donnent "
                 "l'URL locale, la clé d'API et le bloc de configuration MCP à "
                 "coller côté agent.", "",
                 "> La clé donne un accès complet en lecture et en écriture au "

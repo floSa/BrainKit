@@ -14,8 +14,8 @@ differents produisent deux tables differentes, et chacune est juste.
 Il ne repose que sur un fait STRUCTUREL — le dossier porte la valeur de l axe de
 rangement — donc tout brain construit sur l arbre l obtient gratuitement. C est
 la brique J1 de l inventaire de separation, classee GENERIQUE, et la mesure le
-confirme : elle passe d un brain de sources d histoire a un brain de courses de
-montagne sans une retouche.
+confirme : elle passe d un brain a un autre, sans un mot commun, sans une
+retouche.
 
 # Les six familles de lignes, et ce qui les fait naitre
 

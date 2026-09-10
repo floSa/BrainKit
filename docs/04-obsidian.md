@@ -373,7 +373,7 @@ Elle vit dans le **manifeste de l'instance**, sous la clé des couleurs, et
 l'instance la rend dans sa propre documentation générée — un fichier
 `Documentation/graphe.md` et une section de son `INSTALL.md`. Écrire ici une
 table de rôles serait écrire un sujet dans la doc du kit : les rôles d'un brain
-d'histoire ne sont pas ceux d'un brain de droit du travail.
+ne sont jamais ceux d'un autre.
 
 ### Deux faits qui valent pour tout brain
 
@@ -398,6 +398,13 @@ skills. Il n'y a rien à rédiger : tout sort du manifeste.
 
 Ce qui reste à faire est de laisser l'agent atteindre le vault **vivant** —
 frontmatter résolu, vues évaluées — et pas seulement ses fichiers.
+
+> **Cette section est un CONFORT, pas un prérequis.** L'agent travaille très
+> bien sur les fichiers seuls : il les lit, il les écrit, et le kit se lance
+> dans un terminal. **Aucune clé n'est requise pour utiliser BrainKit.** Le pont
+> ci-dessous n'ajoute qu'une chose : le vault tel qu'Obsidian le voit, vues
+> évaluées comprises. Si tu n'en veux pas, saute cette section — rien d'autre
+> dans la documentation n'en dépend.
 
 Paramètres → **Modules complémentaires** → ligne du plugin de pont → icône
 d'engrenage. Le panneau donne l'URL locale et la clé :

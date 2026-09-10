@@ -2,8 +2,9 @@
 
 Une unite de brain decrit quelque chose qui existe ailleurs, et cet ailleurs a
 sa propre vie. Une brique de developpement a un depot : il publie des versions,
-il recoit des commits, et un jour son proprietaire l archive. Une source
-d histoire n a rien de tel — un ouvrage de 1939 ne sortira pas de version 2.
+il recoit des commits, et un jour son proprietaire l archive. L unite d un
+autre brain n a rien de tel — un texte publie une fois ne sortira pas de
+version 2.
 
 C est pour cela que ce paquet est **entierement declaratif**. Le bloc `amont:`
 du manifeste est FACULTATIF : un brain qui ne le declare pas ne sonde rien, ne

@@ -19,9 +19,8 @@ Le controle est une commande :
 
     uv run tests/skills.py --generique
 
-Il seme deux brains sans rien de commun (des sources d histoire, des courses de
-montagne) et verifie que chaque mot de sujet du premier est absent des skills du
-second. Une table identique sur deux brains differents serait la preuve qu elle
+Il seme deux brains sans un mot commun et verifie que chaque mot de vocabulaire
+du premier est absent des skills du second. Une table identique sur deux brains differents serait la preuve qu elle
 est recopiee.
 
 # Le troisieme skill peut ne pas exister, et c est une reponse

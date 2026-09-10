@@ -232,9 +232,8 @@ def hubs_transverses(corpus: _corpus.Corpus, prose: Prose,
     """(chemin, titre, intro, puces) par valeur PORTEE de l axe — la boucle de la rupture 4.
 
     Le le vault d'origine n a qu un axe transverse et `build_mocs.py` le codait en dur :
-    une constante de dossier, une table de libelles, une boucle. Un brain
-    d histoire en veut deux (`Themes/` et `Espaces/`), un brain de domaine client
-    sans doute trois. La boucle est ici, l appelant itere sur
+    une constante de dossier, une table de libelles, une boucle. Un autre brain
+    en veut deux, un brain de domaine client sans doute trois. La boucle est ici, l appelant itere sur
     `axes.transverses[]`, et ZERO axe est legal — le generateur ne cree alors
     aucun dossier.
 

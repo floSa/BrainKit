@@ -3,7 +3,7 @@
 C est le livrable central du projet, et il tient en une phrase : **le kit ne
 sait rien du sujet du brain qu il seme.** Tout ce qu il pose — l arbre, les
 hubs, les gabarits, la taxonomie, le routeur, les hooks — se derive du
-manifeste. Aucun mot de dev, aucun mot d histoire, aucun titre de section.
+manifeste. Aucun mot de sujet, aucun titre de section code en dur.
 
     from pathlib import Path
     from brainkit.semer import seme, imprime

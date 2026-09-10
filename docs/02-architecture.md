@@ -165,9 +165,10 @@ C'est une frontière de dépôt, et elle est la raison de la forme de ce dossier
 La seconde ne se relit pas et ne se corrige pas sur place : on corrige le
 **générateur**, ou le manifeste. Un exemple complet, rendu une fois depuis le
 manifeste de démonstration, est lisible dans
-[`../gabarit/rendu/`](../gabarit/rendu) — un brain
-d'histoire, choisi parce que c'est le sujet le plus éloigné de celui dont le kit
-a été extrait.
+[`../gabarit/rendu/`](../gabarit/rendu) — rendu depuis le **manifeste de
+référence**, qui ne nomme aucun sujet : ce qu'on veut montrer est la FORME de ce
+que le semis pose, et une forme montrée sur un sujet se lit comme une promesse
+de sujet.
 
 > **Historique, et il explique une suppression.** Jusqu'à la refonte de cette
 > documentation, l'`INSTALL.md` du dépôt du kit était **généré** par le même

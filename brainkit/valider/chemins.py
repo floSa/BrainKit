@@ -8,8 +8,8 @@ le vault et son validateur divergent en silence.
 # L axe non exclusif — la rupture 3, portee ici
 
 Le le vault d'origine n a jamais le cas : une brique a exactement un domaine, toujours.
-Un brain d histoire l a des la vingtieme page — « Histoire de la France des
-origines a nos jours » ne tombe dans aucune periode unique. Trois mecanismes
+Un brain a axe ordonne l a des la vingtieme page — une page « de l origine a
+nos jours » ne tombe dans aucune valeur unique. Trois mecanismes
 declares par le manifeste, et ce module les porte tous les trois :
 
   - `exclusif: false` — le champ peut porter PLUSIEURS valeurs, ou AUCUNE ;
