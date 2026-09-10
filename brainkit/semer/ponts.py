@@ -2,7 +2,7 @@
 
 # Le trou que ce module ferme — remontee 1 du lot 9
 
-Le lot 9 a fait du DevBrain une instance du kit. Il n a PAS supprime ses sept
+Le lot 9 a fait du vault d'origine une instance du kit. Il n a PAS supprime ses sept
 scripts : il les a reduits a des **ponts** de vingt lignes qui resolvent le kit,
 chargent `brain.yml` et l appellent. Deux motifs, tous deux mesures :
 
@@ -18,7 +18,7 @@ chargent `brain.yml` et l appellent. Deux motifs, tous deux mesures :
 Et le constat que le lot 9 en a tire, qui est la raison de ce module : **ces
 553 lignes etaient du code d instance.** Dans aucun paquet, teste par aucun jeu
 d epreuve, et la prochaine instance les aurait reecrites. Or ce n est pas une
-singularite du DevBrain : TOUTE instance qui a des habitudes — un hook, un
+singularite du vault d'origine : TOUTE instance qui a des habitudes — un hook, un
 skill, une commande dans un README — preferera garder ses noms.
 
 # Ce que le semis pose, et selon quoi
@@ -88,7 +88,7 @@ def _profondeur(mo: Modele) -> int:
 
     `<agent>/scripts/_pont_kit.py` : autant de segments que le chemin en porte.
     Se calculer plutot que se coder en dur, parce que `agent.racine` est
-    declaree — le DevBrain dit `AI/`, un autre brain dira `agent/interne/`.
+    declaree — le vault d'origine dit `AI/`, un autre brain dira `agent/interne/`.
     """
     return len(dossier_des_scripts(mo).split("/"))
 

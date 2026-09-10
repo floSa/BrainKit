@@ -7,7 +7,7 @@ L'usage de tous les jours, une fois qu'un brain existe et qu'Obsidian est régl�
 > ses axes, ses champs indexés, ses sections de page — est **généré dans le
 > vault** par le semis : `manuel.md`, `enrichir.md`, `exploiter.md`. Un exemple
 > complet est lisible dans
-> [`../exemples/rendu-histobrain/`](../exemples/rendu-histobrain).
+> [`../exemples/rendu-reference/`](../exemples/rendu-reference).
 
 ---
 

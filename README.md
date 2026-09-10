@@ -130,7 +130,7 @@ savoir :
 
 L'index complet est dans [docs/README.md](docs/README.md). Un exemple des
 documents qu'une instance porte est dans
-[`exemples/rendu-histobrain/`](exemples/rendu-histobrain). L'état du chantier —
+[`exemples/rendu-reference/`](exemples/rendu-reference). L'état du chantier —
 ce que le kit fait, ce qu'il ne fait pas, ce qui reste ouvert — est dans
 [design/etat-final.md](design/etat-final.md).
 
@@ -213,7 +213,7 @@ brainkit/            le kit — 8 paquets, 76 modules, ~18 900 lignes
   amont/               la fraicheur : sonder, dater, signaler
 schema/              le contrat de brain.yml, en JSON Schema, et son validateur
 exemples/            trois manifestes complets, dont un CONTRE-EXEMPLE qui doit echouer
-  rendu-histobrain/    les documents d une instance, rendus une fois en exemple
+  rendu-reference/    les documents d une instance, rendus une fois en exemple
 tests/               les dix jeux d epreuve
 outils/              les outils de developpement du kit
 skills/              le skill qui mene l entretien, charge depuis ce depot

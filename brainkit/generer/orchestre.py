@@ -2,7 +2,7 @@
 
 Trois choix, et ils sont le lot :
 
-1. **Un seul balayage du vault pour les quatre.** Le DevBrain en faisait quatre,
+1. **Un seul balayage du vault pour les quatre.** Le le vault d'origine en faisait quatre,
    dont un qui relisait le JSON produit par un autre — donc un vault vieux d une
    execution. Le chainage disparait : `corpus.py` lit une fois, les quatre
    composent.
@@ -74,7 +74,7 @@ def genere_tout(mo: Modele, racine: Path, mode: str = CHECK,
       - un hub transverse peut etre CREE. La page n existait pas quand le
         catalogue a compte les pages : il en annonce donc un de moins.
 
-    Le DevBrain avait le meme defaut, et sa procedure de cloture le contournait a
+    Le le vault d'origine avait le meme defaut, et sa procedure de cloture le contournait a
     la main : « lancer `build_index.py` puis `build_mocs.py` / `build_links.py` »
     — un ordre a retenir, qui ne repare que le premier des deux cas et jamais le
     second. Ici, une passe qui a ECRIT quelque chose invalide le corpus : on
@@ -152,7 +152,7 @@ def imprime(s: Sortie, mo: Modele, racine: Path, detail: int = 12) -> int:
     if s.refus:
         return 1
     if ecarts:
-        # Code 2, comme le `--check` du DevBrain : « il reste quelque chose a
+        # Code 2, comme le `--check` du vault d'origine : « il reste quelque chose a
         # regenerer » n est pas la meme chose qu une erreur d execution.
         return 2
     n = sum(1 for p in s.poses if p.etat != IDENTIQUE)

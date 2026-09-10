@@ -245,9 +245,9 @@ def sources_d_aiguillage(ctx: Contexte) -> tuple[list, str]:
     comportement qu elle avait — un durcissement silencieux sur un manifeste
     muet serait exactement ce que le lot 8 interdit.
 
-    Ce que le branchement a COUTE, mesure avant de le poser : sur DevBrain, 9
+    Ce que le branchement a COUTE, mesure avant de le poser : sur le vault d'origine, 9
     `.md` a la racine dont UN seul aiguille (`Home.md`) — et ZERO page perd son
-    atteignabilite quand les huit autres cessent de compter. Sur HistoBrain, 4
+    atteignabilite quand les huit autres cessent de compter. Sur BrainRef, 4
     fichiers a la racine, un seul aiguille, et les 13 constats sont les MEMES
     dans les deux perimetres. Le durcissement etait gratuit, et c est parce
     qu il l etait qu il est pose.

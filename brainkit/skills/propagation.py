@@ -29,7 +29,7 @@ montagne sans une retouche.
 | les hubs de ralliement | un role qui declare `hub_de_ralliement`                     |
 | les hubs transverses   | UNE ligne par entree de `axes.transverses`                  |
 
-La derniere est ecrite au pluriel a dessein : le DevBrain n a qu un axe
+La derniere est ecrite au pluriel a dessein : le vault d'origine n a qu un axe
 transverse et sa table n a qu une ligne ; BrainRef en a deux et en obtient
 deux, parce qu une page peut porter un theme sans porter d espace — et alors
 l une des deux lignes est SANS OBJET, ce qui doit se declarer separement.
@@ -138,7 +138,7 @@ def _champs_reciproques_du_role(mo: Modele, rid: str) -> list[tuple[str, dict]]:
 def paires_inverses(mo: Modele) -> list[tuple[str, str]]:
     """Les paires `mode: inverse`, DEDUPLIQUEES — (champ, son oppose).
 
-    Le mode inverse n existe pas dans le DevBrain : « A prolonge B » n implique
+    Le mode inverse n existe pas dans le vault d'origine : « A prolonge B » n implique
     pas « B prolonge A », il implique « B EST PROLONGE PAR A ». Une paire se
     declare des DEUX cotes, et `paire_inverse_bien_declaree` refuse le contraire.
     """
@@ -367,7 +367,7 @@ def _ligne_des_pairs(mo: Modele, rid: str) -> dict:
 # --------------------------------------------------------------------------- #
 #  LA TABLE DES EFFETS DE BORD — le mode mise a jour
 # --------------------------------------------------------------------------- #
-# Les quatre marqueurs, repris du DevBrain et REDEFINIS pour un brain neuf :
+# Les quatre marqueurs, repris du vault d'origine et REDEFINIS pour un brain neuf :
 #   [M] propagation MANUELLE obligatoire — rien ne la fera a votre place ;
 #   [G] corrige par une relance de `brainkit generer --ecrire` ;
 #   [D] DECLARE — une regle du validateur le controle. Sur un brain neuf, ces

@@ -1263,7 +1263,7 @@ def _propagation(m: dict, unite: dict, notion_id: str | None,
     obligatoire et ce composeur l ecrivait, pendant que le lot 7 la DERIVAIT
     depuis les roles et les axes. Deux sources de la meme information, et elles
     divergeaient deja en longueur : sept lignes declarees contre neuf derivees
-    pour HistoBrain, parce que la declaration repliait les deux axes transverses
+    pour BrainRef, parce que la declaration repliait les deux axes transverses
     en une ligne et enfouissait le hub de ralliement.
 
     C est exactement le constat E4 que le manifeste existe pour supprimer. La

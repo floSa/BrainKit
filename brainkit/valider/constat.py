@@ -17,7 +17,7 @@ Trois idees, et une seule est evidente.
    celles que le manifeste desactive, celles qu il ne declare pas et celles qui
    sont deleguees ailleurs. Sans cette liste, une regle verte et une regle morte
    se ressemblent — c est exactement ce que l absence de `completude_du_hub` a
-   coute au DevBrain : « une regle absente ne ressemble pas a une regle souple,
+   coute au vault d'origine : « une regle absente ne ressemble pas a une regle souple,
    elle ressemble a une regle satisfaite. »
 
 4. **Zero violation ne veut rien dire sans son denominateur.** AJOUTE AU LOT 8.

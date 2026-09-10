@@ -1,7 +1,7 @@
 """bandeau.py — le haut de page, DERIVE du frontmatter. Remplace `build_bandeau.py`.
 
 C est la brique la plus nettement separee de tout le kit, et le test a blanc du
-cadrage l a prouvee : le bandeau du DevBrain est
+cadrage l a prouvee : le bandeau du vault d'origine est
 `Nature | Licence | Execution | Maturite`, celui d un brain d histoire
 `Nature | Auteur et date | Langue | Fiabilite`. Quatre colonnes, chacune derivee
 d un champ, chacune avec sa table de rendu. **Le moteur ne change pas d une
@@ -14,7 +14,7 @@ distinctes et non une seule.
 une valeur plausible.** Une fiche vide honnetement vaut mieux qu une fiche
 remplie au juge. Le test porte sur les CELLULES et jamais sur la zone rendue :
 le tiret cadratin est aussi un signe de ponctuation courant, et douze resumes du
-DevBrain en portent un — chercher le caractere vide dans le TEXTE du bandeau
+le vault d'origine en portent un — chercher le caractere vide dans le TEXTE du bandeau
 signalait onze trous inexistants au premier essai.
 
 # La regle 9, portee ici et nulle part ailleurs
@@ -129,7 +129,7 @@ def rendu_de_colonne(colonne: dict, fm: dict, mo: Modele,
 def _valeur_dependante(colonne: dict, fm: dict, brut: str) -> str:
     """Le cas ou la valeur de la source ne suffit pas : deux autres champs la disent.
 
-    Dans le DevBrain, trois familles s hebergent et six non : pour les six, la
+    Dans le vault d'origine, trois familles s hebergent et six non : pour les six, la
     reponse est dans la famille elle-meme (la `table:`) ; pour les trois, elle
     est dans `hosted:` puis `scaling:`. C est exactement ce que la regle des
     champs conditionnels a acte en supprimant `hosted:` des 177 paquets qui le

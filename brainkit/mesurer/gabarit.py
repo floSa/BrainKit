@@ -18,13 +18,13 @@ manifeste BRANCHE les regles, il ne les decrit pas »). Une condition en francai
 reste en francais ; ce qui devient mesurable, c est le fait qu elle produise ou
 non une section sur les pages reelles.
 
-Le manifeste HistoBrain avait ecrit lui-meme ce qu il fallait faire :
+Le manifeste BrainRef avait ecrit lui-meme ce qu il fallait faire :
 
     le kit doit MESURER l usage de ce qu il genere — une section qui n existe sur
     aucune page au bout de N pages est une section a supprimer du gabarit, pas a
     laisser « au cas ou ».
 
-Et la mesure du DevBrain est la meilleure illustration qu on puisse en donner :
+Et la mesure du vault d'origine est la meilleure illustration qu on puisse en donner :
 `## Retours`, declaree conditionnelle avec `existe_si: "au moins une entree
 datee"`, est ABSENTE des 337 briques — 0/337 presente, 0/337 remplie. Zero
 entree en dix-huit mois, et pas meme un titre pose. La section conditionnelle

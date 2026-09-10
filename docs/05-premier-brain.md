@@ -143,8 +143,8 @@ qu'est la valeur de l'entretien. À employer pour **rejouer**, pas pour se
 dispenser de réfléchir.
 
 Deux fichiers de réponses complets servent d'exemples de forme :
-[`../tests/cimebrain.reponses.yml`](../tests/cimebrain.reponses.yml) (un brain
-de montagne) et [`../tests/blanc.reponses.yml`](../tests/blanc.reponses.yml) (un
+[`../tests/deuxieme.reponses.yml`](../tests/deuxieme.reponses.yml) (un brain
+de montagne) et [`../tests/troisieme.reponses.yml`](../tests/troisieme.reponses.yml) (un
 brain de droit du travail, né de l'installation à blanc qui a validé cette
 documentation). Chacun porte en tête le raisonnement de son sujet : c'est la
 **forme** à copier, pas le contenu.

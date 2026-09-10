@@ -7,7 +7,7 @@ premier journal de lot.
 
 # Ce que « genere » veut dire pour la taxonomie, et ce que ca supprime
 
-Dans le DevBrain, `taxonomie.md` est la source MACHINE : le validateur y lit les
+Dans le vault d'origine, `taxonomie.md` est la source MACHINE : le validateur y lit les
 vocabulaires fermes dans des blocs clotures. C est une bonne idee — un
 vocabulaire lisible par l humain ET par le script, en un seul endroit — mais elle
 place la source dans un document, donc a cote du manifeste.

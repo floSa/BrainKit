@@ -2,11 +2,11 @@
 
 # Pourquoi il est genere, et pas ecrit
 
-Propriete 1 du manifeste : *il est la seule source*. L `INSTALL.md` du DevBrain
+Propriete 1 du manifeste : *il est la seule source*. L `INSTALL.md` du vault d'origine
 nomme son coffre, son dossier de gabarits, sa table de couleurs, ses trois
 skills et son seuil de promotion — cinq valeurs qui vivent AUSSI dans
 `brain.yml`. Ecrit a la main, il prend du retard : c est le constat E4 de
-l inventaire, et il est mesure dans le DevBrain lui-meme (`Templates/` a pris
+l inventaire, et il est mesure dans le vault d'origine lui-meme (`Templates/` a pris
 trois lots de retard sur ses 337 pages).
 
 # Deux documents, et la coupure est celle du LECTEUR
@@ -396,8 +396,8 @@ def _entretien(mo: Modele | None) -> Section | None:
         "la repose. C'est la bonne façon de changer d'avis — écraser une "
         "réponse par une autre laisserait le brouillon en dire deux choses.", "",
         "> **À quoi ressemble un fichier de réponses.** Deux exemples complets "
-        "sont dans `tests/` : `cimebrain.reponses.yml` (un second vocabulaire, disjoint du premier) et "
-        "`blanc.reponses.yml` (un brain de droit du travail — c'est l'entretien "
+        "sont dans `tests/` : `deuxieme.reponses.yml` (un second vocabulaire, disjoint du premier) et "
+        "`troisieme.reponses.yml` (un brain de droit du travail — c'est l'entretien "
         "de l'installation à blanc qui a validé ce guide). Chacun porte, en "
         "tête, le raisonnement du sujet ; c'est la forme à copier, pas le "
         "contenu.", "",

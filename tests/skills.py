@@ -10,11 +10,11 @@
 Sept scenarios. Aucun n ecrit hors d un dossier temporaire, et aucun ne touche
 une instance d essai.
 
-  1. DERIVATION   — la table de propagation d BrainRef, ligne par ligne. Ce
+  1. DERIVATION   — la table de propagation du manifeste de reference, ligne par ligne. Ce
                     n est pas un compte : c est la composition qui est le
                     livrable, et chaque ligne est verifiee sur son GENRE, son
                     role vise et sa condition de « sans objet ».
-  2. GENERICITE   — la table de BrainDeux confrontee a celle du manifeste de reference. Deux
+  2. GENERICITE   — la table du second brain confrontee a celle de reference. Deux
                     manifestes sans un mot commun doivent donner deux tables
                     dont AUCUNE cellule ne coincide. Une table identique serait
                     la preuve qu elle est recopiee. Plus le controle des mots :
@@ -70,7 +70,8 @@ REFERENCE = RACINE_KIT / "gabarit" / "brain.yml"
 # manifeste, c est-a-dire le defaut que le manifeste existe pour supprimer.
 REPONSES_DEUX = RACINE_KIT / "tests" / "deuxieme.reponses.yml"
 
-# La table du manifeste de reference, attendue LIGNE PAR LIGNE : (genre, role visé, la ligne
+# La table du manifeste de reference, attendue LIGNE PAR LIGNE :
+# (genre, role vise, la ligne
 # a-t-elle toujours un objet ?, demande-t-elle un travail humain ?).
 TABLE_REFERENCE = [
     ("P1", P.G_HUB,         "hub",         True,  False),
@@ -156,7 +157,7 @@ def scenario_derivation(j: Journal, mo: Modele) -> list[P.Ligne]:
               all(li.origine and "`" in li.origine for li in lignes),
               " · ".join(f"{li.n}={li.origine!r}" for li in lignes
                          if not li.origine))
-    # La paire ORIENTEE, le mecanisme que le DevBrain n a jamais eu.
+    # La paire ORIENTEE, le mecanisme que le vault d'origine n a jamais eu.
     paires = P.paires_inverses(mo)
     j.verifie("la paire inverse `prolonge` / `prolonge_par` est vue UNE fois",
               paires == [("prolonge", "prolonge_par")], str(paires))

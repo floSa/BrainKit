@@ -9,7 +9,7 @@ identifiants de regle fermes par le kit).
 # L homonymie « domaine » — trois choses, trois noms distincts
 
 C est la remontee 7 du lot 1 et la remontee 5 du lot 2, tranchees ici. Dans le
-DevBrain, trois choses s ecrivent « domaine », et un validateur qui les
+le vault d'origine, trois choses s ecrivent « domaine », et un validateur qui les
 confondrait rangerait une prescription par un champ libre :
 
 | Ce que c est                              | Ou ca vit                        | Nom dans ce moteur      |

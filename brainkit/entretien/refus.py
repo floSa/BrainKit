@@ -43,7 +43,7 @@ PROVENANCE_VALIDE = "utilisateur"
 PROVENANCES_INTERDITES = ("harnais", "environnement", "git-global", "devine",
                           "kit", "exemple")
 
-#: Les mots que le kit ne connait QUE parce qu il a lu le DevBrain. Ils ne
+#: Les mots que le kit ne connait QUE parce qu il a lu le vault d'origine. Ils ne
 #: sortent jamais de la bouche de l entretien. Un utilisateur qui les emploie
 #: de lui-meme les impose en marquant sa reponse `assume: true` — la sortie de
 #: secours est ecrite, elle laisse une trace, et elle est a lui.
@@ -137,7 +137,7 @@ def _c2_unite(reponses: dict, manifeste: dict | None = None) -> list[str]:
     for mot in (str(val["s"]), str(val["p"])):
         if mot.strip().lower() in LEXIQUE_DU_DEV:
             r.append(f"« {mot} » appartient au lexique que le kit ne connaît que "
-                     f"pour avoir lu le DevBrain. Si c'est bien le mot de "
+                     f"pour avoir lu le vault d'origine. Si c'est bien le mot de "
                      f"l'utilisateur, marquer la réponse `assume: true` — la "
                      f"sortie de secours laisse une trace, et elle est à lui.")
     return r

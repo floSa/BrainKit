@@ -1,8 +1,8 @@
 """hooks.py — les trois garde-fous git de l instance, parametres par `git:`.
 
-# Ce qui change par rapport aux hooks du DevBrain, et pourquoi
+# Ce qui change par rapport aux hooks du vault d'origine, et pourquoi
 
-Les hooks du DevBrain codent `DOMAINE_INTERDIT="aosis.net"` en dur. M2 de
+Les hooks du vault d'origine codent `DOMAINE_INTERDIT="aosis.net"` en dur. M2 de
 l inventaire l a classe PARAMETRABLE pour une raison qui n est pas cosmetique :
 **la polarite peut s inverser**. Un brain de domaine client, vendu chez un
 employeur, est un depot PRO — et c est alors l adresse PERSO qu il faut refuser.
@@ -32,7 +32,7 @@ globale, variables d environnement, et l override `git -c user.email=…`. Lire
 
 `pre-commit` ne peut PAS lire le message : git le lance AVANT de composer
 `COMMIT_EDITMSG`, qui porte alors encore celui du commit precedent. C est ce
-trou qui a laisse passer cinq commits dans le DevBrain. Le controle du trailer
+trou qui a laisse passer cinq commits dans le vault d'origine. Le controle du trailer
 vit donc dans `commit-msg`, et `pre-commit` verifie que `commit-msg` est
 INSTALLE — une installation partielle ne doit pas pouvoir faire disparaitre un
 controle en silence.

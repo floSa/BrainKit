@@ -35,7 +35,7 @@ def _sans_accent(s: str) -> str:
 def reciprocite(ctx: Contexte, r: Rapport) -> None:
     """Si A cite B dans un champ a reciprocite, B cite A — ou son INVERSE declare.
 
-    Deux modes, et le second n existe pas dans le DevBrain :
+    Deux modes, et le second n existe pas dans le vault d'origine :
 
       `symetrique` — A.X contient B  <=>  B.X contient A ;
       `inverse`    — A.X contient B  <=>  B.Y contient A, ou Y est le champ

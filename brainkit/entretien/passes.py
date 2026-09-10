@@ -20,7 +20,7 @@ elle est ecrite au cadrage §3.1.
 
 Le cadrage en compte quarante-cinq. Il en manque quatre, et le manque n est pas
 theorique : sans elles, l entretien ne saurait produire NI le manifeste
-DevBrain, NI le manifeste HistoBrain, qui sont les deux remplissages de
+le vault d'origine, NI le manifeste BrainRef, qui sont les deux remplissages de
 reference du kit.
 
 | id | ce qu elle produit | pourquoi elle manquait |
@@ -218,7 +218,7 @@ PASSES: tuple[Passe, ...] = (
             Question("4.3", "Comment appelles-tu le dossier qui les rassemble ?",
                      "axes.transverses[].dossier", condition="4.1 ≥ un axe",
                      note="Vérifier qu'il ne redouble aucun nom de l'arbre — le "
-                          "DevBrain a nommé `Métiers/` et non `Domaines/` pour "
+                          "le vault d'origine a nommé `Métiers/` et non `Domaines/` pour "
                           "cette raison exacte."),
         )),
     # ---------------------------------------------------------------- 5 ---- #
@@ -249,7 +249,7 @@ PASSES: tuple[Passe, ...] = (
         (
             Question("6.1", "Sur une page d'unité, que veux-tu lire, DANS "
                             "L'ORDRE ?", "roles[].corps[]",
-                     note="Ne pas proposer les titres du DevBrain."),
+                     note="Ne pas proposer les titres du vault d'origine."),
             Question("6.2", "Laquelle de ces sections est une PROSE ?",
                      "corps[].genre: prose",
                      note="Une seule, en principe. Si l'utilisateur en veut "
@@ -275,7 +275,7 @@ PASSES: tuple[Passe, ...] = (
     Passe(
         7, "Les liens et le résumé",
         "La passe qui a coûté une ligne de code au kit : la réciprocité INVERSE, "
-        "que le DevBrain n'a jamais eue.",
+        "que le vault d'origine n'a jamais eue.",
         (
             Question("7.1", "Deux pages peuvent-elles être en OPPOSITION ? En "
                             "COMPLÉMENT ? Autrement ?", "champs[type: liens]"),
@@ -330,7 +330,7 @@ PASSES: tuple[Passe, ...] = (
             Question("9.3", "Y a-t-il un second mode — travailler DEPUIS ce "
                             "brain, dans un autre dépôt ?",
                      "frontieres_d_ecriture.second_mode",
-                     note="« Non » est légal : le DevBrain en a un parce que son "
+                     note="« Non » est légal : le vault d'origine en a un parce que son "
                           "consommateur est un dépôt de code."),
             Question("9.4", "Quels chemins ne doivent JAMAIS être édités à la "
                             "main ?", "genere.chemins[]",
@@ -353,7 +353,7 @@ PASSES: tuple[Passe, ...] = (
                              "renvoyée à ce lot. Posée UNE fois, avec son coût "
                              "annoncé, et le défaut est ZÉRO dossier.",
                      note="Dire la mesure avant la réponse : le `Projects/` du "
-                          "DevBrain porte ZÉRO page en dix-huit mois. Un dossier "
+                          "le vault d'origine porte ZÉRO page en dix-huit mois. Un dossier "
                           "vide qu'on n'a pas demandé reste vide."),
         )),
     # --------------------------------------------------------------- 10 ---- #

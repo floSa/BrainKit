@@ -22,7 +22,7 @@ Rien d autre :
   - CE N EST PAS le validateur de manifeste. `schema/valider.py` (lot 1) verifie
     qu un `brain.yml` est bien forme ; ici on verifie qu il est VRAI.
 
-Tout est pilote par le manifeste : aucune valeur de DevBrain n est ecrite dans ce
+Tout est pilote par le manifeste : aucune valeur du vault d'origine n est ecrite dans ce
 fichier. Le seuil de promotion, les 20 prefixes, les 109 valeurs d axe, les 38
 sections de corps, les 4 colonnes du bandeau sont LUS. Un test qui recopierait le
 vault ne testerait rien.
@@ -208,7 +208,7 @@ VERDICTS: dict[str, tuple[str, str]] = {
                                "alors que le vault en a trois — arbre, ralliement, "
                                "transverse. Motif ajoute, forme a trancher au lot 4"),
     "F7/brique.hosted": (M, "`si:` etait ecrit comme une OBLIGATION (« quand l exiger ») "
-                            "et DevBrain n en fait qu une PERMISSION — 21 briques des "
+                            "et le vault d'origine n en fait qu une PERMISSION — 21 briques des "
                             "trois familles ne portent pas le champ, et les 21 portent "
                             "`os:` a la place. Spec corrigee au lot 2"),
     "F7/brique.scaling": (M, "meme cas que `hosted:`, memes 21 pages — la condition "
@@ -350,7 +350,7 @@ class Modele:
 
     Aucune valeur en dur : tout vient du fichier. Les seules constantes de ce
     module sont des conventions de FORMAT (un `##` est un titre de niveau 2), pas
-    des valeurs de DevBrain.
+    des valeurs du vault d'origine.
     """
 
     def __init__(self, m: dict):
@@ -414,7 +414,7 @@ class Modele:
     def etiquettes_de_groupe(self) -> set[str]:
         """Les libelles qu une zone AUTO groupee peut porter en sous-titre.
 
-        Un `hub_de_ralliement` declare `groupe_par:` — dans DevBrain « premier
+        Un `hub_de_ralliement` declare `groupe_par:` — dans le vault d'origine « premier
         segment du chemin (le domaine, jamais le sous-domaine) ». La REGLE de
         groupement est de la prose que l outil ne lit pas ; l ENSEMBLE des
         etiquettes possibles, lui, se derive : ce sont les dossiers de prefixe de

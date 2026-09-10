@@ -1,6 +1,6 @@
 """corpus.py — ce que les quatre generateurs lisent, calcule UNE fois.
 
-Le DevBrain balayait son vault QUATRE fois : `build_index.py`, `build_mocs.py`
+Le le vault d'origine balayait son vault QUATRE fois : `build_index.py`, `build_mocs.py`
 (qui relisait en plus le JSON produit par le premier), `build_links.py` et
 `build_bandeau.py` avaient chacun leur `NON_PAGES`, leur `parse_frontmatter()`
 et leur boucle `rglob`. Quatre copies de la meme chose, dont trois pouvaient
@@ -17,7 +17,7 @@ avant les hubs.
 Aucun champ n est reconnu par son NOM. `champ_identite`, `champ_resume`,
 `champ_alias`, `champ_tags`, `champ_role` sont resolus par leur `fonction:` ou
 leur `source:`, exactement comme dans le validateur — c est ce qui rend
-inoffensive l homonymie « domaine » du DevBrain.
+inoffensive l homonymie « domaine » du vault d'origine.
 """
 
 from __future__ import annotations
@@ -148,7 +148,7 @@ class Corpus:
         """Le wikilink NU vers une entree — jamais qualifie par un chemin.
 
         Un lien qualifie porte le chemin, donc casse au premier `git mv` : le
-        lot 3 du DevBrain a deplace 682 fichiers sans toucher un lien. Le pipe
+        lot 3 du vault d'origine a deplace 682 fichiers sans toucher un lien. Le pipe
         ne sert qu a changer le texte affiche, quand le nom de la page differe
         de son nom de fichier.
         """
@@ -163,7 +163,7 @@ class Corpus:
                     vide: str = "") -> str:
         """Ce qui suit le lien d une puce : le resume, sinon ce qui reste.
 
-        Deux formes, et la difference est mesuree sur le DevBrain : le hub d un
+        Deux formes, et la difference est mesuree sur le vault d'origine : le hub d un
         dossier retombe sur les seuls axes transverses et n affiche RIEN quand il
         n y en a pas ; l index humain retombe en plus sur les alias, et affiche
         un tiret quand il ne reste rien. Les deux sont conservees telles quelles.

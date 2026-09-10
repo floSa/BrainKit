@@ -7,7 +7,7 @@ l est : le seul contenu a parametrer est le nom des commandes et l identite git.
 
 # Ce fichier est LA politique git d un brain, et le seul
 
-Le DevBrain a paye cette regle : trois formulations de sa politique git
+Le le vault d'origine a paye cette regle : trois formulations de sa politique git
 coexistaient, dont deux se contredisaient. Le decoupage retenu est le suivant, et
 il vaut pour toute instance :
 
@@ -29,7 +29,7 @@ porte.
 
 La partie MECANISABLE d une procedure ne doit pas etre noyee dans la partie qui
 demande du jugement. Elle etait dupliquee trois fois dans le skill de capture du
-DevBrain — une fois par mode — et les trois copies avaient commence a diverger.
+le vault d'origine — une fois par mode — et les trois copies avaient commence a diverger.
 """
 
 from __future__ import annotations

@@ -9,7 +9,7 @@ sept avertissements permanents a chaque execution finit ignore »*.
 # `A1` et `A3` — arbitrage 3 du lot 3, execute ici
 
 Le lot 3 a tranche qu elles ne sont pas des regles : elles n ont jamais ete dans
-les validateurs du DevBrain, les ajouter aurait casse son critere d acceptation
+les validateurs du vault d'origine, les ajouter aurait casse son critere d acceptation
 (118 avertissements au lieu de 111), et surtout `A3` signale un etat **voulu** —
 le manifeste garde le libelle d une valeur plafonnee pour que la promotion
 reprenne d elle-meme le jour ou le domaine gagne une seconde population. Une

@@ -2,11 +2,11 @@
 
 # Le constat N3 de l inventaire, applique
 
-L `INSTALL.md` du DevBrain porte 28 captures. L inventaire de separation les a
+L `INSTALL.md` du vault d'origine porte 28 captures. L inventaire de separation les a
 comptees en deux tas, et la coupure n est pas esthetique :
 
   - **17 montrent l interface d Obsidian** — panneaux de reglages, navigateur de
-    plugins, options de plugin. Elles ne montrent rien du DevBrain, donc elles
+    plugins, options de plugin. Elles ne montrent rien du vault d'origine, donc elles
     valent pour n importe quelle instance : ce sont des captures DU KIT (N2).
     Le kit en declare **16** : celle de l extrait CSS est tombee, parce
     qu aucun mecanisme du kit ne produit d extrait CSS — demander la capture
@@ -112,7 +112,7 @@ CAPTURES: tuple[Capture, ...] = (
             "le panneau du graphe, section Groupes, une requête et sa couleur "
             "en cours de saisie", KIT),
     # Pas de capture d extrait CSS, et c est un retrait du lot 10 : le
-    # DevBrain en a un (`.obsidian/snippets/roles.css`, ecrit a la main), mais
+    # le vault d'origine en a un (`.obsidian/snippets/roles.css`, ecrit a la main), mais
     # AUCUN mecanisme du kit ne produit un extrait CSS. Demander la capture
     # d une chose que le kit ne cree pas serait exactement le bruit que ce
     # manifeste existe pour eviter.

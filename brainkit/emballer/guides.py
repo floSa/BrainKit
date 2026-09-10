@@ -6,7 +6,7 @@
 
 Le decoupage est celui des trois skills, et pour la meme raison : il est
 STRUCTUREL, pas thematique. Un lecteur, un auteur, un consommateur — tout brain
-a ces trois-la, quel que soit son sujet. Les guides du DevBrain ont servi de
+a ces trois-la, quel que soit son sujet. Les guides du vault d'origine ont servi de
 reference de ce qui marche ; ce qu ils portaient de dev est ici remplace par ce
 que le manifeste declare.
 

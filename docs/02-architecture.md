@@ -165,7 +165,7 @@ C'est une frontière de dépôt, et elle est la raison de la forme de ce dossier
 La seconde ne se relit pas et ne se corrige pas sur place : on corrige le
 **générateur**, ou le manifeste. Un exemple complet, rendu une fois depuis le
 manifeste de démonstration, est lisible dans
-[`../exemples/rendu-histobrain/`](../exemples/rendu-histobrain) — un brain
+[`../exemples/rendu-reference/`](../exemples/rendu-reference) — un brain
 d'histoire, choisi parce que c'est le sujet le plus éloigné de celui dont le kit
 a été extrait.
 
@@ -223,7 +223,7 @@ amputation du modèle — seulement de son lecteur.
 brainkit/          le kit — 8 paquets, 76 modules
 schema/            le contrat de brain.yml (JSON Schema) et son validateur
 exemples/          trois manifestes complets, dont un CONTRE-EXEMPLE qui doit echouer
-  rendu-histobrain/  les documents d une instance, GENERES, rendus une fois en exemple
+  rendu-reference/  les documents d une instance, GENERES, rendus une fois en exemple
 tests/             les dix jeux d epreuve, tous lancables par uv run
 outils/            les outils de developpement du kit (fidelite, emballage, captures)
 skills/            le skill d entretien, charge dans l agent depuis ce depot

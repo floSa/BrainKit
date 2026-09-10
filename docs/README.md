@@ -13,7 +13,7 @@ C'est la première chose à savoir en arrivant, parce que le dépôt contient
 
 Un exemple complet de la seconde, rendu une fois depuis le manifeste de
 démonstration, est lisible dans
-[`../exemples/rendu-histobrain/`](../exemples/rendu-histobrain).
+[`../exemples/rendu-reference/`](../exemples/rendu-reference).
 
 ---
 

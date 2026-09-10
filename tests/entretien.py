@@ -228,7 +228,7 @@ def scenario_induction(j: Journal) -> None:
               and titres[0] in "\n".join(d.a_dire for d in orphelin.diagnostics))
 
     # le seuil se DERIVE, et il retombe sur les deux points de calibration.
-    j.verifie("le seuil dérivé retrouve DevBrain (700 pages / 20 paquets -> 5)",
+    j.verifie("le seuil dérivé retrouve le vault d'origine (700 pages / 20 paquets -> 5)",
               induction.derive_le_seuil(700, 20)[0] == 5,
               str(induction.derive_le_seuil(700, 20)[0]))
     j.verifie("… et BrainRef (3000 / 8 -> 12)",
@@ -429,7 +429,7 @@ def scenario_invariants(j: Journal, dossier: Path) -> None:
               not m["axes"]["rangement"]["rattachements"])
 
     # Aucun mot d un autre brain. Le controle porte sur le VOCABULAIRE VISIBLE,
-    # pas sur les `motif:` — un motif a le droit de citer le DevBrain pour
+    # pas sur les `motif:` — un motif a le droit de citer le vault d'origine pour
     # expliquer d ou vient un mecanisme, c est meme sa fonction.
     vocabulaire = {k: v for k, v in m["libelles"].items()
                    if not k.startswith(("motif", "note"))}
@@ -437,7 +437,7 @@ def scenario_invariants(j: Journal, dossier: Path) -> None:
         yaml.safe_dump([{"id": r["id"], "libelle": r["libelle"]}
                         for r in m["roles"]], allow_unicode=True)
     intrus = [mot for mot in refus.LEXIQUE_DU_DEV if mot in visibles.lower()]
-    j.verifie("aucun mot du DevBrain dans le vocabulaire visible", not intrus,
+    j.verifie("aucun mot du vault d'origine dans le vocabulaire visible", not intrus,
               str(intrus))
 
     # Une severite deduite est refusee, meme si elle « parait evidente ».

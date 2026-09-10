@@ -10,7 +10,7 @@
 Sept scenarios. Aucun n ecrit hors d un dossier temporaire, et le scenario 4 lit
 un vault REEL sans l ouvrir en ecriture.
 
-  1. VIERGE      — HistoBrain seme dans un dossier temporaire. C est le critere
+  1. VIERGE      — BrainRef seme dans un dossier temporaire. C est le critere
                    d acceptation du lot, verifie et non affirme : un hub par
                    dossier et AUCUNE autre page, les deux validateurs a zero
                    violation ET a zero avertissement, les generateurs silencieux

@@ -56,7 +56,7 @@ raison de ne pas vouloir recommencer.
 
 Les réponses complexes (un rangement en paquets, un arbre de décision, un
 corps de page) s'écrivent dans un fichier YAML que tu passes à `--reponses` —
-`tests/cimebrain.reponses.yml` en est un exemplaire complet, à lire avant de
+`tests/deuxieme.reponses.yml` en est un exemplaire complet, à lire avant de
 commencer pour connaître la forme attendue de chaque réponse.
 
 ---

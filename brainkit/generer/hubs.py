@@ -3,13 +3,13 @@ Remplace `build_mocs.py`.
 
 # L arbitrage du lot : TROIS formes de zone AUTO, et AUCUN gabarit de plus
 
-Le lot 2 a mesure trois formes dans les 74 hubs du DevBrain et laisse la question
+Le lot 2 a mesure trois formes dans les 74 hubs du vault d'origine et laisse la question
 ouverte : « un role porte-t-il plusieurs gabarits de zone AUTO, ou la forme se
 derive-t-elle du perimetre ? »
 
 **Elle se derive du perimetre, et le perimetre se lit sur le DOSSIER du hub.**
 
-| forme       | perimetre | comment le generateur la reconnait                        | DevBrain |
+| forme       | perimetre | comment le generateur la reconnait                        | le vault d'origine |
 |---|---|---|---|
 | arbre       | `dossier` | le cas general                                            | 67 |
 | transverse  | `champ`   | le dossier de tete est un `axes.transverses[].dossier`    | 6  |
@@ -41,7 +41,7 @@ vault.
 
 `MOC_CONCEPT`, `CONCEPT_LABEL`, `WIKI_LABEL`, `wiki_group()`, le parametre
 `scope` d `upsert()` et sa branche `indexe:` — l etage `MOC/Concepts/` du
-DevBrain, mort avec le dossier `Wiki/` au lot 4 de sa migration. Plus la
+le vault d'origine, mort avec le dossier `Wiki/` au lot 4 de sa migration. Plus la
 detection de fin de ligne `nl = "\\r\\n" if ... else "\\n"`, qui ne pouvait jamais
 rendre `\\r\\n` : le texte compare est lu en fins de ligne universelles (cf.
 `sortie.py`).
@@ -176,7 +176,7 @@ def _vues_du_dossier(mo: Modele, absolu: Path) -> list[str]:
 
     ANOMALIE REPRODUITE, non corrigee. Cette sous-section lit une EXTENSION de
     fichier la ou toutes les autres lisent un `role:` — la page `fonction: vue`
-    existe a cote de son fichier de vue depuis le lot 5 du DevBrain, et c est
+    existe a cote de son fichier de vue depuis le lot 5 du vault d'origine, et c est
     elle qui devrait etre listee. Le lot 2 a mesure que la bijection tient
     aujourd hui (47 pages, 47 fichiers, ses controles C8 et A17 a zero), donc la
     difference ne s observe pas ; le premier des deux qui manquera la reveillera.
@@ -231,7 +231,7 @@ def hubs_transverses(corpus: _corpus.Corpus, prose: Prose,
                      axe: dict) -> list[tuple[str, str, str, list[str]]]:
     """(chemin, titre, intro, puces) par valeur PORTEE de l axe — la boucle de la rupture 4.
 
-    Le DevBrain n a qu un axe transverse et `build_mocs.py` le codait en dur :
+    Le le vault d'origine n a qu un axe transverse et `build_mocs.py` le codait en dur :
     une constante de dossier, une table de libelles, une boucle. Un brain
     d histoire en veut deux (`Themes/` et `Espaces/`), un brain de domaine client
     sans doute trois. La boucle est ici, l appelant itere sur
@@ -329,7 +329,7 @@ def _hub_neuf(corpus: _corpus.Corpus, titre: str, intro: str, bloc: str) -> str:
 
     Les champs sont ceux que le manifeste EXIGE du role hub, et rien de plus : un
     champ hors du gabarit ferait refuser la page par le validateur, ce qui est
-    arrive au DevBrain avec un `indexe:` survivant d une v2.
+    arrive au vault d'origine avec un `indexe:` survivant d une v2.
     """
     mo = corpus.mo
     rid = mo.role_hub or "hub"

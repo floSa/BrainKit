@@ -11,7 +11,7 @@ Propriete 1 du manifeste : *il est la seule source*. Ces quatre documents
 nomment le dossier des gabarits, la table de couleurs, les trois skills, le
 seuil de promotion, les titres de section et les champs indexes — une vingtaine
 de valeurs qui vivent AUSSI dans `brain.yml`. Ecrits a la main, ils prennent du
-retard : c est le constat E4, et il est mesure dans le DevBrain, dont
+retard : c est le constat E4, et il est mesure dans le vault d'origine, dont
 `Templates/` a pris trois lots de retard sur ses 337 pages.
 
 # La frontiere avec `brainkit.skills`

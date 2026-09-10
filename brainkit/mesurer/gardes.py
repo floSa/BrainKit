@@ -2,7 +2,7 @@
 
 Ils ne sont pas des options de la mesure : ils sont ce qui distingue une mesure
 d une superstition. Le risque que §5.6 nomme est precis — *« la tentation sera
-forte de livrer les sept regles dures du DevBrain puisqu elles marchent »* — et
+forte de livrer les sept regles dures du vault d'origine puisqu elles marchent »* — et
 la reponse tient en une phrase : **une severite est un resultat de mesure sur un
 corpus, pas une propriete de regle.** Elle ne se porte donc pas d un brain a
 l autre, et un brain neuf nait en `a_mesurer`.
@@ -13,7 +13,7 @@ l autre, et un brain neuf nait en `a_mesurer`.
 
 Trente est ecrit dans le cadrage, et le chiffre importe moins que ce qu il
 protege : sous le plancher, zero violation ne dit pas « la regle est
-respectee », il dit « la regle n a rien vu ». HistoBrain, avec dix pages de son
+respectee », il dit « la regle n a rien vu ». BrainRef, avec dix pages de son
 unite, est le controle negatif de ce lot — et il est aussi important que le
 positif : un outil qui durcirait un brain de dix pages transformerait chaque
 regle en superstition.
@@ -26,14 +26,14 @@ Le plancher se lit DEUX fois, et la seconde est un arbitrage de ce lot :
   - **plancher de regle** — la regle a-t-elle REELLEMENT mesure 30 pages ? Le
     cadrage exprime son plancher en « pages de l unite » parce que c est la
     population de la plupart des regles ; une regle dont la population reelle
-    est plus petite n est pas couverte par ce raisonnement. Sur DevBrain, qui
+    est plus petite n est pas couverte par ce raisonnement. Sur le vault d'origine, qui
     passe largement le plancher d instance, cette seconde lecture ne change
     RIEN — c est ce qui rend l ajout sans risque : il ne se paie pas.
 
 Une regle dont le denominateur n est pas un volume de corpus — verifiable sur le
 MANIFESTE, sans lire une page — echappe au plancher, et c est le seul cas.
 `paire_inverse_bien_declaree` est de celles-la : elle est dure d emblee dans
-HistoBrain, et ce n est pas une entorse, c est un trou qu on refuse d ouvrir.
+BrainRef, et ce n est pas une entorse, c est un trou qu on refuse d ouvrir.
 
 # Garde-fou 2 — le motif obligatoire
 
@@ -58,7 +58,7 @@ n a ecrit la raison est exactement la severite heritee que §5.6 interdit.
 La liste est FERMEE PAR LE KIT, comme celle des dix. Elle ne se lit pas dans le
 manifeste, et c est le point : un garde-fou qu une instance peut desactiver en
 ecrivant `structurellement_dure: false` n est pas un garde-fou. Le manifeste
-d HistoBrain ecrit precisement cela — il porte la recommandation de §5.6 sans
+du manifeste de reference ecrit precisement cela — il porte la recommandation de §5.6 sans
 l appliquer, parce que le point n etait pas tranche quand il a ete ecrit. Il
 l est ici, dans le sens que §5.6 recommandait, et `mesurer` SIGNALE la
 contradiction au lieu de la resoudre en silence.

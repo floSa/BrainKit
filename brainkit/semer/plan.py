@@ -18,13 +18,13 @@ la seule protection qui ne depende pas de l attention de l appelant.
 |---|---|
 | la cible existe et n est pas vide | ecraser un vault qu on croyait absent |
 | la cible vit sous le depot du kit | versionner une instance d essai dans BrainKit |
-| la cible vit sous un depot git     | semer DANS DevBrain, ou dans n importe quel dépôt |
+| la cible vit sous un depot git     | semer DANS le vault d'origine, ou dans n importe quel dépôt |
 | la cible vit sous un vault         | semer un brain a l interieur d un autre |
 
-Les deux derniers sont volontairement formules SANS nommer DevBrain. Un garde-fou
+Les deux derniers sont volontairement formules SANS nommer le vault d'origine. Un garde-fou
 qui interdit un chemin par son nom protege un chemin ; un garde-fou qui interdit
 une SITUATION protege tous les chemins qui s y trouveront un jour. « Sous un
-depot git » couvre DevBrain, BrainKit, et le depot d un client qu on n a pas
+depot git » couvre le vault d'origine, BrainKit, et le depot d un client qu on n a pas
 encore rencontre.
 
 # Le defaut n ecrit rien
@@ -163,7 +163,7 @@ class Plan:
         cible.parent.mkdir(parents=True, exist_ok=True)
         # Fins de ligne LF, toujours, et sans exception : un hook `.githooks/*`
         # dont le shebang porte un CR n est pas executable par git, et les quatre
-        # premieres conversations du DevBrain s y sont fait prendre. Ecrire tout
+        # premieres conversations du vault d'origine s y sont fait prendre. Ecrire tout
         # le vault en LF evite d avoir a se demander, fichier par fichier, si
         # celui-la fait partie des exceptions.
         with cible.open("w", encoding="utf-8", newline="\n") as f:

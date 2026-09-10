@@ -2,7 +2,7 @@
 
 # Pourquoi cette operation existe (rupture 5 du test a blanc)
 
-`SEUIL = 5` du DevBrain est calibre sur ~700 pages en 20 domaines, soit ~35 par
+`SEUIL = 5` du vault d'origine est calibre sur ~700 pages en 20 domaines, soit ~35 par
 domaine. Sur 3 000 pages en 8 periodes — ~375 par periode — le meme seuil
 produirait quarante sous-dossiers par periode, ce qui n est plus un arbre mais
 une liste. A l inverse, un brain client de 40 pages en 6 paquets ne promouvrait
@@ -10,7 +10,7 @@ jamais rien.
 
 Le seuil se derive donc du volume cible, et le calcul s ecrit dans `motif_seuil`.
 Mais un brain qui grandit plus que prevu devra le CHANGER, et **changer le seuil
-reforme l arbre** : des pages changent de dossier. Le DevBrain s en est passe
+reforme l arbre** : des pages changent de dossier. Le le vault d'origine s en est passe
 parce qu il a fixe son seuil une fois, avec 700 pages deja ecrites sous les yeux.
 
 # Trois regles, et aucune n est negociable

@@ -13,7 +13,7 @@ Une cible est resolue si elle nomme une page indexee (par son nom ou par son nom
 de fichier) OU un fichier resolvable du vault. La seconde branche existe pour une
 raison mesuree : la syntaxe d embed d une vue porte une EXTENSION
 (`![[X.base]]`), seule syntaxe qui vise un fichier non-Markdown, et sans elle les
-47 vues du DevBrain comptaient comme autant de liens morts — alors que la cloture
+47 vues du vault d'origine comptaient comme autant de liens morts — alors que la cloture
 du vault exige zero.
 
 Le balayage des cibles resolvables porte sur TOUT le vault, gouvernance et
@@ -24,7 +24,7 @@ meme si le document n est pas une page indexee.
 
 Le jeu `V1` de treize champs herites et le filtre `active()` qui s en servait
 pour ecarter un « reservoir » vivant sous un dossier `Wiki/` supprime au lot 4
-de la migration du DevBrain — meme dette que dans l index, meme raison de ne pas
+de la migration du vault d'origine — meme dette que dans l index, meme raison de ne pas
 la porter (§5.10).
 """
 

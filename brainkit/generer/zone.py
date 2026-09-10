@@ -8,14 +8,14 @@ sait de quoi il parle.
 
 C est le decoupage que l inventaire du cadrage a mesure — I4 « le moteur »
 GENERIQUE contre I5 « le contenu » A REECRIRE — et le test a blanc l a
-confirme : le bandeau du DevBrain (`Nature | Licence | Execution | Maturite`) et
+confirme : le bandeau du vault d'origine (`Nature | Licence | Execution | Maturite`) et
 celui d un brain d histoire (`Nature | Auteur et date | Langue | Fiabilite`)
 n ont pas une valeur en commun, et le moteur ne change pas d une ligne.
 
 # Les balises sont declarees, jamais supposees
 
 `bandeau.balises` et `roles[].corps[<AUTO>].balises` les portent. Deux zones AUTO
-homonymes dans le meme vault finiraient par se marcher dessus : le DevBrain a
+homonymes dans le meme vault finiraient par se marcher dessus : le vault d'origine a
 `<!-- AUTO:START -->` dans ses 74 hubs et `<!-- AUTO:BANDEAU:START -->` dans ses
 337 fiches, et c est deliberement deux jeux distincts.
 
@@ -23,7 +23,7 @@ homonymes dans le meme vault finiraient par se marcher dessus : le DevBrain a
 
   - `remplace()` — la zone existe : remplacement en bloc, le reste de la page
     intact. C est ce qui preserve la zone MANUELLE d un hub (`## Notes`, 13 hubs
-    du DevBrain la portent).
+    du vault d'origine la portent).
   - `applique()` — la zone n existe pas : elle s insere juste sous le titre de
     niveau 1. Une page SANS titre est laissee telle quelle et SIGNALEE. Aucun
     troisieme cas n est devine : la place d une zone dans une page qui n a pas
@@ -31,7 +31,7 @@ homonymes dans le meme vault finiraient par se marcher dessus : le DevBrain a
 
 # Le nombre de remplacements n est pas le meme partout, et c est mesure
 
-Le generateur de hubs du DevBrain remplace TOUTES les occurrences de la zone
+Le generateur de hubs du vault d'origine remplace TOUTES les occurrences de la zone
 (`AUTO_RE.sub` sans `count`), celui du bandeau la PREMIERE seulement
 (`count=1`). Aucune page du vault n en porte deux, donc la difference ne se voit
 pas — mais elle est reproduite telle quelle, parce que le critere du lot est le

@@ -172,7 +172,7 @@ def _transverses(mo: Modele) -> list[str]:
                      f"(`{dossiers[dossier]}` et `{champ}`)")
         dossiers[dossier] = str(champ)
     # La contrainte de nommage de la rupture 4, rendue mecanique : aucun dossier
-    # d axe transverse ne peut porter le nom d un dossier de l arbre. Le DevBrain
+    # d axe transverse ne peut porter le nom d un dossier de l arbre. Le le vault d'origine
     # a nomme `Métiers/` plutot que `Domaines/` pour cette raison exacte.
     arbre = set(mo.dossier_de_prefixe.values())
     for dossier, champ in sorted(dossiers.items()):

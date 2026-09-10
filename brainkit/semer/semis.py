@@ -36,7 +36,7 @@ valeur ». Le lot 4 a mesure et ecrit le contraire, et c est lui qui a raison :
 *« une valeur declaree que personne ne porte ne produit AUCUN hub : le vault
 n aurait rien a y montrer, et une page vide dans un graphe est un nœud de plus
 qui ne rassemble rien »* (`generer/hubs.py`, `hubs_transverses`). Semer les
-quatorze hubs de HistoBrain reviendrait a poser quatorze pages qu aucun
+quatorze hubs de BrainRef reviendrait a poser quatorze pages qu aucun
 generateur ne regenererait, qu il faudrait citer depuis la porte d entree pour
 qu elles soient atteignables, et qui n auraient rien a montrer.
 

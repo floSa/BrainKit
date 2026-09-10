@@ -7,7 +7,7 @@ le vault et son validateur divergent en silence.
 
 # L axe non exclusif — la rupture 3, portee ici
 
-Le DevBrain n a jamais le cas : une brique a exactement un domaine, toujours.
+Le le vault d'origine n a jamais le cas : une brique a exactement un domaine, toujours.
 Un brain d histoire l a des la vingtieme page — « Histoire de la France des
 origines a nos jours » ne tombe dans aucune periode unique. Trois mecanismes
 declares par le manifeste, et ce module les porte tous les trois :

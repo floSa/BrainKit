@@ -58,7 +58,7 @@ def _est_une_place(titre: str) -> bool:
 
 # Ce qui, dans une valeur, oblige a quoter un scalaire YAML. La liste est courte
 # et le motif est mesure : c est un `pitch:` non quote contenant « : » qui a
-# rendu une page du DevBrain illisible, hors du total et hors de TOUTES les
+# rendu une page du vault d'origine illisible, hors du total et hors de TOUTES les
 # regles — sans que rien ne le signale (R17). Un semis qui poserait une page
 # illisible ferait pire que le bug d origine : il le ferait en serie.
 _DANGEREUX = (": ", " #", "\n", '"', "'")
@@ -127,7 +127,7 @@ def dossiers_de_l_arbre(mo: Modele) -> list[tuple[str, str]]:
     """(dossier, resume) par dossier de l arbre, DEDUPLIQUE, dans l ORDRE DECLARE.
 
     Deduplique parce qu un rattachement partage le dossier d un prefixe : le
-    DevBrain range `skill/*` dans « Outils de developpement », deja porte par
+    le vault d'origine range `skill/*` dans « Outils de developpement », deja porte par
     `devtools`. Deux entrees, un seul dossier, un seul hub.
 
     Dans l ordre DECLARE, et pas alphabetique : l ordre des prefixes est une
@@ -421,7 +421,7 @@ def seme_la_racine(mo: Modele, prose: ProseSemis, plan: Plan) -> None:
     # naissent VIDES, avec un `.gitkeep` (git ne suit aucun dossier vide), et
     # ils n existent que si l entretien les a demandes. Le defaut est ZERO :
     # un dossier vide que personne n a demande reste vide, et la mesure du
-    # DevBrain le dit — son `Projects/` porte zero page en dix-huit mois.
+    # le vault d'origine le dit — son `Projects/` porte zero page en dix-huit mois.
     for decl in bloc.get("dossiers") or []:
         chemin = str((decl or {}).get("chemin") or "").strip("/")
         if chemin:

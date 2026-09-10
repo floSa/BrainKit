@@ -5,7 +5,7 @@ regles consomment : ce qu est un frontmatter, ce qu est une section, ce qu est
 un wikilink, ce qu une puce LISTE, ce qu une cellule de tableau contient.
 
 Toutes ces conventions sont celles de Markdown et d Obsidian, donc communes a
-tout brain. Aucune n est une valeur du DevBrain : les TITRES des sections, les
+tout brain. Aucune n est une valeur du vault d'origine : les TITRES des sections, les
 NOMS des colonnes, les VOCABULAIRES d etiquettes viennent du manifeste et sont
 passes en argument.
 

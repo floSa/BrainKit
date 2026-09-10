@@ -18,11 +18,11 @@ minuscules.
 
 # Ce qui a ete jete
 
-`is_active_v2()` et `V1_MARKERS` — treize noms de champs de la v1 du DevBrain,
+`is_active_v2()` et `V1_MARKERS` — treize noms de champs de la v1 du vault d'origine,
 qui servaient a ecarter de l index un « reservoir » de pages vivant sous un
 dossier `Wiki/` supprime au lot 4 de sa migration. Le filtre rend `True` pour
 toute page depuis ce jour, et le compte qu il alimentait sort a zero. Porter ce
-code dans le kit aurait porte la dette du DevBrain dans TOUTES les instances
+code dans le kit aurait porte la dette du vault d'origine dans TOUTES les instances
 (§5.10). La seule trace qui reste est une ligne d en-tete que le manifeste
 declare, parce qu elle est dans le fichier du vault : cf. `prose.py`.
 """

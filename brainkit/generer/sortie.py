@@ -7,7 +7,7 @@ par `Sortie.pose()`, et c est verifiable en une commande :
     # -> uniquement sortie.py
 
 Ce n est pas de la coquetterie d architecture, c est l interdiction du lot 4
-rendue mecanique : « aucune ecriture dans DevBrain, y compris juste pour
+rendue mecanique : « aucune ecriture dans le vault d'origine, y compris juste pour
 tester ». Une seule fonction ecrit, elle refuse par defaut, et elle refuse une
 sortie posee A L INTERIEUR du vault.
 
@@ -75,7 +75,7 @@ class Pose:
     chemin: str            # relatif a la racine du vault, en posix
     etat: str
     artefact: str = ""     # quel generateur l a posee
-    # La FORME, quand un artefact en a plusieurs : les 74 hubs du DevBrain sont
+    # La FORME, quand un artefact en a plusieurs : les 74 hubs du vault d'origine sont
     # tous `role: hub` et se composent de trois facons. Sans elle, un rapport ne
     # dit pas laquelle des trois s ecarte, et un test ne peut pas verifier qu une
     # forme a CESSE d etre posee — ce que la boucle sur les axes transverses
@@ -138,7 +138,7 @@ class Sortie:
         se comparer a sa propre sortie.
 
         Lecture en fins de ligne UNIVERSELLES, ecriture en fins de ligne de la
-        PLATEFORME — exactement comme les quatre scripts du DevBrain, et il faut
+        PLATEFORME — exactement comme les quatre scripts du vault d'origine, et il faut
         dire pourquoi. Le vault est stocke en LF et sorti au format natif
         (`.gitattributes` : `* text=auto`, `core.autocrlf: true`), donc sous
         Windows ses 765 fichiers sont CRLF sur le disque. La comparaison porte
@@ -158,7 +158,7 @@ class Sortie:
         """Pose un artefact regenere. Rend l etat, et n ecrit que si on l a demande."""
         # Deux generateurs qui posent le MEME fichier : le second compare au
         # vault et non a la pose du premier, donc il l ecrase en silence. Aucun
-        # cas dans le DevBrain — les zones de hub et les bandeaux vivent dans des
+        # cas dans le vault d'origine — les zones de hub et les bandeaux vivent dans des
         # roles differents — mais un manifeste peut le declarer par erreur, et
         # ecraser en silence est precisement ce qu on refuse de faire.
         deja = next((p for p in self.poses if p.chemin == rel), None)

@@ -2,7 +2,7 @@
 
 # Le probleme, pose net
 
-Trois des quatre artefacts du DevBrain sont des DOCUMENTS : ils portent des
+Trois des quatre artefacts du vault d'origine sont des DOCUMENTS : ils portent des
 phrases francaises. « Ne pas editer a la main », « liens sortants », « Tags sans
 page concept dediee », « explorer par sous-domaine ». Un generateur qui ecrit un
 document ecrit de la prose ; la question n est pas de l eviter, c est de decider
@@ -10,7 +10,7 @@ OU elle vit.
 
 Trois places possibles, et une seule tient :
 
-1. **En dur dans le code du generateur** — ce que fait le DevBrain. Refuse : le
+1. **En dur dans le code du generateur** — ce que fait le vault d'origine. Refuse : le
    mot « concept » y est un libelle de la v2, et « sous-domaine » est le libelle
    de l axe de rangement du dev. Le lot interdit exactement ca.
 2. **Entierement dans le manifeste** — chaque phrase declaree. Refuse aussi :
@@ -37,11 +37,11 @@ nommes. Chaque trou est rempli par le manifeste — jamais par le code :
 | `{champ_role}`     | le champ dont la `source:` est `roles[].id` |
 
 Le mot « brique » n apparait pas une fois dans ce module, ni « domaine », ni
-« famille », ni « comparatif », ni aucun titre de section du DevBrain.
+« famille », ni « comparatif », ni aucun titre de section du vault d'origine.
 
 # La surcharge, et pourquoi elle est NECESSAIRE et pas une commodite
 
-`genere.prose.<cle>` remplace un gabarit. Le DevBrain en surcharge QUATRE, et
+`genere.prose.<cle>` remplace un gabarit. Le le vault d'origine en surcharge QUATRE, et
 les quatre sont de la dette v1 que le kit n a aucune raison de porter :
 
   - `index.entete` — l en-tete de son index annonce encore un « Reservoir v1

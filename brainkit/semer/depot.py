@@ -19,7 +19,7 @@ Verifiable :
 
 # `core.hooksPath` est pose par le semis, pas laisse a l installation
 
-Les hooks du DevBrain sont versionnes mais leur activation est manuelle
+Les hooks du vault d'origine sont versionnes mais leur activation est manuelle
 (`INSTALL.md` §3.5), et le lot 6 de sa migration a mesure ce que ca coûte : cinq
 commits passes parce que rien ne cherchait. Une instance neuve n a aucune raison
 de naitre avec ses garde-fous eteints — le semis les allume, et le premier commit

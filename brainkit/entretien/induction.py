@@ -190,8 +190,8 @@ def derive_le_seuil(volume_cible: int, nb_paquets: int) -> tuple[int, str]:
     Elle est CALIBREE sur les deux seuls points qui existent, et le dire est
     plus honnete que de la presenter comme une science :
 
-        DevBrain    700 pages /  20 paquets ->  35 par paquet -> 5,2  -> 5  (le seuil reel)
-        HistoBrain 3000 pages /   8 paquets -> 375 par paquet -> 11,5 -> 12 (le seuil ecrit)
+        le vault d'origine    700 pages /  20 paquets ->  35 par paquet -> 5,2  -> 5  (le seuil reel)
+        BrainRef 3000 pages /   8 paquets -> 375 par paquet -> 11,5 -> 12 (le seuil ecrit)
 
     Deux points ne font pas une loi. C est pour ca que `re-seuiller` existe, et
     c est pour ca que le motif ecrit dans le manifeste dit que le nombre est une
@@ -209,7 +209,7 @@ def derive_le_seuil(volume_cible: int, nb_paquets: int) -> tuple[int, str]:
         f"= {par_paquet:.0f} pages par paquet ; seuil = arrondi(1,6 × "
         f"{par_paquet:.0f}^(1/3)) = {brut:.1f} -> {seuil}. La loi en racine "
         f"cubique est calibrée sur les deux seuls points qui existent — "
-        f"DevBrain (700/20 -> 5) et HistoBrain (3000/8 -> 12) — et deux points "
+        f"le vault d'origine (700/20 -> 5) et BrainRef (3000/8 -> 12) — et deux points "
         f"ne font pas une loi. Ce nombre est une PROPOSITION mesurée : si le "
         f"brain grandit autrement, `brainkit re-seuiller` refait l'arbre par "
         f"`git mv`, et c'est pour cela qu'il existe."
@@ -355,7 +355,7 @@ def verifie_les_transverses(transverses: list[dict],
                 "4.3", f"le dossier `{dossier}` est déjà un dossier de l'arbre",
                 f"Tu veux appeler « {dossier} » le dossier qui rassemble tes "
                 f"{champ} — mais c'est déjà le nom d'un de tes paquets. Le "
-                f"DevBrain a nommé son dossier transverse « Métiers » et non "
+                f"le vault d'origine a nommé son dossier transverse « Métiers » et non "
                 f"« Domaines » pour cette raison exacte. Quel autre nom ?",
                 bloquant=True))
         if dossier in vus:

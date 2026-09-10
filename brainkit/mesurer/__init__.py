@@ -2,7 +2,7 @@
 
 C est le lot qui rend une severite MESUREE au lieu d etre decretee. §5.6 du
 cadrage nomme le risque en une phrase — *« la tentation sera forte de livrer les
-sept regles dures du DevBrain puisqu elles marchent »* — et ce paquet est la
+sept regles dures du vault d'origine puisqu elles marchent »* — et ce paquet est la
 reponse : par regle, le compte de violations, la POPULATION reellement mesuree,
 la date, et une proposition de durcissement pour celles qui sont a zero. Avec
 trois garde-fous qui ne se negocient pas (`gardes.py`).
@@ -12,7 +12,7 @@ trois garde-fous qui ne se negocient pas (`gardes.py`).
     from brainkit.mesurer import mesure
 
     mo = charge(Path("<vault>/brain.yml"))
-    m = mesure(mo, Path("../DevBrain"))
+    m = mesure(mo, Path("<le vault>"))
     print(m.pages_de_l_unite, len(m.propositions))
 
 LECTURE SEULE, comme le validateur, et pour la meme raison : mesurer un vault ne
