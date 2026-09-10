@@ -249,7 +249,7 @@ def propose_les_questions(prefixes: list[dict], libelle_unite: str,
 
 
 def _article(nom: str) -> str:
-    """« de la Vanoise », « du Vercors », « des Écrins ». Approximatif, et assumé.
+    """« de la valeur X », « du paquet Y », « des Z ». Approximatif, et assumé.
 
     L entretien FAIT RELIRE la question a l utilisateur : une preposition fausse
     se corrige en une seconde, et proposer une phrase imparfaite vaut mieux que

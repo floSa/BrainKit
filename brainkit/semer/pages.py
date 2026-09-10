@@ -126,15 +126,14 @@ def hub(mo: Modele, prose: ProseSemis, titre: str, apport: str,
 def dossiers_de_l_arbre(mo: Modele) -> list[tuple[str, str]]:
     """(dossier, resume) par dossier de l arbre, DEDUPLIQUE, dans l ORDRE DECLARE.
 
-    Deduplique parce qu un rattachement partage le dossier d un prefixe : le
-    le vault d'origine range `skill/*` dans « Outils de developpement », deja porte par
-    `devtools`. Deux entrees, un seul dossier, un seul hub.
+    Deduplique parce qu un rattachement peut partager le dossier d un prefixe :
+    deux valeurs d axe rangees dans le meme dossier font deux entrees, un seul
+    dossier, un seul hub.
 
     Dans l ordre DECLARE, et pas alphabetique : l ordre des prefixes est une
-    decision de l utilisateur, et sur un axe qui exclut il porte souvent un sens
-    — « Prehistoire, Antiquite, Moyen Age » n est pas la meme liste que
-    « Antiquite, Moyen Age, Prehistoire ». Trier detruirait cette information
-    sans rien apporter.
+    decision de l utilisateur, et sur un axe qui exclut il porte souvent un
+    sens — un axe ordonne (« 1, 2, 3 ») n est pas la meme liste une fois trie
+    par son libelle. Trier detruirait cette information sans rien apporter.
     """
     vus: dict[str, str] = {}
     for p in mo.rangement.get("prefixes") or []:

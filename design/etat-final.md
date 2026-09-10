@@ -16,6 +16,25 @@
 > remontée 1 de §4.3. Ce document a été mis à jour là où il devenait faux ; il
 > reste le document à relire d'abord.
 >
+> **Un treizième lot a suivi, le 2026-09-10** : la *neutralité et le pilotage
+> par agent*. Il n'ajoute aucun mécanisme. Il fait deux choses, et les deux
+> tiennent en une phrase chacune : **le dépôt ne nomme plus aucun sujet** —
+> `exemples/` est devenu `gabarit/`, qui ne porte qu'un manifeste de référence
+> abstrait ; les 75 pages de fixture ont perdu leur thème par `git mv` ; les
+> trois jeux de réponses d'entretien portent trois vocabulaires vides de sens et
+> disjoints ; et le manifeste d'instance que le kit embarquait a été **retiré**,
+> `outils/fidelite.py` prenant désormais son vault en argument. Et **le kit se
+> pilote par un agent de code, pas par une clé d'API** : `AGENTS.md` à la
+> racine, six recettes en Markdown pur dans `recettes/`, et les skills de
+> Claude Code réduits à des enveloppes qui pointent dessus.
+>
+> Ce document a été mis à jour là où il devenait faux. Deux endroits gardent
+> leurs noms propres, par arbitrage écrit : **`design/` en entier** — ce sont
+> les archives du chantier, et effacer les mesures effacerait les preuves — et
+> les **14 captures d'écran** dont la barre de titre porte le nom du vault
+> d'origine, qui sont désormais **nommées comme à reprendre** au lieu d'être
+> excusées.
+>
 > **Un douzième lot a suivi, le même jour** : la *documentation du kit* —
 > `design/12-captures.md`. Il n'ajoute aucun mécanisme sauf un contrôle
 > (`outils/captures.py`), et il tranche une confusion de natures : la doc d'une
@@ -254,7 +273,7 @@ Et la phrase qui résume le tout, née d'une règle dure sur les hauts de page :
 
 ```bash
 uv run schema/valider.py        # le contrat du manifeste
-uv run outils/fidelite.py       # la fidélité au vault d'origine
+uv run outils/fidelite.py --vault <un vault réel>   # la fidélité manifeste/vault
 uv run outils/emballer.py       # les documents rendus sont-ils a jour
 uv run outils/captures.py       # les images de la doc, dans les deux sens
 uv run tests/epreuve.py         # la validation
@@ -267,7 +286,15 @@ uv run tests/entretien.py       # les 49 questions, les 13 refus
 uv run tests/emballage.py       # l'emballage : docs, profils, ponts, figeage
 ```
 
-Deux d'entre eux lisent le vault réel s'il est là. Sur un vault que quelqu'un est
+Deux d'entre eux — `outils/fidelite.py` et les scénarios « témoin » des jeux
+d'épreuve — ont besoin d'un **vault réel**. Le dépôt n'en nomme aucun : ils le
+prennent par `--vault` / `--vault-temoin`, par la variable
+`BRAINKIT_VAULT_TEMOIN`, ou par une ligne `vault_temoin=<chemin>` dans un
+fichier `.brainkit-local` non suivi (cf. `tests/temoin.py`). Sans témoin, ces
+scénarios sont **sautés** et le disent — un scénario sauté n'est pas un scénario
+vert.
+
+Sur un vault que quelqu'un est
 en train d'éditer, `tests/generation.py` peut signaler un écart de zone
 générée — ce n'est pas une régression du kit, c'est `--check` qui fait son
 travail. Le cas est arrivé pendant le lot 10, et il est documenté là :

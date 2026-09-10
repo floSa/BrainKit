@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# DevBrain — refuse tout message de commit portant un trailer `Co-Authored-By`.
+# BrainKit — refuse tout message de commit portant un trailer `Co-Authored-By`.
 #
 # Pourquoi ce hook existe, et pourquoi il est SÉPARÉ de `pre-commit`
 # ------------------------------------------------------------------
@@ -48,7 +48,7 @@ if [ -n "$fautives" ]; then
 
 $(echo "$fautives" | sed 's/^/    ligne /')
 
-  Le DevBrain est le brain PERSO de floSa. Ses commits sont à floSa seul :
+  Ce dépôt est un dépôt PERSO. Ses commits sont à floSa seul :
   pas de co-auteur, pas de « Generated with », pas de second nom dans les
   contributeurs GitHub.
 

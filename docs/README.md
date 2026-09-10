@@ -11,9 +11,14 @@ C'est la première chose à savoir en arrivant, parce que le dépôt contient
 | **la doc du kit** | ici, `docs/` | à la main | on l'édite |
 | **la doc d'une instance** | à la racine du vault semé | **générée** par `brainkit/emballer/` depuis `brain.yml` | on corrige le **générateur** ou le **manifeste** — jamais le fichier |
 
-Un exemple complet de la seconde, rendu une fois depuis le manifeste de
-démonstration, est lisible dans
+Un exemple complet de la seconde, rendu une fois depuis le **manifeste de
+référence** — qui ne nomme aucun sujet — est lisible dans
 [`../gabarit/rendu/`](../gabarit/rendu).
+
+Il y a une **troisième** nature, et elle n'est pas dans `docs/` : les
+**recettes** de [`../recettes/`](../recettes/README.md), écrites pour un agent
+de code. `docs/` explique et justifie ; une recette s'exécute. Quand les deux se
+contredisent, la recette gagne.
 
 ---
 
@@ -21,6 +26,7 @@ démonstration, est lisible dans
 
 | Vous voulez | Lisez |
 |---|---|
+| **piloter le kit avec un agent de code** — la voie normale | [`../AGENTS.md`](../AGENTS.md), puis [`../recettes/`](../recettes/README.md) |
 | **installer le kit** sur une machine neuve | [03-installation.md](03-installation.md) |
 | **créer votre premier brain** | [05-premier-brain.md](05-premier-brain.md) |
 | **régler Obsidian** sur un vault existant | [04-obsidian.md](04-obsidian.md) |

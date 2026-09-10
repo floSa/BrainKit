@@ -1,12 +1,12 @@
 #!/bin/sh
 #
-# DevBrain — refuse tout commit signé avec une adresse professionnelle.
+# BrainKit — refuse tout commit signé avec une adresse professionnelle.
 #
 # Pourquoi ce hook existe
 # -----------------------
 # Le harnais de Claude Code annonce à chaque conversation « The user's email
 # address is florian.horellou@aosis.net ». C'est l'adresse PRO. Le dépôt est
-# PERSO (git@github.com-perso:floSa/DevBrain.git). Une conversation a déjà signé
+# PERSO. Une conversation a déjà signé
 # cinq commits avec l'adresse pro ; une fois poussée, elle apparaît dans les
 # contributeurs GitHub et ne s'en retire pas sans réécriture d'historique.
 #
@@ -46,7 +46,7 @@ refuse() {
 
     $1 : $2
 
-  Le DevBrain est un dépôt PERSO. Son identité git est celle de la config
+  Ce dépôt est un dépôt PERSO. Son identité git est celle de la config
   LOCALE du dépôt, et rien d'autre :
 
     $(git config --local user.name 2>/dev/null || echo '(non configuré)') <$(git config --local user.email 2>/dev/null || echo '(non configuré)')>

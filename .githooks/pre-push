@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# DevBrain — refuse de pousser un commit signé avec une adresse professionnelle.
+# BrainKit — refuse de pousser un commit signé avec une adresse professionnelle.
 #
 # Seconde ligne du garde-fou de `pre-commit`. Le pousser est le moment où le
 # dommage devient réel : c'est là que l'adresse entre dans les contributeurs
@@ -55,7 +55,7 @@ while read -r _ref_locale sha_local _ref_distante sha_distant; do
 
 $(echo "$fautifs" | sed 's/^/    /')
 
-  Le DevBrain est un dépôt PERSO. Ces commits ne doivent pas atteindre
+  Ce dépôt est un dépôt PERSO. Ces commits ne doivent pas atteindre
   GitHub : l'adresse y entrerait dans les contributeurs, et ne s'en retire
   pas sans réécriture d'historique.
 
@@ -90,7 +90,7 @@ MSG
   PUSH REFUSÉ — au moins un commit porte un trailer « Co-Authored-By ».
 $coauteurs
 
-  Le DevBrain est le brain PERSO de floSa. Ses commits sont à floSa seul :
+  Ce dépôt est un dépôt PERSO. Ses commits sont à floSa seul :
   pas de co-auteur, pas de second nom dans les contributeurs GitHub.
 
   Pour le dernier commit :

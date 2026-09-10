@@ -242,7 +242,7 @@ docs/              CE dossier — la documentation du kit, ecrite a la main
 
 ```bash
 uv run schema/valider.py        # le contrat du manifeste
-uv run outils/fidelite.py       # la fidelite au vault d origine
+uv run outils/fidelite.py --vault <un vault reel>   # la fidelite manifeste/vault
 uv run outils/emballer.py       # les documents generes du depot sont-ils a jour
 uv run outils/captures.py       # les images referencees existent, aucune n est orpheline
 uv run tests/epreuve.py         # la validation
