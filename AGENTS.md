@@ -160,6 +160,7 @@ uv run tests/entretien.py
 uv run tests/emballage.py
 uv run outils/emballer.py
 uv run outils/captures.py
+bash  outils/neutralite.sh      # 0 occurrence : le dépôt ne nomme aucun sujet
 ```
 
 Deux jeux d'épreuve savent en plus tourner sur un **vault témoin** réel, s'il y

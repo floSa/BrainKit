@@ -245,6 +245,7 @@ uv run schema/valider.py        # le contrat du manifeste
 uv run outils/fidelite.py --vault <un vault reel>   # la fidelite manifeste/vault
 uv run outils/emballer.py       # les documents generes du depot sont-ils a jour
 uv run outils/captures.py       # les images referencees existent, aucune n est orpheline
+bash  outils/neutralite.sh      # aucun sujet nomme dans un fichier livre
 uv run tests/epreuve.py         # la validation
 uv run tests/generation.py      # les generateurs
 uv run tests/semis.py           # le semis, re-seuiller, freeze

@@ -173,6 +173,50 @@ prouve que le contrat contrôle vraiment quelque chose.
 > laquelle une règle est en avertissement plutôt qu'en dur — sont la moitié de
 > sa valeur, et aucun outil ne les produit.
 
+### À quoi ça ressemble, sur un sujet
+
+Le manifeste de référence est **abstrait**, et c'est ce qu'on veut d'un gabarit.
+Mais un gabarit abstrait se lit mal la première fois, alors voici le même
+squelette **sur un sujet quelconque** — une cave à vins. C'est le seul exemple
+de ce genre dans tout le dépôt : il vit **inline, ici**, et pas comme un
+fichier livré. Ce que le kit embarque ne parle de rien.
+
+```yaml
+libelles:                            # la langue du sujet — tout est à réécrire
+  unite:         { s: bouteille, p: bouteilles }
+  notion:        { s: cépage,    p: cépages }
+  axe_rangement: { s: région,    p: régions }
+  axe_nature:    { s: couleur,   p: couleurs }
+
+axes:
+  rangement:
+    champ: region                    # LE champ qui décide du dossier
+    exclusif: true                   # une bouteille vient d'UNE région
+    seuil_promotion: 8               # dérivé : volume_cible 200 / 5 régions ≈ 40
+    motif_seuil: "200 bouteilles visées / 5 régions -> ~40 par région."
+    prefixes:
+      - { cle: bourgogne, dossier: "Bourgogne", sous: { cote-d-or: { libelle: "Côte-d'Or" } } }
+      - { cle: rhone,     dossier: "Vallée du Rhône", sous: {} }
+    arbre_de_decision:               # l'ORDRE est la décision, et il est à vous
+      - { n: D1, question: "L'appellation est-elle bourguignonne ?", si_oui: ["bourgogne/*"] }
+      - { n: D2, question: "Aucun des précédents", si_oui: [], arret: true,
+          motif: "ARRÊT — demander. Une région manquante ne s'invente pas." }
+
+regles:
+  - { id: chemin_categorie, enonce: "Le dossier suit la région.",
+      active: true, severite: a_mesurer }   # a_mesurer, TOUJOURS, au départ
+```
+
+Trois choses à voir, et elles valent pour n'importe quel sujet :
+
+1. `libelles` porte les mots du sujet ; le kit, lui, ne raisonne que sur les six
+   **fonctions** (`unite`, `notion`, `hub`, `vue`, `prescription`, `transverse`).
+   Aucun mot de cet exemple n'existe dans le code ;
+2. `seuil_promotion` n'est jamais tapé au jugé : il se **dérive** du volume
+   visé, et le calcul s'écrit dans `motif_seuil` juste à côté ;
+3. la sévérité sort en `a_mesurer`. Elle se durcira après un comptage, jamais
+   avant — c'est `brainkit mesurer`.
+
 ---
 
 ## 4. Semer l'instance

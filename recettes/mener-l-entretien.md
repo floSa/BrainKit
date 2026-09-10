@@ -134,11 +134,15 @@ de paquets, et comment les appelles-tu ? » Tu n'interviens pas. Tu ne suggères
 pas de fusion, tu ne suggères pas de découpe. Ce que tu observes est le
 résultat : *quel axe a-t-il choisi spontanément ?*
 
-C'est là que tout se joue. Sur le test à blanc « histoire », l'utilisateur a
-rangé par **période** — pas par thème ni par espace — parce que la période est
-l'axe qui **exclut**, alors que le thème et l'espace se cumulent. Personne n'a
-discuté de l'axe : le geste l'a donné. Sur le brain de montagne, il a rangé par
-**massif**, pour exactement la même raison.
+C'est là que tout se joue, et deux entretiens réels le montrent — ce sont des
+**illustrations**, pas des gabarits à reproduire. Sur l'un, l'utilisateur a
+rangé par **période** plutôt que par thème : la période **exclut**, le thème se
+cumule. Sur l'autre, il a rangé par **massif** plutôt que par difficulté, pour
+exactement la même raison. Personne n'a discuté de l'axe dans aucun des deux :
+le geste l'a donné.
+
+**C'est la seule chose que tu cherches : quel axe EXCLUT ?** Celui-là range ;
+tous les autres traversent.
 
 **Geste 3 — lire le geste, et le lui rendre à haute voix.** Le module
 `induction.py` compte, et te rend :
@@ -292,12 +296,12 @@ refus n° 1 vérifiable après coup.
 ## 6.1 Tu redis le manifeste EN PROSE, et tu attends UN SEUL oui
 
 Avant d'écrire quoi que ce soit, redis-lui son manifeste en français, en une
-vingtaine de lignes : *« ton brain s'appelle X, il parle de Y ; son unité est la
-*course* ; il se range par *massif*, en sept paquets, dont un transversal ; une
-course porte un *terrain* pris dans sept valeurs ; un axe le traverse, les
-saisons ; le haut de page montre quatre faits ; les dix règles sont toutes en
-attente de mesure ; deux skills, et un troisième parce que tu m'as dit ce que tu
-produiras. »*
+vingtaine de lignes. La forme, avec les mots **de son sujet** à la place des
+crochets : *« ton brain s'appelle X, il parle de Y ; son unité est la [unité] ;
+il se range par [axe], en N paquets, dont un transversal ; une [unité] porte un
+[nature] pris dans N valeurs ; un axe le traverse, les [transverse] ; le haut de
+page montre N faits ; les dix règles sont toutes en attente de mesure ; deux
+skills, et un troisième parce que tu m'as dit ce que tu produiras. »*
 
 **Un seul oui, pas une validation par bloc.** Il doit voir l'ensemble d'un coup,
 parce que les incohérences sont *entre* les blocs, pas dedans.
