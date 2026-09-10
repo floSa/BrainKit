@@ -96,7 +96,7 @@ compte plus que la limite.
 | **importer un corpus existant** | Hors plan, et assumé : c'est le vrai chantier d'amorçage, il dépend entièrement du sujet, et il mérite son propre cadrage. |
 | **une interface graphique pour l'entretien** | Hors plan. L'entretien est conversationnel par nature ; un formulaire ramènerait les listes à cocher que les treize refus interdisent. |
 | **évaluer une condition de section** | `existe_si:` est du français (« au moins une entrée datée »). Ni le validateur ni le semis ne peuvent l'évaluer ; `mesurer` compte à la place l'**usage réel** de la section. |
-| **fabriquer les captures d'écran** | Une capture inventée montrerait une interface qui n'existe pas. Depuis le lot 12, **15 existent** — reprises telles quelles du vault d'origine, dont l'interface d'Obsidian ne dépend d'aucun sujet — et **16 sont des trous nommés**, chacun avec l'écran, l'action à faire avant et la zone à cadrer (`design/12-captures.md` §4). Aucune n'est fabriquée. |
+| **fabriquer les captures d'écran** | Une capture inventée montrerait une interface qui n'existe pas. **15 existent** — reprises du vault d'origine, dont l'interface d'Obsidian ne dépend d'aucun sujet — et **16 sont des trous nommés**, chacun avec l'écran, l'action à faire avant et la zone à cadrer (`design/12-captures.md` §4). Aucune n'est fabriquée. **Révision du 2026-09-10** : sur les 15 présentes, **14 sont à reprendre** — leur barre de titre porte le nom du vault d'origine, ce qui est un nom de sujet dans un fichier livré. Elles restent en place, marquées comme telles dans `docs/04-obsidian.md`, parce que ce qu'elles montrent est juste : la reprise est mécanique. La séance passe de 16 à **30** prises. |
 | **confronter `kit.mode` au disque** | Une instance qui se déclare branchée avec un kit copié dedans passerait inaperçue. Remontée 2 du lot 10. |
 
 ---
@@ -243,7 +243,7 @@ Et la phrase qui résume le tout, née d'une règle dure sur les hauts de page :
 | jeux d'épreuve · lignes de tests et d'outils | 10 · ~5 900 |
 | rapports de lot · lignes de conception | 13 · ~10 900 |
 | documents de la doc du kit · lignes | 10 · ~2 900 |
-| captures présentes · nommées à prendre | 15 · 16 |
+| captures présentes · nommées à prendre · à reprendre | 15 · 16 · 14 |
 | commandes | 8 |
 | règles de §10 · contrôles de socle (DevBrain) | 10 · 19 |
 | questions d'entretien · refus de deviner | 49 · 13 |

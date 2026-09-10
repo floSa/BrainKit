@@ -17,6 +17,13 @@
 
 ---
 
+> **Où tu lances ces commandes.** `uv run brainkit …` se lance **depuis le
+> dépôt du kit** ; `uv tool install --editable <dépôt du kit>` met `brainkit`
+> sur le PATH ; une instance **figée** se lance depuis elle-même
+> (`uv run AI/scripts/valider.py`). Le vault est toujours désigné par
+> `--vault`, et il ne vit jamais sous le dépôt du kit.
+
+
 ## 0. Comprendre ce que ça coûte, avant de le faire
 
 Le kit est un **générateur**, pas un dépôt-gabarit qu'on clone. Le jour du

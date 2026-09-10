@@ -17,6 +17,28 @@
 
 ---
 
+## Où tu lances ces commandes
+
+`uv run brainkit …` se lance **depuis le dépôt du kit** : c'est `uv` qui y
+trouve le paquet. Deux autres formes marchent aussi, et il faut choisir la
+tienne avant de commencer :
+
+```bash
+cd <dépôt du kit> && uv run brainkit <commande>   # depuis le dépôt, sans rien installer
+uv tool install --editable <dépôt du kit>          # puis `brainkit <commande>` de partout
+cd <instance figée> && uv run AI/scripts/valider.py   # instance figée : son propre code
+```
+
+Le **vault**, lui, est toujours désigné par `--vault` ou `--dans`. Il n'a pas
+besoin d'être sous le dépôt du kit — et il ne doit surtout pas l'être.
+
+> **Sous Windows, garde le chemin de la cible court.** Un vault semé sous un
+> chemin très long fait échouer `git init` sur `Filename too long`, et le message
+> arrive au milieu de la sortie du semis, pas en tête. Si tu vois cette erreur,
+> ce n'est ni le manifeste ni le kit : c'est le chemin.
+
+---
+
 ## 0. Avant de lancer quoi que ce soit
 
 Le manifeste doit passer le contrat :
@@ -78,14 +100,24 @@ git -C <cible> log -1 --format='%an <%ae>'
 
 Ce que tu dois obtenir, et que tu annonces :
 
-- **0 violation dure et 0 avertissement.** Sur un vault à zéro page d'unité, un
-  avertissement porterait forcément sur une page que personne n'a écrite ;
-- **0 écart aux générateurs.** Le semis est à son point fixe : ce qu'il pose est
-  exactement ce que les générateurs regénéreraient ;
-- **un hub par dossier, et aucune autre page.** Compte-les ;
+- **`OK — aucune violation dure`**, et **aucun avertissement**. Sur un vault à
+  zéro page d'unité, un avertissement porterait forcément sur une page que
+  personne n'a écrite. Le validateur imprime en plus un compte de **notes** —
+  une note n'est pas un défaut, c'est une chose que le kit a **écartée en le
+  disant** (une page sans valeur d'axe, par exemple). Lis-les :
+  `uv run brainkit valider --vault <cible> --tout` ;
+- **`OK — les N artefacts concordent avec le vault`.** Le semis est à son point
+  fixe : ce qu'il pose est exactement ce que les générateurs regénéreraient ;
+- **un hub par dossier, et aucune autre page.** Les `.md` de la **racine**
+  (`Home.md`, `Inbox.md`, `INSTALL.md`, le routeur d'agent) n'en sont pas : la
+  racine n'est pas un dossier de pages, et `genere.non_pages` énumère le reste
+  du hors-périmètre. Ce qui se compte est donc, pour chaque dossier de l'arbre,
+  une page portant son nom — et rien d'autre ;
 - **`git status` vide**, et le commit porte l'identité du manifeste ;
-- les titres cités pendant l'entretien sont dans `Inbox.md`, **en cases à
-  cocher**, et **pas une de ces pages n'est écrite**.
+- si tu viens de l'entretien, les titres cités sont dans `Inbox.md`, **en cases
+  à cocher**, et **pas une de ces pages n'est écrite**. Si tu as semé sans
+  entretien, `racine.pages[].amorce` est vide et l'`Inbox.md` l'est aussi :
+  c'est normal, et c'est mieux qu'une liste inventée.
 
 ## 4. Ce que tu dis en rendant la main
 
@@ -107,7 +139,7 @@ Copie `gabarit/brain.yml` et **réécris-le**. Rien n'y est à garder tel quel s
 la forme : chaque libellé, chaque clé d'axe et chaque `motif:` est à remplacer.
 Un `motif:` recopié sans être relu est un motif faux.
 
-Les cinq blocs qu'on rate le plus souvent, dans l'ordre où ils se lisent :
+Les six blocs qu'on rate le plus souvent, dans l'ordre où ils se lisent :
 
 1. `libelles` — la langue du sujet. Le kit ne raisonne que sur les six
    *fonctions* (`unite`, `notion`, `hub`, `vue`, `prescription`, `transverse`) ;
@@ -121,7 +153,10 @@ Les cinq blocs qu'on rate le plus souvent, dans l'ordre où ils se lisent :
    sur un corpus ; un brain neuf n'a pas de corpus ;
 5. `racine.pages[].aiguille` — quelle page de la racine cite les hubs de premier
    niveau. Sans elle, les hubs de premier niveau sont « atteignables depuis
-   aucun hub ».
+   aucun hub » ;
+6. `skills.*.nom` — les noms des skills posés dans l'instance. Ils ne se
+   dérivent **pas** de `brain.nom` : changer le nom du brain sans changer
+   ceux-là pose des skills qui portent le nom d'un autre.
 
 Puis reviens à l'étape 0.
 

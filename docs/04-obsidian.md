@@ -11,9 +11,19 @@ revenir ici.
 >
 > **Environnement des captures présentes** : Obsidian **1.13.7** en français,
 > sur Windows 11. Les libellés anglais sont entre parenthèses quand ils aident.
-> Ces captures ont été prises sur un vault réel : la barre de titre y affiche
-> le nom de ce vault. C'est le seul endroit où elles ne sont pas génériques —
-> les panneaux, eux, sont ceux d'Obsidian et ne dépendent d'aucun sujet.
+>
+> **Quatorze de ces captures sont à reprendre, et ce document le dit plutôt que
+> de le taire.** Elles ont été prises sur un vault réel, et la **barre de
+> titre** de la fenêtre y affiche le nom de ce vault. Le kit ne doit nommer
+> aucun sujet : c'est donc un défaut, pas une réserve. Elles restent ici en
+> attendant la séance de reprise pour une seule raison — **ce qu'elles montrent
+> est juste** : les panneaux sont ceux d'Obsidian et ne dépendent d'aucun
+> sujet, et un guide qui montre le bon panneau vaut mieux qu'un guide sans
+> image. La reprise est mécanique : même écran, même geste, sur un brain de
+> démonstration neutre. Le protocole est dans `design/12-captures.md` §4.
+>
+> La seule qui n'est **pas** concernée est la première : aucun coffre n'y est
+> ouvert, donc la fenêtre ne porte aucun nom.
 
 ---
 

@@ -16,6 +16,13 @@
 
 ---
 
+> **Où tu lances ces commandes.** `uv run brainkit …` se lance **depuis le
+> dépôt du kit** ; `uv tool install --editable <dépôt du kit>` met `brainkit`
+> sur le PATH ; une instance **figée** se lance depuis elle-même
+> (`uv run AI/scripts/valider.py`). Le vault est toujours désigné par
+> `--vault`, et il ne vit jamais sous le dépôt du kit.
+
+
 ## 1. La règle du jeu, en une phrase
 
 **Une sévérité est un résultat de mesure sur un corpus, pas une propriété de

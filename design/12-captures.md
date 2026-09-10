@@ -71,17 +71,44 @@ modification**.
 | `15-file-hider-options.png` | `13-file-hider-options.png` | les options de File Hider, liste vide |
 | `14-local-rest-api-advanced.png` | `29-plugin-rest-api-avance.png` | les réglages avancés du pont : certificats, réinitialisation |
 
-**Deux réserves écrites, et aucune ne justifie de refaire la capture :**
+**Deux réserves écrites, et la première a été RENVERSÉE — révision du
+2026-09-10 :**
 
-1. la **barre de titre** de ces panneaux affiche le nom du vault sur lequel elles
-   ont été prises. C'est le seul endroit où elles ne sont pas génériques ; le
-   contenu des panneaux, lui, est celui d'Obsidian. La consigne est écrite dans
-   `docs/04-obsidian.md`, en tête de chapitre.
+1. ~~la **barre de titre** de ces panneaux affiche le nom du vault sur lequel
+   elles ont été prises. C'est le seul endroit où elles ne sont pas génériques ;
+   le contenu des panneaux, lui, est celui d'Obsidian.~~ **Ce n'est plus une
+   réserve acceptable : c'est un défaut.** Le dépôt ne doit nommer aucun sujet,
+   et une barre de titre est un nom de sujet dans un fichier livré — que la
+   recherche textuelle ne trouve pas, ce qui la rend pire, pas meilleure. Le
+   nouveau tri est ci-dessous.
 2. sur `09-plugin-rest-api-mcp.png`, le bloc de configuration lui-même est
    **sous la ligne de pliure** : on voit son titre, pas son contenu. Le document
    le dit, et ajoute que ce bloc se copie depuis l'écran et jamais depuis une
    image, puisqu'il contient la clé. Une reprise serait un confort, pas une
-   correction.
+   correction — mais cette capture est de toute façon à reprendre, pour le
+   motif 1.
+
+#### Le nouveau tri du paquet (a) : **1 acceptable, 14 à reprendre**
+
+Chacune a été **rouverte et regardée** le 2026-09-10, pas jugée sur son nom.
+
+| Verdict | Fichiers | Motif |
+|---|---|---|
+| **acceptable telle quelle** — 1 | `01-obsidian-selecteur-de-coffre.png` | aucun coffre n'est ouvert au moment de la prise : la fenêtre ne porte **aucun** nom de vault. C'est la seule des quinze dans ce cas |
+| **à reprendre** — 14 | `02-obsidian-reglages-general.png` · `03-obsidian-mode-restreint.png` · `04-obsidian-modules-actives.png` · `05-obsidian-catalogue.png` · `06-plugin-rest-api-recherche.png` · `06b-plugin-rest-api-carte.png` · `07-plugin-rest-api-active.png` · `08-plugin-rest-api-options.png` · `09-plugin-rest-api-mcp.png` · `10-plugins-tous-actives.png` · `11-templater-reglages.png` · `12-templater-dossier-pose.png` · `13-file-hider-options.png` · `29-plugin-rest-api-avance.png` | la barre de titre porte le nom du vault d'origine (`Paramètres - <nom> - Obsidian 1.13.7`, et sa variante pour la fenêtre des modules) |
+
+**La reprise est mécanique, et c'est important de le dire** : ces quatorze
+captures sont **justes sur le fond** — elles montrent des panneaux d'Obsidian
+qui ne dépendent d'aucun sujet. Il n'y a rien à recadrer, rien à repenser : même
+écran, même geste, sur le brain de démonstration **neutre** de §4.1. C'est la
+raison pour laquelle elles restent en place en attendant la séance plutôt que
+d'être supprimées : un guide qui montre le bon panneau avec la mauvaise barre de
+titre vaut mieux qu'un guide sans image. `docs/04-obsidian.md` le dit en tête de
+chapitre, en toutes lettres.
+
+**La séance passe donc de 16 à 30 prises.** Les quatorze reprises n'ont pas de
+table à elles : elles se prennent en suivant `docs/04-obsidian.md` du début à la
+fin, ce que §4.1 demande déjà.
 
 ### Paquet (b) — à refaire sur un vault BrainKit : **9 fichiers**
 
@@ -164,9 +191,14 @@ Deux trous délibérés, pour que personne ne les rebouche par erreur :
    fichier et vérifier qu'il montre ce que la ligne dit. Une capture du vault
    d'origine montre le panneau du graphe là où elle annonce un menu contextuel :
    personne ne l'a rouverte.
-3. **Travailler sur un vault de démonstration**, pas sur un brain réel. Aucun nom
-   de tiers, aucun contenu privé ne doit apparaître. `HistoBrain` — semé depuis
-   `exemples/histobrain.brain.yml` — est fait pour ça.
+3. **Travailler sur un vault de démonstration NEUTRE**, semé pour la séance,
+   **hors de tout dépôt**, et jamais sur un brain réel. Aucun nom de sujet,
+   aucun nom de tiers, aucun contenu privé ne doit apparaître — **y compris
+   dans la barre de titre de la fenêtre**, qui affiche le nom du coffre ouvert.
+   C'est ce point qui a fait reprendre quatorze captures (§2). Le brain de
+   démonstration se sème depuis `gabarit/brain.yml`, dont les valeurs sont
+   volontairement vides de sens (« Domaine A », « Unité »), et son **dossier**
+   se nomme neutrement lui aussi — c'est ce nom-là qui s'affichera.
 4. **Un environnement, et le dire.** Les captures présentes ont été prises sous
    **Obsidian 1.13.7 en français, Windows 11**. Rester sur la même version et la
    même langue, sinon les deux jeux ne se ressemblent plus.
