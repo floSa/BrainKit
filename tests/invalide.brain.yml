@@ -1,9 +1,10 @@
 # ==============================================================================
 # invalide.brain.yml — LE CONTRE-EXEMPLE. Volontairement faux.
 # ------------------------------------------------------------------------------
-# Ce fichier ne decrit AUCUN brain. Il existe pour une seule raison : prouver que
-# le contrat refuse, et qu il NOMME le champ fautif. Il porte les SIX refus du
-# critere d acceptation du lot 1, un par faute, chacune marquee `# FAUTE n`.
+# Ce fichier ne decrit AUCUN brain, et ne parle de RIEN. Il existe pour une seule
+# raison : prouver que le contrat refuse, et qu il NOMME le champ fautif. Il
+# porte les SIX refus du critere d acceptation du lot 1, un par faute, chacune
+# marquee `# FAUTE n`.
 #
 #   FAUTE 1  une `fonction:` hors de la liste fermee de six
 #            -> roles[2].fonction
@@ -16,7 +17,7 @@
 #   FAUTE 5  une version de manifeste inconnue
 #            -> manifeste
 #   FAUTE 6  une valeur d enumeration ABSENTE de la declaration de son axe
-#            -> bandeau.colonnes[0].table.brochure
+#            -> bandeau.colonnes[0].table.nature-9
 #
 # Les cinq premieres sont portees par le JSON Schema. La sixieme est
 # intra-document et n est pas exprimable en JSON Schema : elle est portee par la
@@ -24,7 +25,7 @@
 # en prime — elles ne sont pas mises la expres, elles sont la CONSEQUENCE des
 # six, et c est instructif : un manifeste faux est faux plusieurs fois.
 #
-# Verifier :  uv run schema/valider.py --attendre-echec exemples/invalide.brain.yml
+# Verifier :  uv run schema/valider.py --attendre-echec tests/invalide.brain.yml
 # ==============================================================================
 
 manifeste: 7                          # FAUTE 5 — le kit ne connait que la version 1
@@ -42,115 +43,116 @@ git:
   identite:
     name: floSa
     email: florian_horellou@laposte.net
-  domaines_refuses: [aosis.net]
+  domaines_refuses: [exemple-a-remplacer.invalid]
   trailers_refuses: [Co-Authored-By]
   branche_principale: main
 
 libelles:
-  unite:         { s: piece,   p: pieces }
+  unite:         { s: unité,   p: unités }
   hub:           { s: hub,     p: hubs }
-  axe_rangement: { s: rayon,   p: rayons }
-  axe_nature:    { s: matiere, p: matieres }
+  axe_rangement: { s: domaine, p: domaines }
+  axe_nature:    { s: nature,  p: natures }
 
 roles:
 
   # --- 0 : une premiere unite -------------------------------------------------
-  - id: piece
+  - id: unite
     fonction: unite                   # FAUTE 2 (1/2) — premiere `unite`
-    libelle: { s: piece, p: pieces }
+    libelle: { s: unité, p: unités }
     range_par: axe
     protege: false
     pese_sur_le_seuil: true
     apparait_dans_le_hub: true
     couleur: "#412CDD"
     champs:
-      requis: [role, nom, resume, categorie]
-      autorises: [role, nom, resume, categorie, matiere, epaisseur, tags]
+      requis: [role, nom, resume, domaine]
+      autorises: [role, nom, resume, domaine, nature, option, tags]
       conditionnels:
-        - { champ: epaisseur }        # FAUTE 4 — conditionnel SANS `si`
+        - { champ: option }           # FAUTE 4 — conditionnel SANS `si`
     corps:
       - { titre: "<bandeau>", niveau: 0, genre: bandeau }
       - { titre: "Ce que c'est", niveau: 2, genre: prose }
 
   # --- 1 : une SECONDE unite, ce qui est interdit -----------------------------
-  - id: piece-bis
+  - id: unite-bis
     fonction: unite                   # FAUTE 2 (2/2) — seconde `unite`
-    libelle: { s: piece bis, p: pieces bis }
+    libelle: { s: unité bis, p: unités bis }
     range_par: axe
     champs:
       requis: [role, nom]
       autorises: [role, nom, tags]
 
   # --- 2 : une fonction qui n existe pas dans le kit --------------------------
-  - id: chronologie
-    fonction: chronologie             # FAUTE 1 — hors de la liste fermee de six.
-                                      # `chronologie` est un `id:` legitime dans
-                                      # HistoBrain ; ce n est PAS une `fonction:`.
+  - id: sequence
+    fonction: sequence                # FAUTE 1 — hors de la liste fermee de six.
+                                      # `sequence` est un `id:` legitime dans le
+                                      # manifeste de reference ; ce n est PAS une
+                                      # `fonction:` — celle-la s appelle `vue`.
                                       # C est exactement la confusion que le
                                       # dedoublement id/fonction doit empecher.
-    libelle: { s: chronologie, p: chronologies }
+    libelle: { s: séquence, p: séquences }
     range_par: axe
 
   # --- AUCUN role de fonction `hub` : FAUTE 3 ---------------------------------
 
 axes:
   rangement:
-    champ: categorie
+    champ: domaine
     exclusif: true
     seuil_promotion: 5
-    motif_seuil: "100 pages / 2 rayons -> 50 par rayon. Seuil a 5."
+    motif_seuil: "100 pages / 2 domaines -> 50 par domaine. Seuil a 5."
     plafond_promotion: true
     prefixes:
-      - cle: bois
-        dossier: "Bois"
+      - cle: domaine-a
+        dossier: "Domaine A"
         sous:
-          massif: { libelle: "Massif" }
-          panneau: { libelle: "Panneau" }
-      - cle: metal
-        dossier: "Métal"
+          a1: { libelle: "Segment A1" }
+          a2: { libelle: "Segment A2" }
+      - cle: domaine-b
+        dossier: "Domaine B"
         sous:
-          acier: { libelle: "Acier" }
+          b1: { libelle: "Segment B1" }
     arbre_de_decision:
-      - { n: D1, question: "Est-ce du bois ?",   si_oui: ["bois/*"] }
-      - { n: D2, question: "Est-ce du métal ?",  si_oui: ["metal/*"] }
+      - { n: D1, question: "Relève-t-elle du premier domaine ?", si_oui: ["domaine-a/*"] }
+      - { n: D2, question: "Relève-t-elle du second domaine ?",  si_oui: ["domaine-b/*"] }
       - { n: D3, question: "Aucun des précédents", si_oui: [], arret: true }
     departages: []
     frontieres: []
 
   nature:
-    champ: matiere
-    porte_par: [piece]
+    champ: nature
+    porte_par: [unite]
     vide_autorise: true
     valeurs:
-      - { cle: planche, definition: "Débitée dans l'épaisseur." }
-      - { cle: tube,    definition: "Section creuse." }
-      - { cle: profile, definition: "Section pleine, laminée." }
+      - { cle: nature-1, definition: "La première nature." }
+      - { cle: nature-2, definition: "La deuxième nature." }
+      - { cle: nature-3, definition: "La troisième nature." }
     arbre_de_decision:
-      - { n: N1, question: "La section est-elle creuse ?", si_oui: tube }
-      - { n: N2, question: "Aucun des précédents", si_oui: planche, defaut: true }
+      - { n: N1, question: "Relève-t-elle du deuxième cas ?", si_oui: nature-2 }
+      - { n: N2, question: "Aucun des précédents", si_oui: nature-1, defaut: true }
     departages: []
 
   transverses: []
 
 champs:
-  role:      { type: enum, source: "roles[].id", fonction: aucune }
-  nom:       { type: ligne, fonction: identite }
-  resume:    { type: ligne, fonction: resume_court }
-  categorie: { type: enum, source: axes.rangement, fonction: aucune }
-  matiere:   { type: enum, source: axes.nature, fonction: aucune }
-  epaisseur: { type: ligne, fonction: aucune }
-  tags:      { type: liste, fonction: aucune }
+  role:    { type: enum, source: "roles[].id", fonction: aucune }
+  nom:     { type: ligne, fonction: identite }
+  resume:  { type: ligne, fonction: resume_court }
+  domaine: { type: enum, source: axes.rangement, fonction: aucune }
+  nature:  { type: enum, source: axes.nature, fonction: aucune }
+  option:  { type: ligne, fonction: aucune }
+  tags:    { type: liste, fonction: aucune }
 
 bandeau:
-  porte_par: [piece]
+  porte_par: [unite]
   vide: "—"
   colonnes:
-    - titre: Matière
-      source: matiere
+    - titre: Nature
+      source: nature
       table:
-        planche: Planche
-        tube: Tube
-        brochure: Brochure        # FAUTE 6 — `brochure` n est pas une valeur
+        nature-1: "Nature 1"
+        nature-2: "Nature 2"
+        nature-9: "Nature 9"      # FAUTE 6 — `nature-9` n est pas une valeur
                                   # declaree de `axes.nature`. Le schema ne peut
                                   # PAS le voir : il faudrait comparer une cle de
                                   # cette table a une liste ecrite ailleurs dans
@@ -159,7 +161,7 @@ bandeau:
 regles:
   - { id: reciprocite,           active: false, severite: a_mesurer }
   - { id: chemin_categorie,      active: true,  severite: a_mesurer }
-  - { id: completude_du_hub,     active: true,  severite: a_mesurer, roles: [piece] }
+  - { id: completude_du_hub,     active: true,  severite: a_mesurer, roles: [unite] }
   - { id: voisinage_declare,     active: false, severite: a_mesurer }
   - { id: redirection_sourcee,   active: false, severite: a_mesurer }
   - { id: reinjection_du_resume, active: true,  severite: a_mesurer, champ_resume: resume }

@@ -1,0 +1,323 @@
+# ==============================================================================
+# deuxieme.reponses.yml — les REPONSES d un entretien joue en entier, sur un
+# SECOND vocabulaire, entierement disjoint de celui du manifeste de reference.
+# ------------------------------------------------------------------------------
+# Le sujet n existe pas : ni ces reponses ni le manifeste qu elles composent ne
+# parlent de quoi que ce soit. Ce qui compte est qu AUCUN mot ne soit commun avec
+# `gabarit/brain.yml` — ni un role, ni un axe, ni une valeur, ni un titre de
+# section. C est ce qui rend le controle de genericite des skills probant :
+# deux manifestes, deux tables de propagation, aucune cellule commune sauf les
+# deux qui ne citent aucune valeur d instance.
+#
+# Les ruptures que ce second jeu rejoue, et qui ne sont pas dans le premier :
+#
+#   · l unite se range sur un axe presque exclusif, casse par DEUX pages : celle
+#     qui deborde mais garde un centre de gravite (regle de majorite) et celle
+#     qui n en a aucun (prefixe transversal) ;
+#   · UN SEUL axe transverse, la ou le manifeste de reference en a deux. Les
+#     deux comptes se confrontent — c est ce qui prouve que la boucle du
+#     generateur porte sur la liste declaree.
+#
+# Ce fichier est la TRANSCRIPTION des reponses, pas le manifeste. Le manifeste
+# s en compose :
+#
+#     uv run brainkit entretien --brouillon <b.yml> --reponses tests/deuxieme.reponses.yml
+#     uv run brainkit entretien --brouillon <b.yml> --composer brain.yml
+# ==============================================================================
+
+reponses:
+
+  # --- Passe 0 — identite et depot ---------------------------------------- #
+  "0.1": >-
+    Ce que je cherche dans ce brain : un élément précis, ce qu'il demande, et
+    dans quel ordre le prendre.
+  "0.2": BrainDeux
+  "0.3": perso
+  "0.4":
+    name: floSa
+    email: florian_horellou@laposte.net
+  "0.5": [exemple-a-remplacer.invalid]
+  "0.6": "C:/Users/FlorianHorellou/Documents/BrainKit-essais/braindeux"
+
+  # --- Passe 1 — l unite --------------------------------------------------- #
+  "1.1": >-
+    Je vais chercher quoi faire ensuite : un élément que je peux tenir avec ce
+    que j'ai, au moment où je suis, dans un groupe où je peux aller.
+  "1.2": { s: élément, p: éléments }
+  "1.3":
+    s: principe
+    p: principes
+    protege: true
+  "1.4": [principe]
+  "1.5":
+    - libelle: { s: règle, p: règles }
+      dossier: "Règles"
+      prefixe_nom: "Règle - "
+      champs: [portee, fermete]
+
+  # --- Passe 2 — l axe qui range ------------------------------------------- #
+  "2.1":
+    - "Élément 01"
+    - "Élément 02"
+    - "Élément 03"
+    - "Élément 04"
+    - "Élément 05"
+    - "Élément 06"
+    - "Élément 07"
+    - "Élément 08"
+    - "Élément 09"
+    - "Élément 10"
+    - "Élément 11"
+    - "Élément 12"
+    - "Élément 13"
+    - "Élément 14"
+    - "Élément 15"
+    - "Élément 16"
+    - "Élément 17"
+    - "Élément 18"
+    - "Élément 19"
+    - "Élément 20"
+
+  # Le rangement, DE SA MAIN. Sept paquets, nommes par lui, dans l ordre ou il
+  # les a nommes — les six premiers, puis les croisements, qu il a crees en
+  # dernier pour la vingtieme page.
+  "2.2":
+    Groupe A:
+      - "Élément 01"
+      - "Élément 02"
+      - "Élément 03"
+      - "Élément 04"
+      - "Élément 20"
+    Groupe B:
+      - "Élément 05"
+      - "Élément 06"
+      - "Élément 07"
+      - "Élément 20"
+    Groupe C:
+      - "Élément 08"
+      - "Élément 09"
+      - "Élément 10"
+      - "Élément 11"
+      - "Élément 20"
+    Groupe D:
+      - "Élément 12"
+      - "Élément 13"
+      - "Élément 14"
+    Groupe E:
+      - "Élément 15"
+      - "Élément 16"
+      - "Élément 17"
+    Groupe F:
+      - "Élément 18"
+      - "Élément 19"
+    Croisements:
+      - "Élément 11"
+      - "Élément 20"
+
+  "2.3": non
+  "2.4":
+    regle_de_majorite: true
+    prefixe_transversal: "Croisements"
+    motif: >-
+      L'élément 11 déborde mais garde un centre de gravité — il ne quitte jamais
+      le groupe C, la règle de majorité suffit. L'élément 20 n'en a aucun : il
+      traverse trois groupes, et le ranger dans le premier parce qu'il y passe
+      serait un mensonge dans le champ.
+  "2.5": { s: groupe, p: groupes }
+  "2.6": 600
+  "2.7":
+    ordre_de_l_utilisateur: true
+    branches:
+      - n: D1
+        question: "L'élément enjambe-t-il plus de deux groupes, sans qu'aucun ne domine ?"
+        si_oui: [croisements]
+        motif: >-
+          HORS classement, et EN PREMIER — c'est le rang qui compte. Sans elle,
+          l'élément 20 tomberait dans le premier groupe qu'il touche,
+          c'est-à-dire au hasard du sens de lecture.
+      - { n: D2, question: "Relève-t-il du groupe A ?", si_oui: ["groupe-a/*"] }
+      - { n: D3, question: "Relève-t-il du groupe B ?", si_oui: ["groupe-b/*"] }
+      - { n: D4, question: "Relève-t-il du groupe C ?", si_oui: ["groupe-c"] }
+      - { n: D5, question: "Relève-t-il du groupe D ?", si_oui: ["groupe-d"] }
+      - { n: D6, question: "Relève-t-il du groupe E ?", si_oui: ["groupe-e/*"] }
+      - { n: D7, question: "Relève-t-il du groupe F ?", si_oui: ["groupe-f"] }
+      - n: D8
+        question: "Aucun des précédents"
+        si_oui: []
+        arret: true
+        motif: "ARRÊT — demander. Un groupe manquant ne s'invente jamais : il se nomme."
+
+  # --- Passe 3 — l axe qui qualifie ---------------------------------------- #
+  "3.1": oui
+  "3.2":
+    champ: matiere
+    libelle: { s: matière, p: matières }
+    valeurs:
+      - cle: matiere-a
+        definition: "La première matière porte la difficulté à elle seule."
+        frontiere: "Distincte de matiere-d parce qu'elle ne se mêle à aucune autre dans un même passage."
+      - cle: matiere-b
+        definition: "La deuxième matière, qui demande un outillage nommé."
+        frontiere: "Distincte de matiere-c parce que l'outil s'y pose, il ne s'y ancre pas."
+      - cle: matiere-c
+        definition: "La troisième matière, permanente."
+        frontiere: "Distincte de matiere-g parce qu'elle est permanente, et non un état de saison."
+      - cle: matiere-d
+        definition: "La quatrième matière : deux matières dans le même passage."
+        frontiere: "Distincte de matiere-a ET de matiere-c : ce qui la définit est qu'on ne change pas d'outillage en cours de passage."
+      - cle: matiere-e
+        definition: "La cinquième matière, définie par le MOYEN et non par la matière."
+        frontiere: "Distincte de tout le reste parce qu'elle décrit un mode de parcours — c'est la seule valeur de l'axe qui le fasse, et c'est assumé."
+      - cle: matiere-f
+        definition: "La sixième matière : aucun outillage, la difficulté est ailleurs."
+        frontiere: "Distincte de matiere-b par l'absence d'outil, et c'est le seul fait vérifiable qui les sépare."
+      - cle: matiere-g
+        definition: "La septième matière, saisonnière."
+        frontiere: "Distincte de matiere-c par la saisonnalité : elle n'existe pas tous les ans, et pas au même moment."
+  "3.3":
+    ordre_de_l_utilisateur: true
+    branches:
+      - { n: N1, question: "Se parcourt-il par le moyen dédié ?",                si_oui: matiere-e }
+      - { n: N2, question: "La matière est-elle un état de saison ?",            si_oui: matiere-g }
+      - { n: N3, question: "Deux matières se mêlent-elles dans le même passage ?", si_oui: matiere-d }
+      - { n: N4, question: "La matière permanente est-elle présente ?",          si_oui: matiere-c }
+      - { n: N5, question: "Faut-il l'outillage nommé ?",                        si_oui: matiere-b }
+      - { n: N6, question: "Y a-t-il des passages cotés ?",                      si_oui: matiere-a }
+      - { n: N7, question: "Aucun des précédents", si_oui: matiere-f, defaut: true }
+  "3.4":
+    - { champ: indice_second, si: "matiere in [matiere-c, matiere-d, matiere-g]" }
+    - { champ: plafond,       si: "matiere == matiere-e" }
+
+  # --- Passe 4 — les axes transverses -------------------------------------- #
+  # UN seul axe, et pas deux : un second a ete propose par l utilisateur puis
+  # retire par lui — c est deja un champ (`indice`), et un champ n est pas un axe.
+  "4.1":
+    - champ: phases
+      libelle: { s: phase, p: phases }
+      valeurs:
+        - { cle: phase-1, libelle: "Phase 1" }
+        - { cle: phase-2, libelle: "Phase 2" }
+        - { cle: phase-3, libelle: "Phase 3" }
+        - { cle: phase-4, libelle: "Phase 4" }
+  "4.2": { phases: true }
+  "4.3": { phases: "Phases" }
+
+  # --- Passe 5 — le haut de page ------------------------------------------- #
+  "5.1": ["Matière", "Indice", "Ampleur et durée", "Exigence"]
+  "5.2":
+    Matière:
+      source: matiere
+      table:
+        matiere-a: "Matière A"
+        matiere-b: "Matière B"
+        matiere-c: "Matière C"
+        matiere-d: "Matière D"
+        matiere-e: "Matière E"
+        matiere-f: "Matière F"
+        matiere-g: "Matière G"
+    Indice:
+      source: indice
+      type: ligne
+    "Ampleur et durée":
+      source: ampleur
+      qualifie_par: duree
+      type: ligne
+    Exigence:
+      source: exigence
+      type: enum
+      valeurs: [faible, moyen, fort, tres-fort]
+  "5.3": "—"
+
+  # --- Passe 6 — le corps --------------------------------------------------- #
+  "6.1":
+    - { titre: "Ce que c'est",                       niveau: 2 }
+    - { titre: "Ce qui passe / Ce qui ne passe pas", niveau: 2 }
+    - { titre: "Fiche pratique",                     niveau: 2 }
+    - { titre: "Autour",                             niveau: 2 }
+    - { titre: "Variante de",                        niveau: 3 }
+    - { titre: "Variantes",                          niveau: 3 }
+    - { titre: "S'enchaîne avec",                    niveau: 3 }
+    - { titre: "Voir aussi",                         niveau: 2 }
+    - titre: "Passages"
+      niveau: 2
+      existe_si: "au moins un passage daté"
+      forme: "- YYYY-MM-DD — <ce qui a été constaté ce jour-là>."
+  "6.2": "Ce que c'est"
+  "6.3":
+    titre: "Ce qui passe / Ce qui ne passe pas"
+    positive: "Ça passe"
+    negative: "Ça ne passe pas"
+  "6.4":
+    - { titre: "Variante de",     niveau: 3, champ: variante_de }
+    - { titre: "Variantes",       niveau: 3, champ: variantes }
+    - { titre: "S'enchaîne avec", niveau: 3, champ: enchaine_avec }
+    - { titre: "Voir aussi",      niveau: 2, champ: null }
+  "6.5":
+    titre: "Fiche pratique"
+    obligatoires: ["Repère 1", "Repère 2", "Repère 3", "Repère 4"]
+    permises: ["Repère 1", "Repère 2", "Repère 3", "Repère 4"]
+
+  # --- Passe 7 — les liens et le resume ------------------------------------- #
+  "7.1":
+    - { champ: enchaine_avec, section: "S'enchaîne avec" }
+    - { champ: variante_de,   section: "Variante de" }
+  "7.2":
+    enchaine_avec: true
+    variante_de: false
+  "7.3":
+    variante_de:
+      champ: variantes
+      section: "Variantes"
+  "7.4": { champ: resume }
+
+  # --- Passe 8 — ce qui rassemble ------------------------------------------- #
+  "8.1": non
+  "8.2":
+    libelle: { s: sélection, p: sélections }
+    prefixe_nom: "Sélection - "
+    tri_par: indice
+    direction: asc
+    colonnes: [nom, resume, matiere, indice, ampleur, phases]
+  "8.3":
+    dossier: "Sélections"
+    lien_retour: "Voir aussi"
+
+  # --- Passe 9 — gouvernance et frontieres ---------------------------------- #
+  "9.1": ferme
+  "9.2": demander
+  "9.3": non
+  "9.4":
+    - "AI/index/"
+    - "les zones AUTO des hubs"
+    - "Phases/"
+    - "Sélections/Sélections.md"
+    - "les bandeaux des éléments"
+    - "Documentation/groupes/taxonomie.md"
+    - "Templates/"
+  "9.5":
+    porte_d_entree: Home.md
+    pages:
+      - { fichier: Home.md,  titre: Accueil, aiguille: true,  role_editorial: porte }
+      - { fichier: Inbox.md, titre: Inbox,   aiguille: false, role_editorial: capture }
+  "9.6":
+    - chemin: "Carnet/"
+      role_editorial: atelier
+      motif: >-
+        Demandé explicitement : les notes brutes prises sur le moment, avant d'en
+        tirer quoi que ce soit. Ce ne sont pas des pages du brain — elles ne
+        portent ni rôle ni catégorie — donc le dossier est dans
+        `genere.non_pages` et le validateur ne le lit pas.
+
+  # --- Passe 10 — l exploitation --------------------------------------------- #
+  "10.1": >-
+    Une fiche prête à l'emploi : ce qu'il faut, les créneaux possibles, et ce
+    qu'on fait si ça ne passe pas.
+  "10.2":
+    - "un élément isolé"
+    - "deux éléments enchaînés"
+    - "une série de plusieurs jours"
+  "10.3":
+    - "quel niveau, et quelle expérience de cette matière-là ?"
+    - "quelle phase, et quel créneau ?"
+    - "combien de jours, avec ou sans étape ?"
+    - "seul, à deux, ou en groupe ?"

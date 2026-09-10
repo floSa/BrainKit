@@ -17,3 +17,4 @@ __pycache__/
 # HORS du vault, et ce n'est pas un livrable : c'est la piece a conviction d'une
 # execution.
 travail/
+.brainkit-local

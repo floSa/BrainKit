@@ -1,0 +1,320 @@
+# ==============================================================================
+# troisieme.reponses.yml — l entretien de l INSTALLATION A BLANC du lot 10.
+# ------------------------------------------------------------------------------
+# Le critere d acceptation du lot 10 est une installation faite « comme sur une
+# machine neuve », en suivant l `INSTALL.md` genere et RIEN D AUTRE. Un critere
+# de ce genre ne vaut que s il est rejouable : ce fichier est la transcription
+# des reponses de cette installation, et `tests/emballage.py` la rejoue.
+#
+# C est le TROISIEME vocabulaire du depot, et il est disjoint des deux autres —
+# `gabarit/brain.yml` et `tests/deuxieme.reponses.yml`. Aucun des trois ne parle
+# de quoi que ce soit : c est ce qui rend le controle de fuite probant, puisqu un
+# mot commun serait forcement un mot du KIT et non du sujet.
+#
+# Ce que ce troisieme jeu casse, que les deux autres ne cassent pas :
+#
+#   · DEUX pages debordent leur paquet en gardant un centre de gravite, et UNE
+#     n en a aucun — l axe non exclusif ET le prefixe transversal se rejouent
+#     donc sur un troisieme cas de figure ;
+#   · l axe qui range n est ni celui du premier ni celui du second manifeste :
+#     ses valeurs sont ORDONNEES, et l ordre des paquets n est pas alphabetique.
+#     Aucun tri par defaut ne le rendrait.
+#
+# Rejouer :
+#
+#     uv run brainkit entretien --brouillon <b.yml> --reponses tests/troisieme.reponses.yml
+#     uv run brainkit entretien --brouillon <b.yml> --verifier
+#     uv run brainkit entretien --brouillon <b.yml> --composer <brain.yml>
+#
+# Le deroule de l installation, et les endroits ou le document etait muet, sont
+# dans `design/10-emballage.md` §1.
+# ==============================================================================
+
+reponses:
+
+  # --- Passe 0 — identite et depot ---------------------------------------- #
+  "0.1": >-
+    Ce que je dois faire dans une situation donnée : le jalon, son délai, le
+    texte qui le porte, et ce que je risque si je ne le tiens pas.
+  "0.2": BrainTrois
+  "0.3": perso
+  "0.4":
+    name: floSa
+    email: florian_horellou@laposte.net
+  "0.5": [exemple-a-remplacer.invalid]
+  "0.6": "C:/Users/FlorianHorellou/Documents/BrainKit-essais/braintrois"
+
+  # --- Passe 1 — l unite --------------------------------------------------- #
+  "1.1": >-
+    Je vais chercher ce que je dois faire dans une situation précise, sous quel
+    délai, et ce que je risque si je ne le fais pas.
+  "1.2": { s: jalon, p: jalons }
+  "1.3":
+    s: éclairage
+    p: éclairages
+    protege: true
+  "1.4": [éclairage]
+  "1.5":
+    - libelle: { s: formulaire, p: formulaires }
+      dossier: "Formulaires"
+      prefixe_nom: "Formulaire - "
+      champs: [objet, quand]
+
+  # --- Passe 2 — l axe qui range ------------------------------------------- #
+  "2.1":
+    - "Jalon 01"
+    - "Jalon 02"
+    - "Jalon 03"
+    - "Jalon 04"
+    - "Jalon 05"
+    - "Jalon 06"
+    - "Jalon 07"
+    - "Jalon 08"
+    - "Jalon 09"
+    - "Jalon 10"
+    - "Jalon 11"
+    - "Jalon 12"
+    - "Jalon 13"
+    - "Jalon 14"
+    - "Jalon 15"
+    - "Jalon 16"
+    - "Jalon 17"
+    - "Jalon 18"
+    - "Jalon 19"
+    - "Jalon 20"
+
+  # Le rangement, DE SA MAIN. Neuf paquets, nommes par lui, dans l ordre ou il
+  # les a nommes — un ordre de deroulement, et « Permanent » cree en dernier
+  # pour la vingtieme page, qui ne tombait nulle part.
+  "2.2":
+    Moment 1:
+      - "Jalon 01"
+      - "Jalon 02"
+      - "Jalon 03"
+      - "Jalon 04"
+    Moment 2:
+      - "Jalon 05"
+      - "Jalon 06"
+    Moment 3:
+      - "Jalon 07"
+      - "Jalon 08"
+      - "Jalon 09"
+    Moment 4:
+      - "Jalon 10"
+      - "Jalon 11"
+      - "Jalon 05"
+    Moment 5:
+      - "Jalon 12"
+      - "Jalon 13"
+      - "Jalon 04"
+    Moment 6:
+      - "Jalon 14"
+      - "Jalon 15"
+    Moment 7:
+      - "Jalon 16"
+      - "Jalon 17"
+      - "Jalon 18"
+      - "Jalon 19"
+    Moment 8:
+      - "Jalon 20"
+    Permanent:
+      - "Jalon 20"
+
+  "2.3": non
+  "2.4":
+    regle_de_majorite: true
+    prefixe_transversal: "Permanent"
+    motif: >-
+      Deux pages débordent et un paquet domine quand même : le jalon 05 relève
+      du moment 2 avant d'être une pièce du moment 4, et le jalon 04 relève du
+      moment 5 avant d'être une formalité du moment 1. Le jalon 20, lui, n'a
+      aucun centre de gravité : il vaut à chaque moment, et le ranger dans le
+      dernier parce que c'est là qu'il sert serait le ranger à l'endroit où il
+      est trop tard.
+  "2.5": { s: moment, p: moments }
+  "2.6": 400
+  "2.7":
+    ordre_de_l_utilisateur: true
+    branches:
+      - n: D1
+        question: "Le jalon vaut-il à TOUS les moments, sans qu'aucun ne domine ?"
+        si_oui: [permanent]
+        motif: >-
+          HORS déroulement, et EN PREMIER — c'est le rang qui compte. Sans elle,
+          un jalon permanent tomberait dans le premier moment où il s'applique,
+          c'est-à-dire au hasard de l'ordre de lecture.
+      - { n: D2,  question: "Relève-t-il du premier moment ?",   si_oui: ["moment-1"] }
+      - { n: D3,  question: "Relève-t-il du deuxième moment ?",  si_oui: ["moment-2"] }
+      - { n: D4,  question: "Relève-t-il du troisième moment ?", si_oui: ["moment-3"] }
+      - { n: D5,  question: "Relève-t-il du quatrième moment ?", si_oui: ["moment-4"] }
+      - { n: D6,  question: "Relève-t-il du cinquième moment ?", si_oui: ["moment-5"] }
+      - { n: D7,  question: "Relève-t-il du sixième moment ?",   si_oui: ["moment-6"] }
+      - { n: D8,  question: "Relève-t-il du septième moment ?",  si_oui: ["moment-7"] }
+      - { n: D9,  question: "Relève-t-il du huitième moment ?",  si_oui: ["moment-8"] }
+      - n: D10
+        question: "Aucun des précédents"
+        si_oui: []
+        arret: true
+        motif: >-
+          ARRÊT — demander. Un moment manquant se nomme, il ne s'invente pas :
+          un jalon rangé dans le mauvais moment est un jalon qu'on lira trop
+          tard.
+
+  # --- Passe 3 — l axe qui qualifie ---------------------------------------- #
+  "3.1": oui
+  "3.2":
+    champ: forme
+    libelle: { s: forme, p: formes }
+    valeurs:
+      - cle: forme-a
+        definition: "Un acte à accomplir, à une date, auprès d'un tiers."
+        frontiere: "Distincte de forme-b parce qu'elle s'adresse à quelqu'un : elle part."
+      - cle: forme-b
+        definition: "Une pièce à tenir et à pouvoir produire."
+        frontiere: "Distincte de forme-a parce qu'elle reste : ce qui est contrôlé est son existence, pas son envoi."
+      - cle: forme-c
+        definition: "Un jalon qui n'existe qu'au-delà d'un seuil chiffré."
+        frontiere: "Distincte des autres par le fait qu'elle peut ne pas s'appliquer du tout — et c'est la première chose à vérifier."
+      - cle: forme-d
+        definition: "Une chose qu'on ne doit pas faire."
+        frontiere: "Distincte de forme-a par la polarité : il n'y a rien à accomplir, seulement à ne pas franchir."
+      - cle: forme-e
+        definition: "Une suite d'actes ordonnés, dont l'ordre est lui-même la règle."
+        frontiere: "Distincte de forme-a parce qu'elle a plusieurs étapes et que sauter l'une vicie les suivantes."
+  "3.3":
+    ordre_de_l_utilisateur: true
+    branches:
+      - { n: N1, question: "Le jalon disparaît-il sous un certain seuil chiffré ?", si_oui: forme-c }
+      - { n: N2, question: "S'agit-il de ne PAS faire quelque chose ?",             si_oui: forme-d }
+      - { n: N3, question: "Y a-t-il plusieurs actes dont l'ordre est prescrit ?",  si_oui: forme-e }
+      - { n: N4, question: "Faut-il pouvoir PRODUIRE une pièce au contrôle ?",      si_oui: forme-b }
+      - { n: N5, question: "Aucun des précédents", si_oui: forme-a, defaut: true }
+  "3.4":
+    - { champ: seuil_minimal, si: "forme == forme-c" }
+    - { champ: etapes,        si: "forme == forme-e" }
+
+  # --- Passe 4 — les axes transverses -------------------------------------- #
+  # UN seul axe. Un second a ete propose puis retire : c est un champ (`enjeu`),
+  # et un champ n est pas un axe — on ne veut pas d un hub par niveau d enjeu.
+  "4.1":
+    - champ: parties
+      libelle: { s: partie, p: parties }
+      valeurs:
+        - { cle: partie-1, libelle: "Partie 1" }
+        - { cle: partie-2, libelle: "Partie 2" }
+        - { cle: partie-3, libelle: "Partie 3" }
+        - { cle: partie-4, libelle: "Partie 4" }
+        - { cle: partie-5, libelle: "Partie 5" }
+        - { cle: partie-6, libelle: "Partie 6" }
+  "4.2": { parties: true }
+  "4.3": { parties: "Parties" }
+
+  # --- Passe 5 — le haut de page ------------------------------------------- #
+  "5.1": ["Forme", "Délai", "Renvoi", "Enjeu"]
+  "5.2":
+    Forme:
+      source: forme
+      table:
+        forme-a: "Forme A"
+        forme-b: "Forme B"
+        forme-c: "Forme C"
+        forme-d: "Forme D"
+        forme-e: "Forme E"
+    Délai:
+      source: delai
+      type: ligne
+    Renvoi:
+      source: renvoi
+      type: ligne
+    Enjeu:
+      source: enjeu
+      type: ligne
+  "5.3": "—"
+
+  # --- Passe 6 — le corps --------------------------------------------------- #
+  "6.1":
+    - { titre: "Ce que c'est",                        niveau: 2 }
+    - { titre: "Ce qui déclenche / Ce qui dispense",  niveau: 2 }
+    - { titre: "Comment on le tient",                 niveau: 2 }
+    - { titre: "Autour",                              niveau: 2 }
+    - { titre: "Conditionne",                         niveau: 3 }
+    - { titre: "Conditionné par",                     niveau: 3 }
+    - { titre: "Va avec",                             niveau: 3 }
+    - { titre: "Voir aussi",                          niveau: 2 }
+    - titre: "Cas rencontrés"
+      niveau: 2
+      existe_si: "au moins un cas daté"
+      forme: "- YYYY-MM-DD — <la situation, ce qui a été fait, ce que ça a donné>."
+  "6.2": "Ce que c'est"
+  "6.3":
+    titre: "Ce qui déclenche / Ce qui dispense"
+    positive: "Déclenche"
+    negative: "Dispense"
+  "6.4":
+    - { titre: "Conditionne",      niveau: 3, champ: conditionne }
+    - { titre: "Conditionné par",  niveau: 3, champ: conditionne_par }
+    - { titre: "Va avec",          niveau: 3, champ: va_avec }
+    - { titre: "Voir aussi",       niveau: 2, champ: null }
+  "6.5":
+    titre: "Comment on le tient"
+    obligatoires: ["Qui", "Quand", "Preuve", "Outil"]
+    permises: ["Qui", "Quand", "Preuve", "Outil", "Coût"]
+
+  # --- Passe 7 — les liens et le resume ------------------------------------- #
+  "7.1":
+    - { champ: va_avec,      section: "Va avec" }
+    - { champ: conditionne,  section: "Conditionne" }
+  "7.2":
+    va_avec: true
+    conditionne: false
+  "7.3":
+    conditionne:
+      champ: conditionne_par
+      section: "Conditionné par"
+  "7.4": { champ: resume }
+
+  # --- Passe 8 — ce qui rassemble ------------------------------------------- #
+  "8.1": non
+  "8.2":
+    libelle: { s: liste, p: listes }
+    prefixe_nom: "Liste - "
+    tri_par: delai
+    direction: asc
+    colonnes: [nom, resume, forme, delai, enjeu, parties]
+  "8.3":
+    dossier: "Listes"
+    lien_retour: "Voir aussi"
+
+  # --- Passe 9 — gouvernance et frontieres ---------------------------------- #
+  "9.1": ferme
+  "9.2": demander
+  "9.3": non
+  "9.4":
+    - "AI/index/"
+    - "les zones AUTO des hubs"
+    - "Parties/"
+    - "Listes/Listes.md"
+    - "les bandeaux des jalons"
+    - "Documentation/moments/taxonomie.md"
+    - "Templates/"
+    - "docs/"
+  "9.5":
+    porte_d_entree: Home.md
+    pages:
+      - { fichier: Home.md,  titre: Accueil, aiguille: true,  role_editorial: porte }
+      - { fichier: Inbox.md, titre: Inbox,   aiguille: false, role_editorial: capture }
+  "9.6": []
+
+  # --- Passe 10 — l exploitation --------------------------------------------- #
+  "10.1": >-
+    Une note d'action pour une situation donnée : ce qu'il faut faire, dans quel
+    ordre, sous quel délai, avec quelle preuve à garder.
+  "10.2":
+    - "un cas simple"
+    - "un cas qui s'arrête en cours"
+    - "un contrôle"
+  "10.3":
+    - "quel volume, et depuis quand ?"
+    - "quel cadre s'applique ?"
+    - "y a-t-il une partie tierce ?"
+    - "la situation est-elle déjà litigieuse ?"

@@ -5,7 +5,7 @@
 """epreuve.py — le jeu d epreuve du moteur de validation (lot 3).
 
     uv run tests/epreuve.py
-    uv run tests/epreuve.py --vault-devbrain ../DevBrain
+    uv run tests/epreuve.py --vault-temoin <chemin d un vault reel>
 
 Six scenarios. Les quatre premiers opposent deux vaults JUMEAUX — `tests/vert/`
 et `tests/rouge/` — qui ne different que par les sept defauts que le rouge porte
@@ -27,9 +27,9 @@ qu une regle CRIE, jamais qu elle se taise quand il faut.
                 EN MEMOIRE. La regle qui verifie la PAIRE mord sur le manifeste,
                 sans lire une page.
   5. CONTRAT  — `tests/epreuve.brain.yml` passe le schema du lot 1.
-  6. DEVBRAIN — facultatif : le critere d acceptation du lot, sur le vrai vault.
-                Zero violation dure, 111 avertissements, et le compte exact par
-                regle. Saute si le vault n est pas la.
+  6. TEMOIN   — facultatif : le critere d acceptation du lot, sur un vault REEL
+                donne en argument. Zero violation dure, et le compte exact par
+                regle. Saute si aucun temoin n est declare — cf. tests/temoin.py.
 
 Les deux mutations EN MEMOIRE (scenarios 3 et 4) ne touchent aucun fichier :
 elles modifient le dictionnaire charge, une cle chacune, et le disent.
@@ -47,6 +47,8 @@ import yaml
 RACINE_KIT = Path(__file__).resolve().parents[1]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import temoin                                          # noqa: E402
 
 from brainkit.valider import valide                    # noqa: E402
 from brainkit.valider.manifeste import Modele          # noqa: E402
@@ -91,9 +93,10 @@ VERT_MULTIVALUES = {
     "Transverse/Unité T1.md",
 }
 
-# Le critere d acceptation du lot, mesure sur les deux validateurs actuels du
-# DevBrain le 2026-09-07 : `uv run AI/scripts/check_brain.py` (0 dure, 111
-# avertissements) et `uv run AI/scripts/check_arbo.py` (0 ecart).
+# Le critere d acceptation du lot, mesure le 2026-09-07 sur le VAULT TEMOIN —
+# le vault reel de plusieurs centaines de pages dont le kit a ete extrait, et
+# que le depot ne nomme pas (cf. tests/temoin.py). Ces comptes ne valent que
+# pour LUI : un autre temoin les fait echouer, et c est normal.
 #
 # MIS A JOUR LE 2026-09-08, lot 11 : 111 -> 127. Les seize de plus sont les
 # constats de `amont_concorde`, une regle NEUVE — aucun compte existant n a
@@ -105,7 +108,7 @@ VERT_MULTIVALUES = {
 # Ce compte depend du SIDE-CAR (`AI/index/fraicheur.json`) : un vault dont le
 # side-car n a pas ete sonde rend 0 sur les trois, et le scenario le dit au lieu
 # d echouer — une regle qui n a rien a lire n est pas une regle en faute.
-DEVBRAIN_ATTENDU = {
+TEMOIN_ATTENDU = {
     ("voisinage_declare", ""): 62,
     ("collision_alias", ""): 13,
     ("couverture_des_vues", "a"): 13,
@@ -121,7 +124,7 @@ DEVBRAIN_ATTENDU = {
 }
 # Les sous-cles dont le compte depend d un side-car sonde. Sans lui, elles sont
 # a zero et le scenario l ANNONCE plutot que d echouer.
-DEPEND_DU_SONDAGE = {k for k in DEVBRAIN_ATTENDU if k[0] == "amont_concorde"}
+DEPEND_DU_SONDAGE = {k for k in TEMOIN_ATTENDU if k[0] == "amont_concorde"}
 
 
 def charge_dict() -> dict:
@@ -232,11 +235,10 @@ def scenario_contrat(j: Journal) -> None:
               "\n".join(viol))
 
 
-def scenario_devbrain(j: Journal, vault: Path) -> None:
-    print(f"\n6. DEVBRAIN — le critère d'acceptation, sur `{vault.name}`")
-    mo = Modele(yaml.safe_load(
-        (RACINE_KIT / "exemples" / "devbrain.brain.yml").read_text(
-            encoding="utf-8")), RACINE_KIT / "exemples" / "devbrain.brain.yml")
+def scenario_temoin(j: Journal, vault: Path) -> None:
+    print(f"\n6. TÉMOIN — le critère d'acceptation, sur `{vault.name}`")
+    manifeste = vault / "brain.yml"
+    mo = Modele(yaml.safe_load(manifeste.read_text(encoding="utf-8")), manifeste)
     v = valide(mo, vault)
     dures = constats(v, "dure")
     j.verifie("0 violation dure", not dures,
@@ -246,7 +248,7 @@ def scenario_devbrain(j: Journal, vault: Path) -> None:
     # frais ne l a pas, et les seize constats de fraicheur sont alors absents.
     # On le DIT et on retire ces sous-cles de l attendu, plutot que d echouer
     # sur une absence qui n est pas une regression.
-    attendu = dict(DEVBRAIN_ATTENDU)
+    attendu = dict(TEMOIN_ATTENDU)
     side_car = vault / "AI" / "index" / "fraicheur.json"
     sonde = side_car.is_file() and '"etat"' in side_car.read_text(encoding="utf-8")
     if not sonde:
@@ -274,8 +276,8 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Le jeu d'épreuve du lot 3.")
-    ap.add_argument("--vault-devbrain", type=Path,
-                    default=RACINE_KIT.parent / "DevBrain")
+    ap.add_argument("--vault-temoin", type=Path, default=None,
+                    help="un vault réel ; cf. tests/temoin.py")
     ns = ap.parse_args()
 
     print("épreuve — le moteur de validation de BrainKit, lot 3")
@@ -285,10 +287,11 @@ def main() -> int:
     scenario_exclusif(j)
     scenario_paire(j)
     scenario_contrat(j)
-    if ns.vault_devbrain.is_dir():
-        scenario_devbrain(j, ns.vault_devbrain.resolve())
+    vault = temoin.resout(ns.vault_temoin)
+    if vault is not None and (vault / "brain.yml").is_file():
+        scenario_temoin(j, vault)
     else:
-        print(f"\n6. DEVBRAIN — sauté : `{ns.vault_devbrain}` introuvable")
+        print(f"\n6. TÉMOIN — sauté : {temoin.pourquoi_saute()}")
 
     print()
     if j.echecs:

@@ -18,14 +18,13 @@ du kit — comme `outils/fidelite.py`, `outils/captures.py` ou `schema/valider.p
 
 | Fichier | Genere depuis | Lecteur |
 |---|---|---|
-| `exemples/rendu-histobrain/*` | `exemples/histobrain.brain.yml` | celui qui veut VOIR ce que le semis pose |
+| `gabarit/rendu/*` | `gabarit/brain.yml` | celui qui veut VOIR ce que le semis pose |
 
 Les quatre documents d instance sont poses par le SEMIS, dans l instance — ils
 n ont rien a faire dans le depot du kit. Sauf qu un depot qui annonce « le semis
 pose un INSTALL.md et trois guides » sans qu on puisse les lire demande de le
-croire sur parole. Ils sont donc rendus une fois, depuis le manifeste de
-demonstration, et clairement etiquetes comme tels : c est le meme choix que
-`exemples/histobrain.brain.yml`, pour la meme raison.
+croire sur parole. Ils sont donc rendus une fois, depuis le MANIFESTE DE
+REFERENCE — qui ne nomme aucun sujet — et clairement etiquetes comme tels.
 
 **Ce qu il ne pose plus** : l `INSTALL.md` du DEPOT DU KIT, et le `docs/README.md`.
 Les deux etaient generes, et les deux etaient de la DOC DU KIT — une nature
@@ -63,16 +62,16 @@ if str(RACINE_KIT) not in sys.path:
 from brainkit import emballer                              # noqa: E402
 from brainkit.valider import charge                        # noqa: E402
 
-#: Le manifeste de demonstration dont les guides sont rendus.
-#: HistoBrain et pas DevBrain, et ce n est pas un hasard : le kit doit se
-#: montrer sur le sujet le plus ELOIGNE de celui dont il est extrait.
-DEMONSTRATION = "histobrain"
-SOUS_DOSSIER = f"exemples/rendu-{DEMONSTRATION}"
+#: Le manifeste de REFERENCE dont les guides sont rendus. Il ne nomme aucun
+#: sujet : ce qu on veut montrer est la FORME de ce que le semis pose, et une
+#: forme montree sur un sujet se lit comme une promesse de sujet.
+MANIFESTE = RACINE_KIT / "gabarit" / "brain.yml"
+SOUS_DOSSIER = "gabarit/rendu"
 
 
 def documents() -> dict[str, str]:
     """{chemin relatif au depot : contenu} — tout ce que cet outil pose."""
-    mo = charge(RACINE_KIT / "exemples" / f"{DEMONSTRATION}.brain.yml")
+    mo = charge(MANIFESTE)
     return {f"{SOUS_DOSSIER}/{Path(chemin).name}": texte
             for chemin, texte in emballer.rendus(mo).items()}
 

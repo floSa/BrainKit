@@ -30,7 +30,7 @@ montagne sans une retouche.
 | les hubs transverses   | UNE ligne par entree de `axes.transverses`                  |
 
 La derniere est ecrite au pluriel a dessein : le DevBrain n a qu un axe
-transverse et sa table n a qu une ligne ; HistoBrain en a deux et en obtient
+transverse et sa table n a qu une ligne ; BrainRef en a deux et en obtient
 deux, parce qu une page peut porter un theme sans porter d espace — et alors
 l une des deux lignes est SANS OBJET, ce qui doit se declarer separement.
 
@@ -162,7 +162,7 @@ def champ_resume(mo: Modele) -> str | None:
 def sections_de_reinjection(mo: Modele) -> list[str]:
     """Les sections ou le resume court se RECOPIE. Dedupliquees, ordre declare.
 
-    La deduplication n est pas de la coquetterie : `cimebrain.brain.yml` porte
+    La deduplication n est pas de la coquetterie : `un manifeste a deux axes transverses` porte
     « Variantes » deux fois dans `reinjecte_dans`, parce que le champ a deux
     cotes qui visent la meme section. Une table qui la listerait deux fois
     ferait croire a deux travaux distincts.

@@ -27,9 +27,9 @@ Toute violation, des deux passes, nomme LE CHAMP FAUTIF par son chemin dans le
 document (`roles[2].champs.conditionnels[0].si`, `bandeau.colonnes[1].source`).
 
 Usage :
-    uv run schema/valider.py                          # les trois exemples
-    uv run schema/valider.py exemples/devbrain.brain.yml
-    uv run schema/valider.py --attendre-echec exemples/invalide.brain.yml
+    uv run schema/valider.py                          # les quatre manifestes du depot
+    uv run schema/valider.py gabarit/brain.yml
+    uv run schema/valider.py --attendre-echec tests/invalide.brain.yml
 
 Sort en 0 si tout ce qui devait passer passe et tout ce qui devait echouer
 echoue ; en 1 sinon.
@@ -55,10 +55,15 @@ if str(RACINE) not in sys.path:
     sys.path.insert(0, str(RACINE))
 from brainkit.amont.etat import ETATS as ETATS_DU_KIT      # noqa: E402
 
+# Les manifestes que le depot porte, et le verdict attendu de chacun. Aucun ne
+# nomme un sujet : `gabarit/brain.yml` est le manifeste de reference, les deux
+# suivants sont des jeux d epreuve, le dernier un CONTRE-EXEMPLE qui doit
+# echouer. Un depot sans contre-exemple ne prouve pas que son schema mord.
 DEFAUT = [
-    (RACINE / "exemples" / "devbrain.brain.yml", True),
-    (RACINE / "exemples" / "histobrain.brain.yml", True),
-    (RACINE / "exemples" / "invalide.brain.yml", False),
+    (RACINE / "gabarit" / "brain.yml", True),
+    (RACINE / "tests" / "epreuve.brain.yml", True),
+    (RACINE / "tests" / "generation.brain.yml", True),
+    (RACINE / "tests" / "invalide.brain.yml", False),
 ]
 
 
@@ -408,7 +413,7 @@ def valide(f: Path, schema: dict) -> list[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Valide un brain.yml contre le contrat du lot 1.")
-    ap.add_argument("fichiers", nargs="*", help="manifestes a valider ; vide = les trois exemples")
+    ap.add_argument("fichiers", nargs="*", help="manifestes a valider ; vide = les quatre du depot")
     ap.add_argument("--attendre-echec", action="store_true",
                     help="les fichiers donnes DOIVENT echouer")
     ns = ap.parse_args()

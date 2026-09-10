@@ -396,7 +396,7 @@ def _entretien(mo: Modele | None) -> Section | None:
         "la repose. C'est la bonne façon de changer d'avis — écraser une "
         "réponse par une autre laisserait le brouillon en dire deux choses.", "",
         "> **À quoi ressemble un fichier de réponses.** Deux exemples complets "
-        "sont dans `tests/` : `cimebrain.reponses.yml` (un brain de montagne) et "
+        "sont dans `tests/` : `cimebrain.reponses.yml` (un second vocabulaire, disjoint du premier) et "
         "`blanc.reponses.yml` (un brain de droit du travail — c'est l'entretien "
         "de l'installation à blanc qui a validé ce guide). Chacun porte, en "
         "tête, le raisonnement du sujet ; c'est la forme à copier, pas le "

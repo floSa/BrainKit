@@ -5,7 +5,7 @@
 """emballage.py — le jeu d epreuve de L EMBALLAGE (lot 10).
 
     uv run tests/emballage.py
-    uv run tests/emballage.py --vault-devbrain ../DevBrain
+    uv run tests/emballage.py --vault-temoin <chemin d un vault reel>
 
 Huit scenarios. Aucun n ecrit hors d un dossier temporaire, et le scenario 8 lit
 un vault reel SANS l ouvrir en ecriture.
@@ -33,7 +33,7 @@ un vault reel SANS l ouvrir en ecriture.
   7. DEFAUT      — lancees DANS un vault, `valider` et `generer` resolvent
                    `./brain.yml` sans option (remontee 3 du lot 5, close au
                    lot 6 — ce scenario le verifie plutot que de le croire).
-  8. DEVBRAIN    — sur le vault reel, en lecture seule : les documents que le
+  8. TEMOIN      — sur un vault reel, en lecture seule : les documents que le
                    kit genererait pour lui sont composables et ne contiennent
                    aucune valeur inventee. Saute si le vault n est pas la.
 """
@@ -54,6 +54,8 @@ import yaml
 RACINE_KIT = Path(__file__).resolve().parents[1]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import temoin                                          # noqa: E402
 
 from brainkit import contrat, emballer                             # noqa: E402
 from brainkit.entretien import brouillon as _brouillon             # noqa: E402
@@ -64,18 +66,17 @@ from brainkit.semer import figer, ponts, semis                     # noqa: E402
 from brainkit.valider import valide                                # noqa: E402
 from brainkit.valider.manifeste import Modele                      # noqa: E402
 
-HISTO = RACINE_KIT / "exemples" / "histobrain.brain.yml"
-DEV = RACINE_KIT / "exemples" / "devbrain.brain.yml"
-REPONSES_CIME = RACINE_KIT / "tests" / "cimebrain.reponses.yml"
-REPONSES_BLANC = RACINE_KIT / "tests" / "blanc.reponses.yml"
+REFERENCE = RACINE_KIT / "gabarit" / "brain.yml"
+REPONSES_DEUX = RACINE_KIT / "tests" / "deuxieme.reponses.yml"
+REPONSES_TROIS = RACINE_KIT / "tests" / "troisieme.reponses.yml"
 
 # Les mots de SUJET de chaque brain — repris du controle du lot 7, meme motif :
 # les jetons portent leur ponctuation, parce qu un controle de genericite qui
 # teste des mots courants mesure la langue et non la derivation.
-MOTS_HISTO = ["role: source", "role: chronologie", "période", "Antiquité",
-              "prolonge_par", "contredit:", "fiabilite", "HistoBrain"]
-MOTS_BLANC = ["role: obligation", "role: check-list", "Embauche", "DroitBrain",
-              "conditionnee_par", "va_avec:", "sanction", "URSSAF"]
+MOTS_REF = ["role: unite", "role: sequence", "domaine", "Marqueur 1",
+            "prolonge_par", "contredit:", "fiabilite", "BrainRef"]
+MOTS_TROIS = ["role: jalon", "role: liste", "Moment 1", "BrainTrois",
+              "conditionne_par", "va_avec:", "enjeu", "Partie 1"]
 
 # Ce qu un document du depot ne doit JAMAIS porter. §5.7 et §5.8 du cadrage ne
 # sont pas tranches, et un depot qui les trancherait a la place de son
@@ -167,7 +168,7 @@ def scenario_documents(j: Journal) -> None:
     # Idempotence : deux rendus du meme manifeste sont identiques a l octet.
     # Sans ca, `--check` signalerait un ecart a chaque appel et le contrat
     # « ce qui est genere n est jamais edite a la main » serait invérifiable.
-    mo = Modele(charge_dict(HISTO), HISTO)
+    mo = Modele(charge_dict(REFERENCE), REFERENCE)
     a, b = emballer.rendus(mo), emballer.rendus(mo)
     j.verifie("la génération est idempotente (deux rendus identiques)", a == b,
               "\n".join(sorted(set(a) ^ set(b))))
@@ -193,8 +194,8 @@ def scenario_documents(j: Journal) -> None:
     fautes: list[str] = []
     cibles = ["README.md", "LICENSE"]
     cibles += [f"docs/{p.name}" for p in (RACINE_KIT / "docs").glob("*.md")]
-    cibles += [f"exemples/rendu-histobrain/{p.name}"
-               for p in (RACINE_KIT / "exemples" / "rendu-histobrain").glob("*.md")]
+    cibles += [f"gabarit/rendu/{p.name}"
+               for p in (RACINE_KIT / "gabarit" / "rendu").glob("*.md")]
     for chemin in cibles:
         for ligne in (RACINE_KIT / chemin).read_text(
                 encoding="utf-8").splitlines():
@@ -233,17 +234,17 @@ def scenario_documents(j: Journal) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_genericite(j: Journal, dossier: Path) -> None:
     print("\n2. GÉNÉRICITÉ — aucun mot de sujet ne traverse d'un brain à l'autre")
-    histo = Modele(charge_dict(HISTO), HISTO)
-    blanc = compose(REPONSES_BLANC, dossier / "compose-blanc")
-    (dossier / "compose-blanc").mkdir(parents=True, exist_ok=True)
+    ref = Modele(charge_dict(REFERENCE), REFERENCE)
+    trois = compose(REPONSES_TROIS, dossier / "compose-trois")
+    (dossier / "compose-trois").mkdir(parents=True, exist_ok=True)
 
-    doc_h = emballer.rendus(histo)
-    doc_b = emballer.rendus(blanc)
+    doc_h = emballer.rendus(ref)
+    doc_b = emballer.rendus(trois)
     j.verifie("les deux brains produisent les mêmes CHEMINS de document",
               set(doc_h) == set(doc_b), str(set(doc_h) ^ set(doc_b)))
 
-    for mots, cible, nom in ((MOTS_HISTO, doc_b, "HistoBrain -> DroitBrain"),
-                             (MOTS_BLANC, doc_h, "DroitBrain -> HistoBrain")):
+    for mots, cible, nom in ((MOTS_REF, doc_b, "BrainRef -> BrainTrois"),
+                             (MOTS_TROIS, doc_h, "BrainTrois -> BrainRef")):
         fuites = [f"{c} : « {m} »" for m in mots
                   for c, t in cible.items() if m in t]
         j.verifie(f"aucune fuite {nom}", not fuites, "\n".join(fuites))
@@ -251,8 +252,8 @@ def scenario_genericite(j: Journal, dossier: Path) -> None:
     # Et le controle inverse, qui prouve que le test n est pas vide : chaque
     # brain porte SES mots dans SES documents. Un jeu d essai qui ne verifie
     # que l absence passerait sur deux documents vides.
-    for mots, cible, nom in ((MOTS_HISTO, doc_h, "HistoBrain"),
-                             (MOTS_BLANC, doc_b, "DroitBrain")):
+    for mots, cible, nom in ((MOTS_REF, doc_h, "BrainRef"),
+                             (MOTS_TROIS, doc_b, "BrainTrois")):
         presents = [m for m in mots if any(m in t for t in cible.values())]
         j.verifie(f"… et {nom} porte bien ses propres mots ({len(presents)}"
                   f"/{len(mots)})", len(presents) >= len(mots) // 2,
@@ -262,13 +263,13 @@ def scenario_genericite(j: Journal, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_profil_nu(j: Journal, dossier: Path) -> None:
     print("\n3. PROFIL NU — un brain sans Obsidian, et ce qu'il perd, mesuré")
-    base = charge_dict(HISTO)
+    base = charge_dict(REFERENCE)
     nu = copy.deepcopy(base)
     nu["brain"]["profil"] = "nu"
     nu["brain"]["nom"] = base["brain"]["nom"]
 
-    mo_o = Modele(base, HISTO)
-    mo_n = Modele(nu, HISTO)
+    mo_o = Modele(base, REFERENCE)
+    mo_n = Modele(nu, REFERENCE)
     a = semis.seme(mo_o, dossier / "prof-obsidian", ecrire=True, avec_git=False)
     b = semis.seme(mo_n, dossier / "prof-nu", ecrire=True, avec_git=False)
     j.verifie("le semis `nu` ne refuse rien", not b.refuse,
@@ -330,7 +331,7 @@ def scenario_profil_nu(j: Journal, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_croise(j: Journal, dossier: Path) -> None:
     print("\n4. CROISÉ — la même instance, kit BRANCHÉ puis kit FIGÉ")
-    mo = Modele(charge_dict(HISTO), HISTO)
+    mo = Modele(charge_dict(REFERENCE), REFERENCE)
     cible = dossier / "croise"
     s = semis.seme(mo, cible, ecrire=True, avec_git=False)
     if s.refuse:
@@ -385,10 +386,10 @@ def scenario_croise(j: Journal, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_ponts(j: Journal, dossier: Path) -> None:
     print("\n5. PONTS — la couche d'adaptation, posée et EXERCÉE")
-    base = charge_dict(HISTO)
+    base = charge_dict(REFERENCE)
     avec = copy.deepcopy(base)
     avec["agent"]["ponts"] = dict(PONTS_A_EXERCER)
-    mo = Modele(avec, HISTO)
+    mo = Modele(avec, REFERENCE)
     cible = dossier / "ponts"
     s = semis.seme(mo, cible, ecrire=True, avec_git=False)
     j.verifie("le semis avec ponts ne refuse rien", not s.refuse,
@@ -433,7 +434,7 @@ def scenario_ponts(j: Journal, dossier: Path) -> None:
     faux = copy.deepcopy(base)
     faux["agent"]["ponts"] = {"check_brain": "faire-le-cafe"}
     perdu = dossier / "ponts-refuses"
-    s2 = semis.seme(Modele(faux, HISTO), perdu, ecrire=True, avec_git=False)
+    s2 = semis.seme(Modele(faux, REFERENCE), perdu, ecrire=True, avec_git=False)
     j.verifie("une cible de pont inventée est REFUSÉE", bool(s2.manques),
               "aucun manque signalé")
     j.verifie("… et rien n'est écrit", not perdu.exists(),
@@ -453,7 +454,7 @@ def scenario_version(j: Journal) -> None:
               and 'path = "brainkit/__init__.py"' in pyproject,
               "deux sources pour une version, c'est le constat E4")
 
-    base = charge_dict(HISTO)
+    base = charge_dict(REFERENCE)
     majeur, mineur, correctif = (int(x) for x in __version__.split("."))
 
     cas = [
@@ -495,7 +496,7 @@ def scenario_version(j: Journal) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_defaut(j: Journal, dossier: Path) -> None:
     print("\n7. DÉFAUT D'INSTANCE — `valider` et `generer` lancés DANS le vault")
-    mo = Modele(charge_dict(HISTO), HISTO)
+    mo = Modele(charge_dict(REFERENCE), REFERENCE)
     cible = dossier / "defaut"
     s = semis.seme(mo, cible, ecrire=True, avec_git=False)
     if s.refuse:
@@ -508,14 +509,15 @@ def scenario_defaut(j: Journal, dossier: Path) -> None:
                   "\n".join(lignes[-6:]))
         j.verifie(f"… et il a pris LE manifeste du vault",
                   any("brain.yml" in l for l in lignes)
-                  and not any("devbrain" in l.lower() for l in lignes),
+                  and not any("gabarit/brain.yml" in l for l in lignes),
                   "\n".join(lignes[:4]))
 
 
 # --------------------------------------------------------------------------- #
-def scenario_devbrain(j: Journal, vault: Path) -> None:
-    print("\n8. DEVBRAIN — les documents du vault réel, composés en LECTURE SEULE")
-    mo = Modele(charge_dict(DEV), DEV)
+def scenario_temoin(j: Journal, vault: Path) -> None:
+    print("\n8. TÉMOIN — les documents du vault réel, composés en LECTURE SEULE")
+    manifeste = vault / "brain.yml"
+    mo = Modele(charge_dict(manifeste), manifeste)
     docs = emballer.rendus(mo)
     j.verifie(f"{len(docs)} documents composés depuis le manifeste réel",
               len(docs) == 4, str(sorted(docs)))
@@ -552,8 +554,8 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Le jeu d'épreuve de l'emballage.")
-    ap.add_argument("--vault-devbrain", type=Path,
-                    default=RACINE_KIT.parent / "DevBrain")
+    ap.add_argument("--vault-temoin", type=Path, default=None,
+                    help="un vault réel ; cf. tests/temoin.py")
     ap.add_argument("--garder", action="store_true")
     ns = ap.parse_args()
 
@@ -568,10 +570,11 @@ def main() -> int:
         scenario_ponts(j, tmp)
         scenario_version(j)
         scenario_defaut(j, tmp)
-        if (ns.vault_devbrain / ".git").exists():
-            scenario_devbrain(j, ns.vault_devbrain.resolve())
+        vault = temoin.resout(ns.vault_temoin)
+        if vault is not None and (vault / ".git").exists():
+            scenario_temoin(j, vault)
         else:
-            print(f"\n8. DEVBRAIN — sauté : `{ns.vault_devbrain}` introuvable")
+            print(f"\n8. TÉMOIN — sauté : {temoin.pourquoi_saute()}")
     finally:
         if ns.garder:
             print(f"\ndossier temporaire gardé : {tmp}")

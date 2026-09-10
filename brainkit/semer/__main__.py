@@ -4,8 +4,8 @@
 # ///
 """Le semis d instance de BrainKit, en ligne de commande.
 
-    uv run brainkit/semer/__main__.py --manifeste exemples/histobrain.brain.yml \\
-                                      --dans /chemin/vers/histobrain
+    uv run brainkit/semer/__main__.py --manifeste gabarit/brain.yml \\
+                                      --dans /chemin/vers/mon-brain
     uv run brainkit/semer/__main__.py --manifeste … --dans … --ecrire
 
 # Le mode par defaut n ecrit rien, et ce n est pas negociable
@@ -52,21 +52,14 @@ def _manifeste(chemin: Path | None, vault: Path) -> Path | None:
 
     Un defaut du kit serait ici un piege : re-seuiller avec le manifeste d un
     AUTRE brain reformerait l arbre selon des valeurs qui ne sont pas celles du
-    vault. Depuis le lot 6, la resolution est PARTAGEE avec `valider` et
-    `generer` (`brainkit/defauts.py`), et l incoherence se DIT — un
-    `--manifeste` qui n est pas celui du vault est annonce, nom contre nom,
-    avant que quoi que ce soit ne tourne.
+    vault. La resolution est PARTAGEE avec `valider` et `generer`
+    (`brainkit/defauts.py`), et l incoherence se DIT — un `--manifeste` qui n est
+    pas celui du vault est annonce, nom contre nom, avant que quoi que ce soit ne
+    tourne.
     """
     resolu, dits = defauts.resout(chemin, vault)
     for ligne in dits:
         print(ligne)
-    if resolu is not None and resolu.resolve() ==             defauts.MANIFESTE_DE_DEVELOPPEMENT.resolve() and chemin is None:
-        # `semer`, `re-seuiller` et `freeze` ECRIVENT. Le repli sur le
-        # manifeste de developpement du kit est acceptable pour un verdict, il
-        # ne l est pas pour une migration.
-        print("refus — ces commandes écrivent : elles ne se rabattent pas sur "
-              "le manifeste de développement du kit.")
-        return None
     return resolu
 
 

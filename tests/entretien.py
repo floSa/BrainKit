@@ -27,7 +27,7 @@ dangereux qu un entretien absent.
   4. REPRISE       — un entretien s arrete et repart : rien ne se redemande,
                      les questions conditionnelles se sautent toutes seules, et
                      `--oublier` est le seul moyen de rouvrir.
-  5. BOUT EN BOUT  — CimeBrain, un TROISIEME sujet. Reponses -> manifeste ->
+  5. BOUT EN BOUT  — BrainDeux, un TROISIEME sujet. Reponses -> manifeste ->
                      schema -> semis -> deux validateurs verts sur ZERO page
                      d unite, et les vingt titres dans `Inbox.md` sans qu une
                      page ait ete ecrite.
@@ -63,9 +63,9 @@ from brainkit.semer import semis                                   # noqa: E402
 from brainkit.valider import valide                                # noqa: E402
 from brainkit.valider.manifeste import Modele                      # noqa: E402
 
-REPONSES = RACINE_KIT / "tests" / "cimebrain.reponses.yml"
-HUBS_ATTENDUS = {"Mont-Blanc", "Écrins", "Vanoise", "Vercors", "Pyrénées",
-                 "Queyras-Ubaye", "Traversées", "Règles", "Sélections"}
+REPONSES = RACINE_KIT / "tests" / "deuxieme.reponses.yml"
+HUBS_ATTENDUS = {"Groupe A", "Groupe B", "Groupe C", "Groupe D", "Groupe E",
+                 "Groupe F", "Croisements", "Règles", "Sélections"}
 
 
 class Journal:
@@ -168,11 +168,13 @@ def scenario_identite(j: Journal, dossier: Path) -> None:
     # Elle porte le domaine que la question 0.5 vient de nommer comme interdit.
     # C est le SECOND filet, et c est celui qui attrape l accident reel.
     triche = dict(reponses)
-    triche["0.4"] = {"name": "floSa", "email": "florian.horellou@aosis.net"}
+    triche["0.4"] = {"name": "floSa",
+                 "email": "compte.pro@exemple-a-remplacer.invalid"}
     b3 = _brouillon_neuf(dossier / "domaine-refuse", triche)
     motif = refus.arret(b3.reponses)
     j.verifie("une identité portant le domaine refusé par 0.5 est REFUSÉE",
-              motif is not None and "aosis.net" in str(motif), str(motif))
+              motif is not None and "exemple-a-remplacer.invalid" in str(motif),
+              str(motif))
     m, griefs = composer.compose(b3)
     j.verifie("… et le manifeste ne se compose pas", m is None)
 
@@ -229,7 +231,7 @@ def scenario_induction(j: Journal) -> None:
     j.verifie("le seuil dérivé retrouve DevBrain (700 pages / 20 paquets -> 5)",
               induction.derive_le_seuil(700, 20)[0] == 5,
               str(induction.derive_le_seuil(700, 20)[0]))
-    j.verifie("… et HistoBrain (3000 / 8 -> 12)",
+    j.verifie("… et BrainRef (3000 / 8 -> 12)",
               induction.derive_le_seuil(3000, 8)[0] == 12,
               str(induction.derive_le_seuil(3000, 8)[0]))
     seuil, motif = induction.derive_le_seuil(600, 7)
@@ -310,9 +312,9 @@ def scenario_reprise(j: Journal, dossier: Path) -> None:
 
 # --------------------------------------------------------------------------- #
 def scenario_bout_en_bout(j: Journal, dossier: Path) -> Modele | None:
-    print("\n5. BOUT EN BOUT — CimeBrain, un TROISIÈME sujet, semé et vérifié")
+    print("\n5. BOUT EN BOUT — BrainDeux, un TROISIÈME sujet, semé et vérifié")
     reponses = _charge_les_reponses()
-    b = _brouillon_neuf(dossier / "cime", reponses)
+    b = _brouillon_neuf(dossier / "deux", reponses)
     _brouillon.enregistre(b)
 
     m, griefs = composer.compose(b)
@@ -321,7 +323,7 @@ def scenario_bout_en_bout(j: Journal, dossier: Path) -> Modele | None:
     if m is None:
         return None
 
-    fichier = dossier / "cime-manifeste" / "brain.yml"
+    fichier = dossier / "deux-manifeste" / "brain.yml"
     _rendu.ecrit(m, fichier, brouillon=str(b.chemin))
     # `uv run` et non `sys.executable` : l en-tete PEP 723 de `schema/valider.py`
     # declare `jsonschema`, que le projet ne porte qu en extra. Le lancer avec
@@ -335,7 +337,7 @@ def scenario_bout_en_bout(j: Journal, dossier: Path) -> Modele | None:
               p.returncode == 0, p.stdout + p.stderr)
 
     mo = Modele(yaml.safe_load(fichier.read_text(encoding="utf-8")), fichier)
-    cible = dossier / "cimebrain"
+    cible = dossier / "braindeux"
     s = semis.seme(mo, cible, ecrire=True, avec_git=True,
                    brouillon=b.chemin.read_text(encoding="utf-8"))
     j.verifie("le semis ne refuse rien", not s.refuse,
@@ -387,7 +389,7 @@ def scenario_bout_en_bout(j: Journal, dossier: Path) -> Modele | None:
     if skill.is_file():
         texte = skill.read_text(encoding="utf-8")
         j.verifie("… et il parle la langue du brain, pas celle du kit",
-                  "course" in texte and "massif" in texte
+                  "élément" in texte and "groupe" in texte
                   and "brique" not in texte)
 
     _c, auteur = _git(cible, "log", "-1", "--format=%an <%ae>")
@@ -456,7 +458,7 @@ def scenario_invariants(j: Journal, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_defaut_de_manifeste(j: Journal, dossier: Path, mo: Modele | None) -> None:
     print("\n7. DÉFAUT DE MANIFESTE — remontée 3 du lot 5, corrigée")
-    cible = dossier / "cimebrain"
+    cible = dossier / "braindeux"
     if not (cible / "brain.yml").is_file():
         j.verifie("l'instance du scénario 5 est là", False)
         return
@@ -468,14 +470,14 @@ def scenario_defaut_de_manifeste(j: Journal, dossier: Path, mo: Modele | None) -
     j.verifie("… et rien n'est dit, parce qu'il n'y a rien à dire", not dits,
               "\n".join(dits))
 
-    autre = RACINE_KIT / "exemples" / "histobrain.brain.yml"
+    autre = RACINE_KIT / "gabarit" / "brain.yml"
     resolu, dits = defauts.resout(autre, cible)
     j.verifie("un `--manifeste` donné l'emporte toujours",
               resolu is not None and resolu.resolve() == autre.resolve())
     j.verifie("… mais l'incohérence est DITE, et elle nomme les deux brains",
-              any("CimeBrain" in d and "HistoBrain" in d for d in dits)
-              or (any("CimeBrain" in d for d in dits)
-                  and any("HistoBrain" in d for d in dits)),
+              any("BrainDeux" in d and "BrainRef" in d for d in dits)
+              or (any("BrainDeux" in d for d in dits)
+                  and any("BrainRef" in d for d in dits)),
               "\n".join(dits))
 
     vide = dossier / "pas-un-vault"

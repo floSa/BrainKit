@@ -1,8 +1,8 @@
-# Installer — HistoBrain
+# Installer — BrainRef
 
 > **Document GÉNÉRÉ** depuis `brain.yml` par BrainKit `0.1.0`. Ne pas l'éditer à la main : il se régénère, et deux sources qui décrivent la même installation divergent.
 
-Installer **HistoBrain** sur une machine neuve : cloner, activer les garde-fous, atteindre l'outillage, ouvrir, vérifier.
+Installer **BrainRef** sur une machine neuve : cloner, activer les garde-fous, atteindre l'outillage, ouvrir, vérifier.
 
 ---
 
@@ -28,24 +28,24 @@ Installer **HistoBrain** sur une machine neuve : cloner, activer les garde-fous,
 
 ## 1. Ce que tu obtiens
 
-**HistoBrain** — Ce que je lis en histoire, les sources qui l'établissent et les notions qui l'expliquent.
+**BrainRef** — Le manifeste de référence du kit : tous les mécanismes, aucun sujet.
 
-Un dossier par période, à la racine, et rien à côté. Le dossier se **dérive** de `categorie:` : personne ne choisit un chemin. Un sous-dossier apparaît quand une sous-valeur atteint **12** page(s), sauf s'il ne laisserait aucune page au niveau du parent.
+Un dossier par domaine, à la racine, et rien à côté. Le dossier se **dérive** de `domaine:` : personne ne choisit un chemin. Un sous-dossier apparaît quand une sous-valeur atteint **12** page(s), sauf s'il ne laisserait aucune page au niveau du parent.
 
 ```
-Préhistoire/                   (Préhistoire.md)
-Antiquité/                     (Antiquité.md)
-Moyen Âge/                     (Moyen Âge.md)
-Époque moderne/                (Époque moderne.md)
-Révolutions et empires/        (Révolutions et empires.md)
-Âge industriel/                (Âge industriel.md)
-XXe siècle/                    (XXe siècle.md)
-Transversal/                   (Transversal.md)
-Controverses/                  (les pages `controverse`, groupées par leur rôle)
-Méthodes/                      (les pages `methode`, groupées par leur rôle)
-Chronologies/                  (le hub de ralliement des `chronologie`)
-Thèmes/                        (un hub par valeur PORTÉE de `themes:`)
-Espaces/                       (un hub par valeur PORTÉE de `espaces:`)
+Domaine A/                     (Domaine A.md)
+Domaine B/                     (Domaine B.md)
+Domaine C/                     (Domaine C.md)
+Domaine D/                     (Domaine D.md)
+Domaine E/                     (Domaine E.md)
+Domaine F/                     (Domaine F.md)
+Domaine G/                     (Domaine G.md)
+Transverse/                    (Transverse.md)
+Consignes/                     (les pages `consigne`, groupées par leur rôle)
+Directives/                    (les pages `directive`, groupées par leur rôle)
+Séquences/                     (le hub de ralliement des `sequence`)
+Marqueurs/                     (un hub par valeur PORTÉE de `marqueurs:`)
+Secteurs/                      (un hub par valeur PORTÉE de `secteurs:`)
 Documentation/                 (la taxonomie et les vocabulaires — GÉNÉRÉS)
 Templates/                     (un gabarit par rôle — GÉNÉRÉS)
 AI/                            (l'espace de l'agent)
@@ -85,8 +85,8 @@ Les pages, elles, ne sont pas dans cette liste : un brain neuf n'en porte **aucu
 ## 3. Cloner ce vault, et activer ses garde-fous
 
 ```bash
-git clone <url de ce vault> ~/HistoBrain
-cd ~/HistoBrain
+git clone <url de ce vault> ~/BrainRef
+cd ~/BrainRef
 ```
 
 > **S'il n'y a pas d'URL** — un vault remis hors ligne n'en a pas — un `git bundle` se clone exactement comme une URL (`git clone <fichier>.bundle`) et garde l'historique. Un dossier copié marche aussi ; une archive perd l'historique, et l'historique est ce qui distingue un vault d'un dossier de fichiers.
@@ -115,7 +115,7 @@ git config --local user.name  "floSa"
 git config --local user.email "florian_horellou@laposte.net"
 ```
 
-C'est cette identité **locale**, et rien d'autre, qui attribue un commit de ce dépôt. Un agent de code annonce à chaque conversation l'adresse qui identifie l'utilisateur auprès de l'outil ; si elle porte `aosis.net`, **elle n'attribue jamais un commit ici**.
+C'est cette identité **locale**, et rien d'autre, qui attribue un commit de ce dépôt. Un agent de code annonce à chaque conversation l'adresse qui identifie l'utilisateur auprès de l'outil ; si elle porte `exemple-a-remplacer.invalid`, **elle n'attribue jamais un commit ici**.
 
 - **Ne jamais** passer `-c user.email`, `--author`, ni poser `GIT_AUTHOR_EMAIL` / `GIT_COMMITTER_EMAIL`. Committer nu : git lit la config locale tout seul.
 - Si la config locale manque ou paraît fausse : **s'arrêter et demander**. Ne pas la deviner, ne pas la « réparer » avec l'adresse qu'on a sous la main.
@@ -161,7 +161,7 @@ export BRAINKIT_RACINE=~/BrainKit     # l'échappatoire explicite
 
 Obsidian n'importe rien et ne convertit rien : un coffre **est** un dossier de fichiers. Ouvrir le vault ne le modifie pas.
 
-À l'écran d'accueil, **Ouvrir un dossier comme coffre** *(Open folder as vault)*, puis choisir la racine de `HistoBrain` — celle qui porte `brain.yml`.
+À l'écran d'accueil, **Ouvrir un dossier comme coffre** *(Open folder as vault)*, puis choisir la racine de `BrainRef` — celle qui porte `brain.yml`.
 
 > **Capture attendue** — `docs/install/img/01-obsidian-selecteur-de-coffre.png` (du kit, réutilisable) : l'écran d'accueil d'Obsidian, bouton « Ouvrir un dossier comme coffre » (Open folder as vault).
 
@@ -240,18 +240,18 @@ Panneau du graphe → **Groupes**. Ajouter les 8 requêtes **dans cet ordre**, a
 
 | # | Requête | Couleur | RGB |
 |---|---|---|---|
-| 1 | `path:Chronologies/` | #EF4444 | `15680580` |
-| 2 | `path:Thèmes/` | #FFD43B | `16766011` |
-| 3 | `path:Espaces/` | #FFD43B | `16766011` |
+| 1 | `path:Séquences/` | #EF4444 | `15680580` |
+| 2 | `path:Marqueurs/` | #FFD43B | `16766011` |
+| 3 | `path:Secteurs/` | #FFD43B | `16766011` |
 | 4 | `["role":"hub"]` | #FF922B | `16749099` |
-| 5 | `["role":"source"]` | #412CDD | `4271325` |
+| 5 | `["role":"unite"]` | #412CDD | `4271325` |
 | 6 | `["role":"notion"]` | #7AB800 | `8042496` |
-| 7 | `["role":"chronologie"]` | #EF4444 | `15680580` |
-| 8 | `["role":"controverse"] OR ["role":"methode"]` | #94A3B8 | `9741240` |
+| 7 | `["role":"sequence"]` | #EF4444 | `15680580` |
+| 8 | `["role":"consigne"] OR ["role":"directive"]` | #94A3B8 | `9741240` |
 
 **L'ordre compte.** Une requête `path:` passe AVANT une requête `role:`, sinon un hub spécial prend la couleur des hubs ordinaires.
 
-> Un `.base` NE SE COLORE PAS : il n a pas de frontmatter, donc pas de `role:`. Trois faits sur Obsidian, aucun sur le sujet — ils transposent tels quels.
+> Un `.base` NE SE COLORE PAS : il n a pas de frontmatter, donc pas de `role:`.
 
 La cible (.obsidian/graph.json, clé `colorGroups`) n’est pas versionnée : cette table est la **seule** source de vérité, et elle se réapplique à la main sur chaque poste. Elle est aussi dans le vault, en `Documentation/graphe.md`.
 
@@ -267,9 +267,9 @@ Le routeur est déjà là : `CLAUDE.md` à la racine, et son contexte de mode à
 
 | Rôle | Skill | Écrit dans le brain |
 |---|---|---|
-| capture | `enrichir-histobrain` | oui |
-| clôture | `cloturer-histobrain` | non |
-| exploitation | `preparer-un-propos` | non |
+| capture | `enrichir-brainref` | oui |
+| clôture | `cloturer-brainref` | non |
+| exploitation | `preparer-un-livrable` | non |
 
 Lancer l'agent **depuis la racine du vault** : c'est là que `CLAUDE.md` est chargé, et là que les commandes du kit résolvent `./brain.yml`.
 

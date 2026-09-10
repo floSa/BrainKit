@@ -9,9 +9,9 @@ manifeste. Aucun mot de dev, aucun mot d histoire, aucun titre de section.
     from brainkit.semer import seme, imprime
     from brainkit.valider import charge
 
-    mo = charge(Path("exemples/histobrain.brain.yml"))
-    s = seme(mo, Path("/tmp/histobrain"))          # ne pose pas un octet
-    imprime(s, mo, Path("/tmp/histobrain"))
+    mo = charge(Path("gabarit/brain.yml"))
+    s = seme(mo, Path("/tmp/mon-brain"))          # ne pose pas un octet
+    imprime(s, mo, Path("/tmp/mon-brain"))
 
 Le mode par defaut n ecrit rien. `plan.py` est le seul module du paquet capable
 d ecrire, et il refuse quatre situations avant tout : une cible non vide, une

@@ -5,8 +5,8 @@
 """mesure.py — le jeu d epreuve de la passe de mesure (lot 8).
 
     uv run tests/mesure.py
-    uv run tests/mesure.py --vault-devbrain ../DevBrain
-    uv run tests/mesure.py --vault-histobrain <chemin>
+    uv run tests/mesure.py --vault-temoin <chemin d un vault reel>
+    uv run tests/mesure.py --vault-essai  <chemin d une petite instance>
 
 Neuf scenarios. Le premier est le CONTROLE NEGATIF, et il est le plus important
 du lot : un outil qui durcirait un brain de dix pages transformerait chaque
@@ -32,10 +32,11 @@ bien le plancher qui l en empeche.
                       remplissage, sous-arbre compris, et une section CONTENEUR
                       n est pas declaree morte.
   7. LECTURE SEULE  — mesurer ne touche aucun octet du vault.
-  8. DEVBRAIN       — facultatif : le recensement du lot 3 retrouve, les comptes
-                      du lot 8 du DevBrain confrontes, et le refus du garde-fou 2
-                      nomme ses deux regles.
-  9. HISTOBRAIN     — facultatif : le controle negatif sur le vrai vault d essai.
+  8. TEMOIN         — facultatif : le recensement retrouve sur un vault REEL, ses
+                      comptes historiques confrontes, et le refus du garde-fou 2
+                      qui nomme ses deux regles.
+  9. ESSAI          — facultatif : le controle negatif sur une PETITE instance
+                      reelle, sous le plancher de trente pages.
 
 Les mutations des scenarios 2 a 5 sont EN MEMOIRE : une cle du dictionnaire
 charge, ou une constante du module de garde-fous, remise en place aussitot.
@@ -54,6 +55,8 @@ import yaml
 RACINE_KIT = Path(__file__).resolve().parents[1]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import temoin                                          # noqa: E402
 
 from brainkit.mesurer import gardes, mesure            # noqa: E402
 from brainkit.valider.manifeste import Modele          # noqa: E402
@@ -62,20 +65,20 @@ MANIFESTE = RACINE_KIT / "tests" / "epreuve.brain.yml"
 VERT = RACINE_KIT / "tests" / "vert"
 DATE = "2026-09-07"
 
-# Les comptes du lot 8 du DevBrain, tels que le lot 3 les a confrontes au vault.
+# Les comptes historiques du VAULT TEMOIN, tels que le lot 3 les a confrontes.
 # Le troisieme est DATE : le lot 8 annoncait « 11 candidats dont 2 vrais », le
 # vault dit 4 depuis le 2026-09-07 — sept candidats ont disparu par reecriture
 # des sections de definition. C est le vault qui a raison.
-DEVBRAIN_HISTORIQUE = {
+TEMOIN_HISTORIQUE = {
     ("voisinage_declare", ""): 62,
     ("etiquettes_fermees", "Ressources"): 5,
     ("anti_repetition", ""): 4,
 }
 
-# Les deux regles du DevBrain qui restent en avertissement sans qu aucun motif
+# Les deux regles du temoin qui restent en avertissement sans qu aucun motif
 # n ait jamais ete ecrit. Le garde-fou 2 les REFUSE, et c est la premiere fois
 # qu on les voit.
-DEVBRAIN_SANS_MOTIF = {"taille_avertissement", "collision_alias"}
+TEMOIN_SANS_MOTIF = {"taille_avertissement", "collision_alias"}
 
 
 def charge_dict() -> dict:
@@ -276,8 +279,8 @@ def scenario_lecture_seule(j: Journal) -> None:
                             for k in avant if avant[k] != apres[k]]))
 
 
-def scenario_devbrain(j: Journal, vault: Path, manifeste: Path) -> None:
-    print(f"\n8. DEVBRAIN — les comptes du lot 8, confrontés au vault `{vault.name}`")
+def scenario_temoin(j: Journal, vault: Path, manifeste: Path) -> None:
+    print(f"\n8. TÉMOIN — les comptes historiques, confrontés au vault `{vault.name}`")
     mo = Modele(yaml.safe_load(manifeste.read_text(encoding="utf-8")), manifeste)
     m, rec, occ, bl = mesure(mo, vault, date=DATE)
 
@@ -292,7 +295,7 @@ def scenario_devbrain(j: Journal, vault: Path, manifeste: Path) -> None:
     j.verifie("… et les 74 hubs, comptés à part parce qu'ils ne se rangent pas",
               rec.total_hubs == 74, f"{rec.total_hubs} hub(s)")
 
-    for (rid, cle), attendu in sorted(DEVBRAIN_HISTORIQUE.items()):
+    for (rid, cle), attendu in sorted(TEMOIN_HISTORIQUE.items()):
         li = ligne(m, rid, cle)
         nom = f"{rid}/{cle}" if cle else rid
         j.verifie(f"`{nom}` : {attendu} violation(s), comme l'histoire le dit",
@@ -305,7 +308,7 @@ def scenario_devbrain(j: Journal, vault: Path, manifeste: Path) -> None:
               f"{red.population.objets if red.population else '—'}")
 
     j.verifie("garde-fou 2 : le refus nomme exactement les deux règles sans motif",
-              {x.regle for x in m.sans_motif} == DEVBRAIN_SANS_MOTIF,
+              {x.regle for x in m.sans_motif} == TEMOIN_SANS_MOTIF,
               f"refusées : {sorted(x.regle for x in m.sans_motif)}")
 
     j.verifie("aucune contradiction de garde-fou 3 — les deux sont déjà dures",
@@ -324,12 +327,12 @@ def scenario_devbrain(j: Journal, vault: Path, manifeste: Path) -> None:
               f"{[e.sujet for e in a1]}")
 
 
-def scenario_histobrain(j: Journal, vault: Path) -> None:
-    print(f"\n9. HISTOBRAIN — le contrôle négatif sur `{vault.name}`")
+def scenario_essai(j: Journal, vault: Path) -> None:
+    print(f"\n9. ESSAI — le contrôle négatif sur `{vault.name}`")
     manifeste = vault / "brain.yml"
     mo = Modele(yaml.safe_load(manifeste.read_text(encoding="utf-8")), manifeste)
     m, _rec, _occ, _bl = mesure(mo, vault, date=DATE)
-    j.verifie("l'unité `source` compte 10 pages — sous le plancher",
+    j.verifie("l'unité du brain d'essai compte 10 pages — sous le plancher",
               m.pages_de_l_unite == 10 and not m.plancher_tenu,
               f"{m.pages_de_l_unite} page(s) de `{m.role_unite}`")
     j.verifie("AUCUNE proposition de durcissement", not m.propositions,
@@ -351,11 +354,10 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Jeu d'épreuve de la mesure.")
-    ap.add_argument("--vault-devbrain", type=Path,
-                    default=RACINE_KIT.parent / "DevBrain")
-    ap.add_argument("--manifeste-devbrain", type=Path,
-                    default=RACINE_KIT / "exemples" / "devbrain.brain.yml")
-    ap.add_argument("--vault-histobrain", type=Path, default=None)
+    ap.add_argument("--vault-temoin", type=Path, default=None,
+                    help="un vault réel ; cf. tests/temoin.py")
+    ap.add_argument("--vault-essai", type=Path, default=None,
+                    help="une petite instance réelle, sous le plancher")
     ns = ap.parse_args()
 
     print("=" * 74)
@@ -371,21 +373,17 @@ def main() -> int:
     scenario_gabarit(j)
     scenario_lecture_seule(j)
 
-    if ns.vault_devbrain.is_dir() and ns.manifeste_devbrain.exists():
-        scenario_devbrain(j, ns.vault_devbrain.resolve(),
-                          ns.manifeste_devbrain)
+    vault = temoin.resout(ns.vault_temoin)
+    if vault is not None and (vault / "brain.yml").is_file():
+        scenario_temoin(j, vault, vault / "brain.yml")
     else:
-        print(f"\n8. DEVBRAIN — sauté : `{ns.vault_devbrain}` absent")
+        print(f"\n8. TÉMOIN — sauté : {temoin.pourquoi_saute()}")
 
-    histo = ns.vault_histobrain
-    if histo is None:
-        defaut = Path.home() / "Documents" / "BrainKit-essais" / "histobrain"
-        histo = defaut if (defaut / "brain.yml").exists() else None
-    if histo is not None and (histo / "brain.yml").exists():
-        scenario_histobrain(j, histo.resolve())
+    essai = temoin.resout_essai(ns.vault_essai)
+    if essai is not None:
+        scenario_essai(j, essai)
     else:
-        print("\n9. HISTOBRAIN — sauté : aucune instance d'essai trouvée "
-              "(`--vault-histobrain <chemin>`)")
+        print(f"\n9. ESSAI — sauté : {temoin.pourquoi_saute_essai()}")
 
     print()
     if j.echecs:

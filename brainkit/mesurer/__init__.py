@@ -11,7 +11,7 @@ trois garde-fous qui ne se negocient pas (`gardes.py`).
     from brainkit.valider import charge, valide
     from brainkit.mesurer import mesure
 
-    mo = charge(Path("exemples/devbrain.brain.yml"))
+    mo = charge(Path("<vault>/brain.yml"))
     m = mesure(mo, Path("../DevBrain"))
     print(m.pages_de_l_unite, len(m.propositions))
 

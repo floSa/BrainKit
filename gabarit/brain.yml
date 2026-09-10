@@ -1,0 +1,1124 @@
+# ==============================================================================
+# gabarit/brain.yml — LE MANIFESTE DE REFERENCE DU KIT
+# ------------------------------------------------------------------------------
+# Ce n est pas un exemple, et ce n est le brain de personne : c est un GABARIT.
+# Il ne nomme AUCUN sujet — ses roles s appellent « unite » et « notion », ses
+# valeurs d axe « Domaine A » et « nature-3 » — et c est deliberé : un manifeste
+# livre avec un sujet ferait croire que le kit en a un.
+#
+# A quoi il sert, et a rien d autre :
+#
+#   1. il est REMPLI EN ENTIER, tous les blocs facultatifs compris. C est le
+#      squelette a copier quand on remplit le sien a la main, plutot que par
+#      l entretien ;
+#   2. il exerce les CINQ mecanismes qu un manifeste minimal ne rencontre pas, et
+#      chacun est marque en ligne par un commentaire `# MECANISME n` :
+#
+#        1  mode `reciproque: inverse`                -> champs.prolonge / prolonge_par
+#        2  axe de rangement NON EXCLUSIF, avec sa
+#           regle de majorite et son prefixe transversal -> axes.rangement
+#        3  DEUX axes transverses                     -> axes.transverses
+#        4  seuil DERIVE du volume cible              -> axes.rangement.seuil_promotion
+#        5  role PROTEGE                              -> roles[notion].protege
+#
+#   3. il sert de vault d essai aux jeux d epreuve du semis, des skills et de
+#      l emballage : une instance semee depuis ce fichier doit etre verte.
+#
+# COMMENT S EN SERVIR : le copier, puis remplacer chaque libelle, chaque cle
+# d axe et chaque `motif:` par les siens. Rien ici n est a garder tel quel sauf
+# la FORME. Un `motif:` recopie sans etre relu est un motif faux.
+#
+# Etat des dix regles : TOUTES en `a_mesurer`, sans exception — principe 1. Une
+# severite est un resultat de mesure sur un corpus, jamais une propriete de
+# regle, et un brain neuf n a aucun corpus. Le durcissement est le travail de
+# `brainkit mesurer`.
+#
+# Les accents sont ecrits partout SAUF dans les commentaires et les `motif:`.
+# ==============================================================================
+
+manifeste: 1
+
+kit:
+  version: "0.1.0"
+  mode: branche
+
+brain:
+  nom: BrainRef
+  sujet: "Le manifeste de référence du kit : tous les mécanismes, aucun sujet."
+  langue: fr
+  volume_cible: 3000
+  usage: perso
+  profil: obsidian
+  proprietaire:
+    nom: floSa
+
+git:
+  identite:
+    name: floSa
+    email: florian_horellou@laposte.net
+  domaines_refuses: [exemple-a-remplacer.invalid]
+  trailers_refuses: [Co-Authored-By]
+  branche_principale: main
+  motif: >
+    `usage: perso` : c est le domaine PRO qui est refuse. Sur un brain
+    `usage: client`, tenu chez un employeur, la polarite s inverse — c est
+    l adresse perso qu il faut refuser, et c est pour ca que le hook lit
+    « identite attendue » dans la config plutot que de coder un domaine.
+    L identite ne se devine JAMAIS : l entretien s arrete si la reponse ne vient
+    pas, et il ne lit jamais l adresse annoncee par le harnais.
+
+libelles:
+  unite:         { s: unité,     p: unités }
+  notion:        { s: notion,    p: notions }
+  vue:           { s: séquence,  p: séquences }
+  hub:           { s: hub,       p: hubs }
+  prescription:  { s: consigne,  p: consignes }
+  axe_rangement: { s: domaine,   p: domaines }
+  axe_nature:    { s: nature,    p: natures }
+  axe_transverse:
+    marqueurs: { s: marqueur, p: marqueurs }
+    secteurs:  { s: secteur,  p: secteurs }
+  motif: >
+    Le kit ne raisonne que sur les SIX fonctions. Les libelles sont la langue du
+    sujet, et ils sont a reecrire integralement : c est le premier endroit ou un
+    manifeste copie se trahit s il n a pas ete relu.
+
+# ==============================================================================
+# roles — SIX, et six est le plafond souple. Avant d en accepter un septieme,
+# l entretien demande « cette page se range-t-elle sur le meme axe que les
+# autres, et y a-t-il une regle qui ne s applique qu a elle ? ». Si non aux deux,
+# ce n est pas un role : c est une valeur de l axe de nature, ou un tag.
+# ==============================================================================
+roles:
+
+  # --- 1/6 -------------------------------------------------------------------
+  - id: unite
+    fonction: unite
+    libelle: { s: unité, p: unités }
+    range_par: axe
+    protege: false
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#412CDD"
+    taille_avertissement: 120
+    champs:
+      requis: [role, nom, apport, domaine]
+      autorises: [role, nom, alias, apport, domaine, nature, marqueurs, secteurs,
+                  origine, date_origine, langue, variante, complement,
+                  fiabilite, acces, reference,
+                  contredit, prolonge, prolonge_par, tags, url]
+      conditionnels:
+        - { champ: variante,   si: "nature == nature-1" }
+        - { champ: complement, si: "nature == nature-1" }
+        - { champ: reference,  si: "nature in [nature-2, nature-1]" }
+      motif_conditionnels: >
+        Un champ conditionnel dit « ce champ n a de sens que dans ce cas ». Deux
+        champs qui decrivent 100 % des pages ne discriminent rien : c est
+        exactement ce que la condition evite. A REECRIRE — les conditions
+        ci-dessus n ont de sens que pour le vocabulaire de nature de ce gabarit.
+    corps:
+      - { titre: "<bandeau>", niveau: 0, genre: bandeau }
+      - { titre: "Ce que c'est", niveau: 2, genre: prose,
+          doctrine: "La SEULE section où la prose est permise." }
+      - titre: "Ce qu'elle fait / Ce qu'elle ne fait pas"
+        niveau: 2
+        genre: decision
+        colonne_positive: "Fait"
+        colonne_negative: "Ne fait pas"
+        motif: >
+          La colonne negative se remplit de deux choses, et de deux seulement :
+          des BORNES qui ne pointent vers personne, et des REDIRECTIONS vers une
+          autre page (« pour ce cas -> [[Unité voisine]] »). La conjonction
+          fleche x cible fichee est ce que la regle `redirection_sourcee` lit.
+      - { titre: "Repères", niveau: 2, genre: etiquetee,
+          obligatoires: ["Repère A", "Repère B", "Repère C", "Repère D", "Repère E"],
+          permises:     ["Repère A", "Repère B", "Repère C", "Repère D", "Repère E"] }
+      - { titre: "Autour", niveau: 2, genre: libre }
+      - { titre: "Contredit par", niveau: 3, genre: liste_liens, champ: contredit }
+      - { titre: "Prolonge",      niveau: 3, genre: liste_liens, champ: prolonge }
+      - { titre: "Prolongée par", niveau: 3, genre: liste_liens, champ: prolonge_par }
+      - { titre: "Voir aussi",    niveau: 2, genre: liste_liens, champ: null }
+      - titre: "Notes datées"
+        niveau: 2
+        genre: conditionnelle
+        existe_si: "au moins une entrée datée"
+        forme: "- YYYY-MM-DD — <ce que j'ai constaté>."
+        motif: >
+          Une section `conditionnelle` ne se pose pas vide. Le kit ne sait pas
+          evaluer `existe_si:` — c est du francais — mais `brainkit mesurer`
+          compte son USAGE REEL : une section qui n existe sur aucune page au
+          bout de N pages est une section a retirer du gabarit, pas a laisser
+          « au cas ou ».
+    motif: >
+      L unite sort de la question 1.1 de l entretien : « je vais chercher quoi,
+      dans ce brain ? ». Elle ne se devine pas et ne se recopie pas : c est la
+      decision qui commande tout le reste du manifeste.
+
+  # --- 2/6 -------------------------------------------------------------------
+  - id: notion
+    fonction: notion
+    libelle: { s: notion, p: notions }
+    range_par: axe
+    protege: true                   # MECANISME 5 — role protege
+    pese_sur_le_seuil: true
+    apparait_dans_le_hub: true
+    couleur: "#7AB800"
+    taille_avertissement: 200
+    champs:
+      requis: [role, nom, domaine, marqueurs]
+      autorises: [role, nom, alias, domaine, marqueurs, secteurs, tags]
+    corps:
+      - { titre: "Aperçu",            niveau: 2, genre: libre }
+      - { titre: "Concepts clés",     niveau: 2, genre: libre }
+      - titre: "Ce qui reste ouvert"
+        niveau: 2
+        genre: conditionnelle
+        existe_si: "la notion porte une question non tranchée"
+        motif: >
+          La place de la chose difficile du sujet, expliquee. `conditionnelle`
+          parce qu une section qu on ne peut pas remplir ne se pose pas vide.
+      - { titre: "En pratique",       niveau: 2, genre: libre }
+      - { titre: "Notions voisines",  niveau: 2, genre: liste_liens, champ: null }
+      - { titre: "Pour aller plus loin", niveau: 2, genre: libre }
+    motif: >
+      `protege: true` — creation libre, modification sur demande explicite. C est
+      la frontiere la plus sensible d un brain : les unites, on peut les
+      relister ; la synthese personnelle, non. A ecrire mot pour mot dans le
+      `CLAUDE.md` genere, avec sa consequence pratique : la frontiere est portee
+      par le CHAMP `role:`, pas par le chemin, donc on lit le frontmatter avant
+      d ecrire.
+
+  # --- 3/6 -------------------------------------------------------------------
+  - id: sequence
+    fonction: vue
+    libelle: { s: séquence, p: séquences }
+    range_par: axe
+    prefixe_nom: "Séquence - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#EF4444"
+    vue_embarquee:
+      extension: ".base"
+      moteur: "obsidian-bases"
+      embed: "![[<même nom>.base]]"
+      tri_par: date_origine
+      direction: asc
+      genere: false
+      motif_non_genere: >
+        Les FILTRES d une vue sont du CONTENU : deux vues du meme dossier veulent
+        deux decoupes differentes, et personne ne peut deviner laquelle. Le
+        generateur en amorce une par dossier promu, avec le filtre evident et
+        l ordre de colonnes par defaut ; le reste s ecrit a la main.
+      colonnes_par_defaut: [nom, apport, nature, origine, date_origine, fiabilite]
+    regle_de_categorie: majorite
+    motif_regle_de_categorie: >
+      Une vue qui enjambe deux valeurs d axe se range dans le dossier de celle
+      qui rassemble le plus de ses membres. La meme regle sert ici DEUX fois :
+      pour la vue, et comme regle generale de l axe de rangement (MECANISME 2).
+    hub_de_ralliement:
+      dossier: "Séquences"
+      lien_retour: "Voir aussi"
+      groupe_par: "premier segment du chemin (le domaine, jamais le sous-domaine)"
+      motif: "C est le lien retour qui fait la grappe. Rappele par l entretien, question 8.3."
+    champs:
+      requis: [role, nom, domaine]
+      autorises: [role, nom, domaine, tags]
+    corps:
+      - { titre: "<accroche>", niveau: 0, genre: prose, forme: "> La séquence : …" }
+      - { titre: "<embed>",    niveau: 0, genre: auto }
+      - { titre: "Ce que la séquence montre", niveau: 2, genre: liste_liens, champ: null }
+      - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      La PRIMITIVE d une vue : une page qui embarque une vue filtree sur une
+      valeur de l axe de rangement, plus une section ecrite a la main, plus un
+      hub de ralliement avec lien retour. L INTENTION, elle, se redemande —
+      l entretien pose 8.1 (« tes unites sont-elles interchangeables ? ») AVANT
+      8.2, sans quoi il poserait un comparatif la ou il faut une sequence.
+
+  # --- 4/6 -------------------------------------------------------------------
+  - id: hub
+    fonction: hub
+    libelle: { s: hub, p: hubs }
+    range_par: axe
+    porte_categorie: false
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: false
+    couleur: "#FF922B"
+    champs:
+      requis: [role, nom, apport]
+      autorises: [role, nom, alias, apport, marqueurs, secteurs, tags]
+    corps:
+      - { titre: "Ce qu'il faut comprendre", niveau: 2, genre: libre, ecrit_a_la_main: true }
+      - { titre: "Choisir",                  niveau: 2, genre: libre, ecrit_a_la_main: true }
+      - titre: "<AUTO>"
+        niveau: 0
+        genre: auto
+        balises: ["<!-- AUTO:START -->", "<!-- AUTO:END -->"]
+        perimetre: dossier
+        # `depuis:` est la lecture MACHINE de `source:`. Sans elle, le generateur
+        # ignore la sous-section et rend « (dossier vide) » quel que soit le
+        # contenu du dossier — un defaut invisible sur un brain vierge, et
+        # criant a la premiere page capturee.
+        sections:
+          - { titre: "Sous-domaines",  source: "sous-dossiers portant un hub",
+              depuis: sous_dossiers, separateur: " · " }
+          - { titre: "Notions",        source: "role: notion du dossier",
+              depuis: role, role: notion }
+          - { titre: "Unités",         source: "role: unite du dossier",
+              depuis: role, role: unite }
+          - { titre: "Consignes",      source: "role: consigne du dossier",
+              depuis: role, role: consigne }
+          - { titre: "Directives",     source: "role: directive du dossier",
+              depuis: role, role: directive }
+          - { titre: "Séquences",      source: "role: sequence du dossier",
+              depuis: role, role: sequence }
+              # `depuis: role` et non `depuis: vues` : c est la PAGE qui se
+              # liste, pas son fichier `.base`. Lire une extension de fichier
+              # ici marcherait, et serait faux le jour ou une vue n a pas de
+              # fichier a cote.
+    motif: >
+      Les sous-titres de la zone AUTO SE DERIVENT du manifeste : ils sont la
+      liste des roles au pluriel, plus « Sous-<axe de rangement au pluriel> ».
+      Rien a ecrire.
+
+  # --- 5/6 -------------------------------------------------------------------
+  - id: consigne
+    fonction: prescription
+    libelle: { s: consigne, p: consignes }
+    range_par: role
+    dossier: Consignes
+    prefixe_nom: "Consigne - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    champs:
+      requis: [role, question, positions]
+      autorises: [role, tags, question, positions, references_cles, etat]
+    corps:
+      - { titre: "La question",       niveau: 2, genre: prose }
+      - { titre: "Les positions",     niveau: 2, genre: libre }
+      - { titre: "Ce qui les sépare", niveau: 2, genre: libre }
+      - { titre: "Où en est-on",      niveau: 2, genre: libre }
+      - { titre: "Références clés",   niveau: 2, genre: liste_liens, champ: references_cles }
+      - { titre: "Voir aussi",        niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      Une page qui enjambe les valeurs de l axe de rangement PAR CONSTRUCTION n a
+      aucune valeur d axe a porter : son chemin se lit sur son ROLE, et son
+      dossier est declare ici. C est ce que `range_par: role` veut dire.
+
+  # --- 6/6 -------------------------------------------------------------------
+  - id: directive
+    fonction: prescription
+    libelle: { s: directive, p: directives }
+    range_par: role
+    dossier: Directives
+    prefixe_nom: "Directive - "
+    protege: false
+    pese_sur_le_seuil: false
+    apparait_dans_le_hub: true
+    couleur: "#94A3B8"
+    champs:
+      requis: [role, portee, applicable, fermete]
+      autorises: [role, tags, portee, applicable, fermete]
+    corps:
+      - { titre: "Principe",      niveau: 2, genre: prose }
+      - { titre: "MUST",          niveau: 2, genre: libre }
+      - { titre: "SHOULD",        niveau: 2, genre: libre }
+      - { titre: "NICE-TO-HAVE",  niveau: 2, genre: libre }
+      - { titre: "Exemples",      niveau: 2, genre: libre }
+      - { titre: "Bon",           niveau: 3, genre: libre }
+      - { titre: "Mauvais",       niveau: 3, genre: libre }
+      - { titre: "Exceptions",    niveau: 2, genre: libre }
+      - { titre: "Voir aussi",    niveau: 2, genre: liste_liens, champ: null }
+    motif: >
+      Le second role `fonction: prescription` : une regle transverse avec un
+      degre de fermete. Deux roles peuvent partager une fonction — c est le
+      `dossier:` et le `prefixe_nom:` qui les separent, pas la fonction.
+
+# ==============================================================================
+# axes
+# ==============================================================================
+axes:
+
+  rangement:
+    champ: domaine
+    # ------------------------- MECANISME 2 ------------------------------------
+    exclusif: false
+    motif_non_exclusif: >
+      Une page peut relever de plusieurs valeurs a la fois. Sans correctif,
+      l auteur MENTIRAIT dans le champ — ce qui est le pire des resultats, parce
+      que le validateur resterait vert. Deux mecanismes le reparent : la regle de
+      MAJORITE, et un PREFIXE DECLARE qui accueille ce qui couvre vraiment tout.
+      L entretien pose la question 2.3 exactement pour ca, et refuse de passer
+      outre : c est la question qui distingue un axe de rangement d un axe
+      transverse, et un brain qui la rate range mal pour toujours.
+    regle_de_majorite: true
+    definition_de_la_majorite: "la valeur de l'axe est celle qui rassemble le plus de la page"
+    prefixe_transversal: transverse
+    motif_prefixe_transversal: >
+      Reserve a ce qui n a AUCUN centre de gravite. Une page qui enjambe trois
+      valeurs mais penche vers l une d elles n en releve pas : la regle de
+      majorite suffit. Le prefixe transversal est pour ce qui ne penche vers
+      rien. La distinction est exactement la question 2.4 de l entretien.
+    # ------------------------- MECANISME 4 ------------------------------------
+    seuil_promotion: 12
+    motif_seuil: >
+      DERIVE du volume cible, jamais tape a la main : volume_cible 3000 / 8
+      prefixes -> ~375 pages par domaine. Un seuil trop bas fait exploser chaque
+      domaine en quarante sous-dossiers, ce qui n est plus un arbre mais une
+      liste ; un seuil trop haut ne promeut jamais rien. Le kit ne CALCULE pas ce
+      nombre : l entretien demande le volume (question 2.6, jamais le seuil, que
+      l utilisateur n a aucun moyen de connaitre) et ECRIT le calcul ici.
+    consequence_du_seuil: >
+      Changer le seuil REFORME l arbre. Un brain qui grandit plus que prevu devra
+      re-seuiller, c est-a-dire deplacer des pages : c est ce que fait
+      `brainkit re-seuiller`, par `git mv`, et il refuse de tourner sur un arbre
+      de travail sale.
+    plafond_promotion: true
+    motif_plafond: >
+      Un sous-dossier qui ne laisse aucune page au niveau du domaine redouble son
+      parent. Le plafond l interdit.
+    niveaux: 2
+    valeur_courte_autorisee: true
+    motif_valeur_courte: >
+      Une valeur NUE est legale : `domaine: domaine-a`, sans sous-valeur. Certains
+      axes n autorisent que `prefixe/sous` ; celui-ci accepte les deux, parce que
+      quatre de ses huit prefixes n ont AUCUNE division interne. Forcer une
+      sous-valeur inventee pour satisfaire un format serait exactement le refus
+      n° 3 de l entretien.
+
+    prefixes:
+
+      - cle: domaine-a
+        dossier: "Domaine A"
+        portee: "le premier domaine"
+        sous: {}
+
+      - cle: domaine-b
+        dossier: "Domaine B"
+        portee: "le deuxième domaine"
+        sous:
+          b1: { libelle: "Segment B1" }
+          b2: { libelle: "Segment B2" }
+          b3: { libelle: "Segment B3" }
+          b4: { libelle: "Segment B4" }
+
+      - cle: domaine-c
+        dossier: "Domaine C"
+        portee: "le troisième domaine"
+        sous:
+          c1: { libelle: "Segment C1" }
+          c2: { libelle: "Segment C2" }
+          c3: { libelle: "Segment C3" }
+          c4: { libelle: "Segment C4" }
+
+      - cle: domaine-d
+        dossier: "Domaine D"
+        portee: "le quatrième domaine"
+        sous:
+          d1: { libelle: "Segment D1" }
+          d2: { libelle: "Segment D2" }
+          d3: { libelle: "Segment D3" }
+          d4: { libelle: "Segment D4" }
+
+      - cle: domaine-e
+        dossier: "Domaine E"
+        portee: "le cinquième domaine"
+        sous: {}
+
+      - cle: domaine-f
+        dossier: "Domaine F"
+        portee: "le sixième domaine"
+        sous: {}
+
+      - cle: domaine-g
+        dossier: "Domaine G"
+        portee: "le septième domaine"
+        sous:
+          g1: { libelle: "Segment G1" }
+          g2: { libelle: "Segment G2" }
+          g3: { libelle: "Segment G3" }
+          g4: { libelle: "Segment G4" }
+          g5: { libelle: "Segment G5" }
+
+      - cle: transverse
+        dossier: "Transverse"
+        portee: "ce qui n'a aucun centre de gravité"
+        sous: {}
+        motif: >
+          Le prefixe qui repare la non-exclusivite. Il ne se propose pas : il sort
+          de la main de l utilisateur, pendant qu il range ses paquets et qu une
+          page refuse d entrer dans un seul.
+
+    rattachements: {}
+    motif_rattachements_vides: >
+      Un rattachement est une exception NOMMEE ET DATEE — « telle valeur va
+      exceptionnellement dans tel dossier ». Un brain neuf n en a aucune, et
+      c est normal : le mecanisme a transposer est la PLACE ou elles s ecrivent,
+      pas leur contenu.
+
+    # HUIT questions de tri plus l arret, D1 -> D9. L ordre est LA decision, et il
+    # appartient a l utilisateur : la premiere passe volontairement devant les
+    # autres parce qu elle est hors de l ordre naturel des valeurs.
+    arbre_de_decision:
+      - { n: D1, question: "La page porte-t-elle sur plus de trois des domaines ci-dessous ?", si_oui: ["transverse"],
+          motif: "EN PREMIER : sans elle, une page qui traverse tout tomberait dans le premier domaine qu'elle touche." }
+      - { n: D2, question: "Relève-t-elle du premier domaine ?",   si_oui: ["domaine-a"] }
+      - { n: D3, question: "Relève-t-elle du deuxième domaine ?",  si_oui: ["domaine-b/*"] }
+      - { n: D4, question: "Relève-t-elle du troisième domaine ?", si_oui: ["domaine-c/*"] }
+      - { n: D5, question: "Relève-t-elle du quatrième domaine ?", si_oui: ["domaine-d/*"] }
+      - { n: D6, question: "Relève-t-elle du cinquième domaine ?", si_oui: ["domaine-e"] }
+      - { n: D7, question: "Relève-t-elle du sixième domaine ?",   si_oui: ["domaine-f"] }
+      - { n: D8, question: "Relève-t-elle du septième domaine ?",  si_oui: ["domaine-g/*"] }
+      - { n: D9, question: "Aucun des précédents", si_oui: [], arret: true,
+          motif: "ARRET — demander. Un domaine manquant ne s invente jamais." }
+    motif_arbre: >
+      L ordre est LA decision de conception, et il reste a l utilisateur : un
+      agent peut proposer les questions, jamais leur rang. Deux questions
+      permutees rangent la moitie du brain ailleurs.
+
+    departages: []
+    frontieres: []
+    motif_listes_vides: >
+      NAISSENT VIDES, et l entretien le dit a haute voix : « ces deux listes se
+      rempliront page par page, quand un arbitrage se repetera. Les remplir
+      maintenant serait inventer des problemes qu on n a pas. » Le mecanisme a
+      transposer est la PLACE ou elles s ecrivent, jamais leur contenu.
+
+  nature:
+    champ: nature
+    porte_par: [unite]
+    interdit_sur: [notion, sequence, hub, consigne, directive]
+    vide_autorise: true
+    motif_vide: >
+      Une page hybride doit pouvoir rester SANS nature en attendant l arbitrage.
+      Un champ vide est le SEUL signal prevu pour « l arbre n a pas tranche » ;
+      une valeur inventee est une faute, un champ vide est une question ouverte.
+    valeurs:
+      - cle: nature-1
+        definition: "La première nature — celle qui permet les champs conditionnels `variante` et `complement`."
+        frontiere: "Distincte de nature-2 par la présence d'un état d'origine distinct de l'état consulté."
+      - cle: nature-2
+        definition: "La deuxième nature — celle qui exige une référence."
+        frontiere: "Distincte de nature-1 par l'absence d'état d'origine ; distincte de nature-3 par la référence."
+      - cle: nature-3
+        definition: "La troisième nature, et le défaut de l'arbre."
+        frontiere: "Ce qui ne relève d'aucune des autres. Le défaut n'est pas un fourre-tout : c'est la valeur qu'on écrit quand on a répondu non à toutes les questions."
+      - cle: nature-4
+        definition: "La quatrième nature."
+        frontiere: "Distincte de nature-3 par un fait vérifiable, jamais par un jugement."
+      - cle: nature-5
+        definition: "La cinquième nature."
+        frontiere: "Distincte de nature-4 par le format, pas par la qualité."
+      - cle: nature-6
+        definition: "La sixième nature."
+        frontiere: "Distincte de nature-5 par l'intention de son auteur, déclarée et non supposée."
+      - cle: nature-7
+        definition: "La septième nature."
+        frontiere: "Distincte des précédentes par son objet, et non par son support."
+      - cle: nature-8
+        definition: "La huitième nature."
+        frontiere: "Distincte de nature-7 par le fait que le support EST l'objet."
+      - cle: nature-9
+        definition: "La neuvième nature."
+        frontiere: "Distincte de toutes les autres parce qu'elle s'interroge plutôt qu'elle ne se lit."
+    # NEUF questions, N1 -> N9 : ordre strict, premiere reponse positive gagne,
+    # aucun jugement de valeur. Un arbre de nature qui demande « est-ce bon ? »
+    # est un arbre casse.
+    arbre_de_decision:
+      - { n: N1, question: "Porte-t-elle un état d'origine distinct de l'état consulté ?", si_oui: nature-1 }
+      - { n: N2, question: "Exige-t-elle une référence pour être retrouvée ?",             si_oui: nature-2 }
+      - { n: N3, question: "S'interroge-t-elle plutôt qu'elle ne se lit ?",                si_oui: nature-9 }
+      - { n: N4, question: "Son objet est-il une représentation d'espace ?",               si_oui: nature-7 }
+      - { n: N5, question: "Le support est-il lui-même l'objet ?",                         si_oui: nature-8 }
+      - { n: N6, question: "A-t-elle été validée par une instance tierce nommée ?",        si_oui: nature-5 }
+      - { n: N7, question: "A-t-elle paru dans un cadre à relecture ?",                    si_oui: nature-4 }
+      - { n: N8, question: "Son intention déclarée est-elle d'enseigner ?",                si_oui: nature-6 }
+      - { n: N9, question: "Aucun des précédents", si_oui: nature-3, defaut: true }
+    departages: []
+    frontieres: []
+    motif_listes_vides: "Naissent vides, comme celles de l'axe de rangement."
+
+  # ------------------------- MECANISME 3 ---------------------------------------
+  # DEUX axes transverses. La boucle transverse du generateur porte sur CETTE
+  # liste, jamais sur une constante : elle peut en compter zero, un, deux ou
+  # davantage. Un brain sans axe transverse est legal, et le generateur ne doit
+  # alors creer aucun dossier.
+  transverses:
+
+    - champ: marqueurs
+      dossier: "Marqueurs"
+      multivalue: true
+      hub_par_valeur: true
+      pointe_vers: "les sous-hubs, jamais les feuilles"
+      motif_du_nom: >
+        Ne redouble ni « domaines » (l axe de rangement au pluriel) ni
+        « secteurs » (l autre axe transverse). La contrainte de nommage devient
+        explicite des qu il y a deux axes : aucun dossier d axe transverse ne peut
+        porter le nom de l axe de rangement au pluriel, ni celui d un autre axe
+        transverse.
+      valeurs:
+        - { cle: m1, libelle: "Marqueur 1" }
+        - { cle: m2, libelle: "Marqueur 2" }
+        - { cle: m3, libelle: "Marqueur 3" }
+        - { cle: m4, libelle: "Marqueur 4" }
+        - { cle: m5, libelle: "Marqueur 5" }
+        - { cle: m6, libelle: "Marqueur 6" }
+        - { cle: m7, libelle: "Marqueur 7" }
+
+    - champ: secteurs
+      dossier: "Secteurs"
+      multivalue: true
+      hub_par_valeur: true
+      pointe_vers: "les sous-hubs, jamais les feuilles"
+      motif: >
+        Un axe transverse SE CUMULE — une page en porte plusieurs — la ou l axe de
+        rangement EXCLUT. C est cette difference, et elle seule, qui decide lequel
+        range et lesquels traversent. L entretien pose la question 4.1 sans en
+        proposer aucun : un axe transverse qu on n a pas nomme spontanement est un
+        axe dont on n a pas besoin.
+      valeurs:
+        - { cle: s1, libelle: "Secteur 1" }
+        - { cle: s2, libelle: "Secteur 2" }
+        - { cle: s3, libelle: "Secteur 3" }
+        - { cle: s4, libelle: "Secteur 4" }
+        - { cle: s5, libelle: "Secteur 5" }
+        - { cle: s6, libelle: "Secteur 6" }
+        - { cle: s7, libelle: "Secteur 7" }
+
+# ==============================================================================
+# champs
+# ==============================================================================
+champs:
+  role:
+    type: enum
+    source: "roles[].id"
+    fonction: aucune
+  nom:
+    type: ligne
+    fonction: identite
+    exemption: 'un `nom:` portant / \ : * ? " < > | ne peut pas etre un nom de fichier'
+  alias:
+    type: liste
+    fonction: alias
+    unicite: souple
+  apport:
+    type: ligne
+    fonction: resume_court
+    section: null
+    reinjecte_dans: ["Contredit par", "Prolonge", "Prolongée par"]
+    motif: >
+      Un champ designe comme resume d une ligne est RECOPIE, jamais retape, chez
+      tous ses citeurs. Si l entretien n avait identifie aucun champ de ce type,
+      la regle `reinjection_du_resume` se serait DESACTIVEE : on n en invente pas
+      un.
+  domaine:
+    type: enum
+    source: axes.rangement
+    fonction: aucune
+  nature:
+    type: enum
+    source: axes.nature
+    fonction: aucune
+  marqueurs:
+    type: liste_enum
+    source: "axes.transverses[marqueurs]"
+    fonction: aucune
+  secteurs:
+    type: liste_enum
+    source: "axes.transverses[secteurs]"
+    fonction: aucune
+  origine:      { type: ligne, fonction: aucune }
+  date_origine: { type: date,  fonction: aucune }
+  langue:       { type: ligne, fonction: aucune }
+  variante:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : n a de sens que pour la nature 1."
+  complement:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : idem."
+  fiabilite:
+    type: enum
+    valeurs: [etablie, discutee, contestee, obsolete]
+    eliminatoire: []
+    fonction: aucune
+    motif: >
+      Une gradation, avec sa liste ELIMINATOIRE explicite — et VIDE ici. Le kit ne
+      doit avoir AUCUNE intuition sur « quelle valeur d enumeration disqualifie » :
+      sur un brain, `obsolete` peut vouloir dire « ne propose jamais ca » ; sur un
+      autre, la valeur la plus interessante du corpus. Le champ est explicite
+      parce que le skill d exploitation filtre dessus SANS ouvrir les pages : une
+      liste devinee eliminerait en silence.
+  acces:
+    type: enum
+    valeurs: [libre, restreint, differe, sur-place]
+    fonction: aucune
+  reference:
+    type: ligne
+    fonction: aucune
+    motif: "Conditionnel : une reference n a de sens que pour les natures qui l exigent."
+  contredit:
+    type: liens
+    reciproque: { mode: symetrique }
+    section: "Contredit par"
+    fonction: aucune
+    motif: >
+      SYMETRIQUE : si A contredit B, B contredit A. Le validateur cherche le MEME
+      champ chez la cible.
+  # ------------------------- MECANISME 1 ---------------------------------------
+  prolonge:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge_par }
+    section: "Prolonge"
+    fonction: aucune
+    motif: >
+      MODE INVERSE. « A prolonge B » n implique pas « B prolonge A » : il implique
+      « B EST PROLONGEE PAR A ». La relation demande une PAIRE de champs, pas un
+      miroir. Le validateur verifie que A.prolonge contient B SI ET SEULEMENT SI
+      B.prolonge_par contient A — et il refuse une paire MAL DECLAREE, un
+      `inverse` qui pointe vers un champ qui ne pointe pas en retour, sinon on
+      remplace un trou par un autre.
+  prolonge_par:
+    type: liens
+    reciproque: { mode: inverse, champ: prolonge }
+    section: "Prolongée par"
+    fonction: aucune
+  tags:
+    type: liste_enum
+    source: "vocabulaires.tags"
+    fonction: aucune
+  url: { type: url, fonction: aucune }
+  # --- champs des roles `prescription`
+  question:        { type: ligne, fonction: aucune }
+  positions:       { type: liste, fonction: aucune }
+  references_cles: { type: liens, fonction: aucune }
+  etat:            { type: ligne, fonction: aucune }
+  portee:          { type: ligne, fonction: aucune }
+  applicable:      { type: ligne, fonction: aucune }
+  fermete:         { type: ligne, fonction: aucune }
+
+# ==============================================================================
+# bandeau — QUATRE colonnes, chacune derivee d un champ, chacune avec sa table de
+# rendu, un tiret cadratin quand la source manque. Le MOTEUR ne connait aucune de
+# ces valeurs : c est la demonstration la plus nette que le moteur (generique) et
+# son contenu (a reecrire) sont deux briques distinctes.
+# ==============================================================================
+bandeau:
+  porte_par: [unite]
+  vide: "—"
+  balises: ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"]
+  position: "juste sous le titre H1 ; une page sans H1 est SAUTÉE et signalée, jamais devinée"
+  porte_le_resume: true
+  regle_dure: >
+    Une cellule sans source dans le frontmatter affiche `vide`, JAMAIS une valeur
+    plausible. Une fiche vide honnetement vaut mieux qu une fiche remplie au juge.
+  echappement: "`|` est echappe dans une cellule."
+  motif: >
+    Quatre faits, pas plus. Le bandeau existe PARCE QU un frontmatter a dix-huit
+    proprietes pousse le texte sous la ligne de flottaison ; il ne le remplace
+    pas, il en montre le peu qu on lit d un coup d oeil. L entretien redemande
+    au-dela de cinq colonnes, et REFUSE une colonne sans champ source — une
+    colonne derivee d un jugement n entre pas dans le bandeau.
+  colonnes:
+    - titre: Nature
+      source: nature
+      table:
+        nature-1: "Nature 1"
+        nature-2: "Nature 2"
+        nature-3: "Nature 3"
+        nature-4: "Nature 4"
+        nature-5: "Nature 5"
+        nature-6: "Nature 6"
+        nature-7: "Nature 7"
+        nature-8: "Nature 8"
+        nature-9: "Nature 9"
+    - titre: "Origine et date"
+      source: origine
+      qualifie_par: date_origine
+      motif: "Deux champs dans une cellule : la source, qualifiee par un second champ."
+    - titre: Langue
+      source: langue
+    - titre: Fiabilité
+      source: fiabilite
+      table:
+        etablie: "établie"
+        discutee: "discutée"
+        contestee: "contestée"
+        obsolete: "obsolète"
+
+# ==============================================================================
+# regles — LES DIX, TOUTES en `a_mesurer`. Sans exception, y compris celles qui
+# « paraissent evidentes ». Une regle ne se durcira qu apres un comptage ECRIT,
+# et pas sous 30 pages de l unite : en dessous, zero violation ne prouve rien.
+# Une regle qui reste en avertissement doit porter un motif ECRIT — le kit refuse
+# un `severite: avertissement` sans motif.
+# ==============================================================================
+regles:
+
+  - id: reciprocite
+    enonce: "Si A cite B dans un champ à réciprocité, B cite A — ou son inverse déclaré."
+    active: true
+    severite: a_mesurer
+    champs: [contredit, prolonge, prolonge_par]
+    modes: { contredit: symetrique, prolonge: inverse, prolonge_par: inverse }
+    motif: >
+      Deux modes a verifier. Le mode inverse exige en plus que la PAIRE soit bien
+      declaree dans les deux sens, et c est une regle de socle a part.
+
+  - id: chemin_categorie
+    enonce: "Le dossier d'une page correspond à sa valeur de l'axe de rangement."
+    active: true
+    severite: a_mesurer
+    structurellement_dure: false
+    motif: >
+      Une violation y est une incoherence de STRUCTURE et non un defaut de
+      redaction : c est l une des deux regles qu on peut defendre de livrer dure
+      d emblee. Le point n est pas tranche ici — elle sort en `a_mesurer` comme
+      les neuf autres, et le manifeste porte la recommandation sans l appliquer.
+    complication: >
+      Sur un axe NON EXCLUSIF, cette regle ne compare plus un chemin a une valeur
+      unique : elle applique la regle de majorite, et accepte le prefixe
+      transversal.
+
+  - id: completude_du_hub
+    enonce: "Toute page d'un rôle `apparait_dans_le_hub` présente dans le dossier apparaît dans le hub du dossier."
+    active: true
+    severite: a_mesurer
+    roles: [unite, notion, sequence, consigne, directive]
+    motif: >
+      Les cinq roles rangeables y entrent, parce que le manifeste declare quels
+      roles doivent apparaitre dans le hub de leur dossier. C est cette
+      declaration qui rend la regle generique.
+
+  - id: voisinage_declare
+    enonce: "Une page dont le dossier porte d'autres pages du même rôle et dont le champ de voisinage est vide est signalée."
+    active: false
+    severite: a_mesurer
+    motif: >
+      DESACTIVEE AU DEMARRAGE, et le motif est ecrit comme le kit l exige : sur un
+      brain neuf, l absence de voisin est la NORME, pas l exception. Une page peut
+      legitimement n avoir aucun voisin — la signaler aide, l interdire mentirait.
+      A rouvrir apres mesure, quand le corpus dira si le silence est un oubli.
+
+  - id: redirection_sourcee
+    enonce: >
+      Une cellule de la colonne négative qui REDIRIGE — c'est-à-dire qui porte une
+      flèche — et dont la cible est une page fichée dans le brain, porte le
+      wikilink de cette page.
+    active: true
+    severite: a_mesurer
+    sections: ["Ce qu'elle fait / Ce qu'elle ne fait pas"]
+    colonne: "Ne fait pas"
+    marqueur: "→|->"
+    condition: "la cible est une page fichée"
+    motif: >
+      La conjonction position x condition est tout le mecanisme : une borne sans
+      fleche n est pas une redirection, et une redirection vers ce qui n est pas
+      fiche n a pas de wikilink a porter.
+
+  - id: reinjection_du_resume
+    enonce: "Chaque puce d'une section de liste de liens adossée à un champ commence par le résumé COURANT de sa cible."
+    active: true
+    severite: a_mesurer
+    champ_resume: apport
+    sections: ["Contredit par", "Prolonge", "Prolongée par"]
+
+  - id: etiquettes_fermees
+    enonce: "Une section déclarée `genre: etiquetee` a un vocabulaire FERMÉ."
+    active: true
+    severite: a_mesurer
+    sections: ["Repères"]
+    motif: >
+      Les etiquettes sont NOMMEES par l utilisateur, et l entretien REFUSE de
+      completer le vocabulaire : cinq etiquettes nommees valent mieux que sept
+      dont deux inventees.
+
+  - id: citation_unique
+    enonce: "Une même cible ne se LISTE pas dans deux sections de liste de liens."
+    active: true
+    severite: a_mesurer
+    sections: ["Contredit par", "Prolonge", "Prolongée par", "Voir aussi"]
+    definition_de_liste: "entrée de puce, pas lien cité dans une phrase"
+    motif: >
+      La distinction « entree de puce » contre « lien cite dans une phrase » n est
+      pas un detail : sans elle, la regle punit la forme qu on recommande. Elle
+      porte ici un risque de plus — « Prolonge » et « Prolongée par » sont deux
+      sections dont le mode inverse garantit qu une meme cible n apparait pas dans
+      les deux, ce que la regle doit savoir pour ne pas signaler une paire
+      correcte.
+
+  - id: bandeau_a_jour
+    enonce: "La zone AUTO du bandeau concorde avec le frontmatter."
+    active: true
+    severite: a_mesurer
+    structurellement_dure: false
+    motif: "Meme situation que `chemin_categorie` : defendable dure d emblee, non tranche ici."
+
+  - id: anti_repetition
+    enonce: "La section de définition ne recontient pas les valeurs affichées par le bandeau."
+    active: false
+    severite: avertissement
+    definitif: true
+    scriptable: false
+    motif: >
+      NON LIVREE. Elle n est pas scriptable : les valeurs d un axe de nature sont
+      souvent les mots les plus frequents du corpus, et une detection litterale
+      rend surtout des faux positifs. A proposer comme relecture assistee
+      optionnelle, et rien de plus.
+
+regles_de_socle:
+  - id: frontmatter_lisible
+    severite: dure
+    enonce: "Un frontmatter illisible est une ERREUR, jamais une absence."
+    motif: >
+      La SEULE regle de socle qu une instance neuve recoit dure sans mesure, et ce
+      n est pas une exception au principe 1 : ce n est pas une regle a durcir,
+      c est l absence de regle qu on comble. Une page qui ne parse pas sort du
+      total, de toutes les autres regles, et ses liens ne sont pas resolus — le
+      vault reste vert en etant faux.
+  - { id: gabarit_par_role,   severite: dure,
+      enonce: "`role:` inconnu ou absent refusé ; champs requis non vides ; tout champ hors de `autorises` échoue." }
+  - { id: liens_resolus,      severite: a_mesurer, enonce: "Aucun wikilink mort, dans le corps ET dans le frontmatter." }
+  - { id: nom_egal_fichier,   severite: a_mesurer, enonce: "`nom:` identique au nom du fichier, sauf caractère illégal en nom de fichier." }
+  - { id: page_atteignable,   severite: a_mesurer, enonce: "Toute page atteignable depuis un hub." }
+  - { id: hub_par_niveau,     severite: dure,      enonce: "TOUT niveau du chemin porte son hub, pas seulement la feuille." }
+  - { id: vocabulaire_ferme,  severite: dure,      enonce: "Toute valeur d'un champ `enum` ou `liste_enum` appartient au vocabulaire déclaré de son axe." }
+  - id: unicite_du_nom_de_fichier
+    severite: dure
+    enonce: "Un nom de fichier est unique dans le vault, à la casse près."
+    motif: >
+      La seule contrainte que le wikilink nu impose. Elle mord surtout aux
+      endroits ou un meme mot est a la fois un dossier, son hub et une notion :
+      a verifier AVANT de creer chaque page et chaque hub.
+  - { id: taille_avertissement, severite: a_mesurer, enonce: "Une page au-delà de `roles[].taille_avertissement` lignes suggère une scission." }
+  - { id: collision_alias,      severite: a_mesurer, enonce: "Doublon interne d'alias, ou alias qui est le `nom:` d'une autre page du MÊME rôle." }
+  - { id: couverture_des_vues,  severite: a_mesurer, enonce: "Une valeur de l'axe de rangement assez peuplée sans vue." }
+  - id: paire_inverse_bien_declaree
+    severite: dure
+    enonce: "Un champ `reciproque: {mode: inverse, champ: Y}` exige que Y déclare `reciproque: {mode: inverse, champ: X}`."
+    motif: >
+      Dure d emblee, pour la meme raison que `frontmatter_lisible` : ce n est pas
+      une regle a durcir, c est un trou a ne pas ouvrir. Un `inverse` qui pointe
+      vers un champ qui ne pointe pas en retour remplacerait un trou par un autre.
+      Elle est verifiable sur le MANIFESTE, sans lire une seule page.
+
+seuils:
+  vue_min_valeurs_axe: 3
+  vue_min_membres: 2
+  motif: "Des seuils de SENS, pas des mesures de corpus : ils se reprennent tels quels."
+
+vocabulaires:
+  tags:
+    fichier: "Documentation/general/tags.md"
+    mode: ferme
+    lecture: "colonne 1 des tableaux, en backticks"
+    motif_lecture: >
+      Un vocabulaire `ferme` dont le kit ne connait pas la LECTURE est declare
+      ILLISIBLE — soit une violation DURE de `vocabulaire_ferme` des la premiere
+      validation. Le champ est facultatif au contrat parce qu un vocabulaire
+      `libre` n en a pas besoin ; des que le mode est `ferme`, il ne l est plus.
+    regle: >
+      On pioche, on n invente JAMAIS. Un tag manquant se propose, s ajoute ici,
+      puis s utilise.
+    vide: true
+    motif_vide: >
+      Le fichier NAIT VIDE avec sa regle. Un vocabulaire herite d un autre brain
+      serait un vocabulaire faux ; `ferme` est recommande et explique, `libre` est
+      accepte si l utilisateur le veut.
+  taxonomie:
+    fichier: "Documentation/domaines/taxonomie.md"
+    mode: ferme
+    genere: true
+    motif: "Genere depuis `axes`, avec les places VIDES pour les departages et les frontieres."
+
+graphe:
+  cible: ".obsidian/graph.json, clé `colorGroups`"
+  versionne: false
+  motif_non_versionne: "Gitignoré : cette table est la seule source, à réappliquer par poste. C'est une étape d'installation, pas un fichier."
+  motif_de_l_ordre: "Une requête `path:` passe AVANT une requête `role:`, sinon un hub spécial prend la couleur des hubs ordinaires."
+  ordre:
+    - { requete: "path:Séquences/", couleur: "#EF4444", rgb: 15680580 }
+    - { requete: "path:Marqueurs/", couleur: "#FFD43B", rgb: 16766011 }
+    - { requete: "path:Secteurs/",  couleur: "#FFD43B", rgb: 16766011 }
+    - { requete: '["role":"hub"]',       couleur: "#FF922B", rgb: 16749099 }
+    - { requete: '["role":"unite"]',     couleur: "#412CDD", rgb: 4271325 }
+    - { requete: '["role":"notion"]',    couleur: "#7AB800", rgb: 8042496 }
+    - { requete: '["role":"sequence"]',  couleur: "#EF4444", rgb: 15680580 }
+    - { requete: '["role":"consigne"] OR ["role":"directive"]', couleur: "#94A3B8", rgb: 9741240 }
+  note_base: >
+    Un `.base` NE SE COLORE PAS : il n a pas de frontmatter, donc pas de `role:`.
+  note_deux_axes_transverses: >
+    Les DEUX axes transverses prennent la MEME couleur. C est un choix, pas une
+    contrainte : une couleur par role suffit a lire le graphe, et distinguer les
+    deux grappes transverses ajouterait une teinte sans repondre a une question.
+
+genere:
+  chemins:
+    - { chemin: "AI/index/", par: build_index }
+    - { chemin: "zones AUTO des hubs", par: build_mocs }
+    - { chemin: "Marqueurs/", par: build_mocs, depuis: "axes.transverses[marqueurs]" }
+    - { chemin: "Secteurs/",  par: build_mocs, depuis: "axes.transverses[secteurs]" }
+    - { chemin: "Séquences/Séquences.md", par: build_mocs }
+    - { chemin: "AI/index/liens.md", par: build_links }
+    - { chemin: "bandeaux des unités", par: build_bandeau }
+    - { chemin: "Documentation/domaines/taxonomie.md", par: kit, depuis: axes }
+    - { chemin: "Templates/", par: kit, depuis: "roles[].champs et roles[].corps" }
+    - { chemin: "docs/", par: kit, depuis: "tout le manifeste" }
+  contrat: >
+    Zone a balises dediees, remplacement en bloc, idempotence, `--check` en code
+    2, preservation de la zone manuelle. Ce qui est genere n est jamais edite a
+    la main.
+  non_pages: [.git, .claude, .obsidian, AI, Documentation, Templates, Projects, docs]
+  index:
+    fichiers: ["AI/index/brain-index.json", "AI/index/brain-index.md"]
+    champs: [nom, alias, role, domaine, nature, origine, date_origine,
+             marqueurs, secteurs, apport, tags, contredit, prolonge, prolonge_par,
+             fiabilite, acces]
+    plus: [path]
+    tri: stable
+    horodatage: false
+  liens:
+    fichier: "AI/index/liens.md"
+    sections: [tags, liens_sortants, backlinks, a_creer]
+    masque_du_graphe: true
+
+propagation:
+  enonce: >
+    Le rayon de propagation d une insertion est le DOSSIER D ACCUEIL, plus ses
+    HUBS PARENTS. Le voisinage d une page est `ls` de son dossier.
+  clause: "Une ligne sans objet se DECLARE sans objet, elle ne se tait pas."
+  derivee: true
+  motif: >
+    La table ci-dessous n est pas ecrite : elle se DERIVE du manifeste. Elle ne
+    depend que d un fait structurel — le dossier porte la valeur de l axe de
+    rangement — donc tout brain construit sur l arbre l obtient gratuitement.
+  table:
+    - { n: P1, cible: "le hub du dossier", trouve_par: "c'est le dossier d'accueil", par: genere }
+    - { n: P2, cible: "les hubs parents",  trouve_par: "remontée de chemin",        par: genere }
+    - { n: P3, cible: "la séquence du dossier", trouve_par: "le fichier `role: sequence` du dossier",
+        par: "vue embarquée : automatique ; « Ce que la séquence montre » : à écrire" }
+    - { n: P4, cible: "la notion du dossier", trouve_par: "le fichier `role: notion` du dossier",
+        par: "à écrire — et c'est un rôle PROTÉGÉ : on y ajoute, on n'y réécrit pas" }
+    - { n: P5, cible: "les pairs", trouve_par: "les autres `role: unite` du dossier",
+        par: "à écrire, réciprocité obligatoire — dont une paire `prolonge` / `prolonge_par`" }
+    - { n: P6, cible: "les résumés réinjectés", trouve_par: "les champs à réciprocité des pairs", par: "script de resynchronisation" }
+  hubs_transverses:
+    - { n: P7, cible: "les hubs de `marqueurs:` et de `secteurs:`", trouve_par: "les valeurs portées par la page", par: genere }
+  motif_p7: >
+    Une ligne PAR AXE TRANSVERSE, derivee elle aussi : un axe -> une ligne
+    generee. Avec deux axes, deux jeux de hubs a regenerer, et la boucle du
+    generateur porte sur la liste declaree.
+
+skills:
+  capture:
+    nom: enrichir-brainref
+    ecrit_dans_le_brain: true
+    mode_lot: true
+    motif_mode_lot: >
+      Un brain neuf a besoin d un mode lot : sans lui, l amorcage coute une
+      conversation par page et personne ne le fera. Ce que l entretien a collecte
+      part dans `Inbox.md` comme premier backlog — ce n est pas du remplissage,
+      c est du travail deja identifie, et pas une page n est ecrite.
+    porte:
+      - "la règle de propagation P1->P7, dérivée"
+      - "le mode mise à jour et sa table des effets de bord"
+      - "la vérification de la réinjection du résumé"
+      - "la vérification de la PAIRE `prolonge` / `prolonge_par`"
+  cloture:
+    nom: cloturer-brainref
+    ecrit_dans_le_brain: false
+    etapes:
+      - "régénérer les artefacts dérivés"
+      - "passer les DEUX validateurs au vert"
+      - "vérifier la divergence avec la branche distante AVANT tout commit"
+      - "committer et intégrer en fast-forward"
+  exploitation:
+    nom: preparer-un-livrable
+    ecrit_dans_le_brain: false
+    livrable: "un plan sourcé, où chaque affirmation porte la page qui l'établit"
+    archetypes: "Documentation/perso/usages.md"
+    filtre_eliminatoire: null
+    motif_filtre_nul: >
+      `champs.fiabilite.eliminatoire` est VIDE : rien ne disqualifie une page. Un
+      brain dont une valeur disqualifie doit l ECRIRE la — le skill filtre sur
+      l index sans ouvrir les pages, et une liste devinee eliminerait en silence.
+    forme: >
+      Identifier l usage -> poser SEULEMENT les questions pertinentes ->
+      interroger l index -> produire un livrable SOURCE qui contraint l aval.
+      Seule cette forme se reprend ; le contenu s ecrit sujet par sujet.
+
+agent:
+  racine: "AI/"
+  sous:
+    - { chemin: "design/",   role: "les specs de reference" }
+    - { chemin: "migration/", role: "un fichier par lot, avec ses *Remontees* — le premier est ecrit VIDE par le generateur" }
+    - { chemin: "index/",    role: "genere, ne pas editer a la main" }
+    - { chemin: "sessions/", role: "resumes automatiques par le hook Stop" }
+    - { chemin: "scripts/",  role: "vide sur une instance `kit.mode: branche`" }
+    - { chemin: "backlog.md", role: "ce qui reste a faire" }
+  hook_stop: "écrit un résumé de session dans AI/sessions/"
+
+# ==============================================================================
+# racine — LES `.md` DE LA RACINE, DECLARES. Ce ne sont PAS des artefacts
+# derives : aucun generateur ne les produit. Ce sont des artefacts de SEMIS,
+# ecrits une fois puis edites a la main — comme le corps d un hub.
+#
+# Le besoin n est pas de les GENERER, il est de les DECLARER : le validateur lit
+# tout `.md` de la racine pour son test d atteignabilite, et sans ce bloc un
+# brouillon pose a la racine elargirait silencieusement l atteignabilite de tous
+# les hubs de premier niveau. `aiguille:` le dit, et le semis n ecrit QUE cette
+# liste.
+# ==============================================================================
+racine:
+  porte_d_entree: Home.md
+  pages:
+
+    - fichier: Home.md
+      titre: Accueil
+      aiguille: true
+      role_editorial: porte
+      motif: >
+        La seule page qui cite les hubs de premier niveau. Sans elle, les huit
+        hubs de domaine, les deux hubs de role et le hub de ralliement sont
+        « atteignables depuis aucun hub ».
+
+    - fichier: Inbox.md
+      titre: Inbox
+      aiguille: false
+      role_editorial: capture
+      motif: >
+        A la racine, mais elle n aiguille PAS : elle ne cite aucun hub, et une
+        page qu elle mentionnerait ne doit pas devenir atteignable pour autant.
+        C est exactement la distinction que `aiguille:` existe pour porter.
+      amorce: []
+      motif_amorce: >
+        VIDE dans le gabarit, et ce n est pas un oubli : l amorce est la liste que
+        l utilisateur a citee pendant l entretien, celle qui a INDUIT la
+        taxonomie. Elle est propre a son sujet ; un gabarit qui en porterait une
+        ferait ecrire des pages que personne n a demandees.
+
+frontieres_d_ecriture:
+  libre:
+    - "AI/ hors index/"
+    - "Inbox.md"
+  sur_confirmation:
+    - "toute page d'un rôle non protégé"
+    - "Documentation/"
+  sur_demande_explicite:
+    - "toute page d'un rôle `protege: true` — ici les notions, et c'est la frontière la plus sensible du vault"
+  jamais_a_la_main:
+    - "les chemins de `genere`"
+  jamais_sans_accord:
+    - "une suppression de page"
+  deplacement: "par `git mv`, JAMAIS par suppression + création"
+  second_mode: false
+  motif_second_mode: >
+    Un second mode (« consommation ») n existe que si le brain a un CONSOMMATEUR
+    distinct de lui-meme — un depot de code qui l interroge, par exemple. Reponse
+    « non » ici, donc aucun `CLAUDE-consommation.md` n est genere. La question est
+    la 9.3 de l entretien, et elle se pose, elle ne se devine pas.

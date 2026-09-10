@@ -9,7 +9,7 @@ bandeau, ni libelle. Tout se lit dans le manifeste.
     from brainkit.generer import genere_tout
     from brainkit.valider import charge
 
-    mo = charge(Path("exemples/devbrain.brain.yml"))
+    mo = charge(Path("<vault>/brain.yml"))
     s = genere_tout(mo, Path("../DevBrain"))     # mode `check` : n ecrit rien
     print(len(s.ecarts()), "écart(s)")
 

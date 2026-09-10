@@ -10,11 +10,11 @@
 Sept scenarios. Aucun n ecrit hors d un dossier temporaire, et aucun ne touche
 une instance d essai.
 
-  1. DERIVATION   — la table de propagation d HistoBrain, ligne par ligne. Ce
+  1. DERIVATION   — la table de propagation d BrainRef, ligne par ligne. Ce
                     n est pas un compte : c est la composition qui est le
                     livrable, et chaque ligne est verifiee sur son GENRE, son
                     role vise et sa condition de « sans objet ».
-  2. GENERICITE   — la table de CimeBrain confrontee a celle d HistoBrain. Deux
+  2. GENERICITE   — la table de BrainDeux confrontee a celle du manifeste de reference. Deux
                     manifestes sans un mot commun doivent donner deux tables
                     dont AUCUNE cellule ne coincide. Une table identique serait
                     la preuve qu elle est recopiee. Plus le controle des mots :
@@ -64,22 +64,22 @@ from brainkit.skills import propagation as P                       # noqa: E402
 from brainkit.valider import valide                                # noqa: E402
 from brainkit.valider.manifeste import Modele                      # noqa: E402
 
-HISTO = RACINE_KIT / "exemples" / "histobrain.brain.yml"
-# CimeBrain n est PAS copie ici : il se COMPOSE depuis les reponses d entretien
+REFERENCE = RACINE_KIT / "gabarit" / "brain.yml"
+# BrainDeux n est PAS copie ici : il se COMPOSE depuis les reponses d entretien
 # que le lot 6 a enregistrees. Une copie serait une seconde source du meme
 # manifeste, c est-a-dire le defaut que le manifeste existe pour supprimer.
-REPONSES_CIME = RACINE_KIT / "tests" / "cimebrain.reponses.yml"
+REPONSES_DEUX = RACINE_KIT / "tests" / "deuxieme.reponses.yml"
 
-# La table d HistoBrain, attendue LIGNE PAR LIGNE : (genre, role visé, la ligne
+# La table du manifeste de reference, attendue LIGNE PAR LIGNE : (genre, role visé, la ligne
 # a-t-elle toujours un objet ?, demande-t-elle un travail humain ?).
-TABLE_HISTO = [
+TABLE_REFERENCE = [
     ("P1", P.G_HUB,         "hub",         True,  False),
     ("P2", P.G_PARENTS,     "hub",         False, False),
-    ("P3", P.G_VOISIN,      "chronologie", False, True),
+    ("P3", P.G_VOISIN,      "sequence",    False, True),
     ("P4", P.G_VOISIN,      "notion",      False, True),
-    ("P5", P.G_PAIRS,       "source",      False, True),
+    ("P5", P.G_PAIRS,       "unite",       False, True),
     ("P6", P.G_RESUMES,     None,          False, True),
-    ("P7", P.G_RALLIEMENT,  "chronologie", False, True),
+    ("P7", P.G_RALLIEMENT,  "sequence",    False, True),
     ("P8", P.G_TRANSVERSE,  None,          False, False),
     ("P9", P.G_TRANSVERSE,  None,          False, False),
 ]
@@ -93,11 +93,11 @@ TABLE_HISTO = [
 # harnais repete » sont du francais ordinaire, pas une fuite de vocabulaire.
 # Un controle de genericite qui teste des mots courants mesure la langue, pas
 # la derivation.
-MOTS_HISTO = ["role: source", "role: chronologie", "période", "controverse",
-              "Antiquité", "prolonge_par", "contredit:", "fiabilite",
-              "HistoBrain"]
-MOTS_CIME = ["role: course", "role: selection", "massif", "terrain",
-             "Mont-Blanc", "enchaine_avec", "variante_de", "CimeBrain"]
+MOTS_REFERENCE = ["role: unite", "role: sequence", "Marqueur 1", "Secteur 1",
+                  "Segment B1", "prolonge_par", "contredit:", "fiabilite",
+                  "BrainRef"]
+MOTS_DEUX = ["role: element", "role: selection", "Croisements", "matiere",
+             "Phase 1", "enchaine_avec", "variante_de", "BrainDeux"]
 
 
 class Journal:
@@ -117,30 +117,30 @@ def charge(chemin: Path) -> Modele:
         return Modele(yaml.safe_load(f), chemin)
 
 
-def compose_cimebrain(dossier: Path) -> Modele:
-    """CimeBrain, recompose depuis ses reponses d entretien. Jamais copie."""
-    with REPONSES_CIME.open(encoding="utf-8") as f:
+def compose_deuxieme(dossier: Path) -> Modele:
+    """BrainDeux, recompose depuis ses reponses d entretien. Jamais copie."""
+    with REPONSES_DEUX.open(encoding="utf-8") as f:
         reponses = (yaml.safe_load(f) or {}).get("reponses") or {}
     b = _brouillon.charge(dossier / "entretien.yml")
     for qid, val in reponses.items():
         b.repond(str(qid), val)
     m, griefs = composer.compose(b)
     if m is None:
-        raise SystemExit("CimeBrain ne se compose pas : " + " · ".join(griefs))
+        raise SystemExit("BrainDeux ne se compose pas : " + " · ".join(griefs))
     return Modele(m, dossier / "brain.yml")
 
 
 # --------------------------------------------------------------------------- #
 def scenario_derivation(j: Journal, mo: Modele) -> list[P.Ligne]:
-    print("\n1. DÉRIVATION — la table d'HistoBrain, ligne par ligne")
+    print("\n1. DÉRIVATION — la table de référence, ligne par ligne")
     lignes = P.derive(mo)
-    j.verifie(f"{len(TABLE_HISTO)} lignes dérivées",
-              len(lignes) == len(TABLE_HISTO),
+    j.verifie(f"{len(TABLE_REFERENCE)} lignes dérivées",
+              len(lignes) == len(TABLE_REFERENCE),
               f"{len(lignes)} obtenues : "
               + " · ".join(f"{li.n} {li.genre}" for li in lignes))
-    if len(lignes) != len(TABLE_HISTO):
+    if len(lignes) != len(TABLE_REFERENCE):
         return lignes
-    for li, (n, genre, role, toujours, ecrire) in zip(lignes, TABLE_HISTO):
+    for li, (n, genre, role, toujours, ecrire) in zip(lignes, TABLE_REFERENCE):
         j.verifie(f"{n} — genre `{genre}`, rôle `{role}`",
                   li.n == n and li.genre == genre and li.role == role,
                   f"obtenu : {li.n} genre `{li.genre}` rôle `{li.role}`")
@@ -171,10 +171,10 @@ def scenario_genericite(j: Journal, mo_h: Modele, mo_c: Modele,
                         lignes_h: list[P.Ligne]) -> None:
     print("\n2. GÉNÉRICITÉ — deux manifestes, deux tables, aucune cellule commune")
     lignes_c = P.derive(mo_c)
-    j.verifie("CimeBrain obtient 8 lignes, HistoBrain 9 — un axe transverse "
+    j.verifie("BrainDeux obtient 8 lignes, BrainRef 9 — un axe transverse "
               "de moins",
               len(lignes_c) == 8 and len(lignes_h) == 9,
-              f"CimeBrain {len(lignes_c)}, HistoBrain {len(lignes_h)}")
+              f"BrainDeux {len(lignes_c)}, BrainRef {len(lignes_h)}")
 
     # Le controle central : deux tables differentes sur deux brains differents.
     cellules_h = {(li.cible, li.trouve_par, li.par) for li in lignes_h}
@@ -198,11 +198,11 @@ def scenario_genericite(j: Journal, mo_h: Modele, mo_c: Modele,
     # Le controle des MOTS : la preuve qu aucun vocabulaire ne fuit.
     rendus_h = "\n".join(skills.rendus(mo_h).values())
     rendus_c = "\n".join(skills.rendus(mo_c).values())
-    for mot in MOTS_CIME:
-        j.verifie(f"« {mot} » (CimeBrain) absent des skills d'HistoBrain",
+    for mot in MOTS_DEUX:
+        j.verifie(f"« {mot} » (BrainDeux) absent des skills de BrainRef",
                   mot.lower() not in rendus_h.lower())
-    for mot in MOTS_HISTO:
-        j.verifie(f"« {mot} » (HistoBrain) absent des skills de CimeBrain",
+    for mot in MOTS_REFERENCE:
+        j.verifie(f"« {mot} » (BrainRef) absent des skills de BrainDeux",
                   mot.lower() not in rendus_c.lower())
 
     # Le NOM des skills vient du manifeste, jamais du kit.
@@ -225,9 +225,9 @@ def scenario_effets(j: Journal, mo: Modele) -> None:
     attendus = [
         ("nom", "unicite_du_nom_de_fichier", "`fonction: identite`"),
         ("apport", "reinjection_du_resume", "`fonction: resume_court`"),
-        ("categorie", "chemin_categorie", "`source: axes.rangement`"),
+        ("domaine", "chemin_categorie", "`source: axes.rangement`"),
         ("nature", "gabarit_par_role", "les conditionnels qu'il commande"),
-        ("themes", "generer --check", "un axe transverse"),
+        ("marqueurs", "generer --check", "un axe transverse"),
         ("tags", "vocabulaire_ferme", "un vocabulaire en fichier"),
         ("prolonge", "reciprocite", "`reciproque: inverse`"),
         ("contredit", "reciprocite", "`reciproque: symetrique`"),
@@ -238,13 +238,13 @@ def scenario_effets(j: Journal, mo: Modele) -> None:
         j.verifie(f"`{champ}:` → {attendu} ({pourquoi})",
                   attendu in texte, texte[:200])
 
-    j.verifie("`categorie:` est le SEUL champ qui change de rayon",
+    j.verifie("`domaine:` est le SEUL champ qui change de rayon",
               [c for c, e in effets.items() if "CHANGE de rayon" in e.rayon]
-              == ["categorie"],
+              == ["domaine"],
               str([c for c, e in effets.items() if "CHANGE" in e.rayon]))
-    j.verifie("`langue_originale:` n'a aucun consommateur, et le DIT",
+    j.verifie("`variante:` n'a aucun consommateur, et le DIT",
               "aucun consommateur déclaré" in
-              " ".join(effets["langue_originale"].consommateurs))
+              " ".join(effets["variante"].consommateurs))
     hors = {e.champ for e in P.effets_hors_champ(mo)}
     j.verifie("le renommage et la suppression ont leur ligne, hors des champs",
               len(hors) == 2 and all("**" in h for h in hors), str(hors))
@@ -258,28 +258,28 @@ def _vault_d_essai(racine: Path, mo: Modele, avec_liens: bool) -> str:
     page est ecrite, ses voisins ne sont pas touches, et RIEN dans le vault ne
     le dit. C est le cas negatif.
     """
-    dossier = racine / "Antiquité"
+    dossier = racine / "Domaine B"
     dossier.mkdir(parents=True, exist_ok=True)
     ecrit = []
 
     def pose(nom: str, texte: str) -> str:
         (dossier / f"{nom}.md").write_text(texte, encoding="utf-8", newline="\n")
-        ecrit.append(f"Antiquité/{nom}.md")
-        return f"Antiquité/{nom}.md"
+        ecrit.append(f"Domaine B/{nom}.md")
+        return f"Domaine B/{nom}.md"
 
-    pose("Antiquité", "---\nrole: hub\nnom: Antiquité\napport: \"x\"\n---\n\n"
-                      "# Antiquité\n")
+    pose("Domaine B", "---\nrole: hub\nnom: Domaine B\napport: \"x\"\n---\n\n"
+                      "# Domaine B\n")
     pose("Notion d'essai", "---\nrole: notion\nnom: Notion d'essai\n"
-                           "categorie: antiquite/rome\nthemes: [politique]\n---\n\n"
+                           "domaine: domaine-b/b1\nmarqueurs: [m1]\n---\n\n"
                            "# Notion d'essai\n")
-    pose("Pair d'essai", "---\nrole: source\nnom: Pair d'essai\n"
+    pose("Pair d'essai", "---\nrole: unite\nnom: Pair d'essai\n"
                          "apport: \"Le pair déjà en place.\"\n"
-                         "categorie: antiquite/rome\n---\n\n# Pair d'essai\n")
+                         "domaine: domaine-b/b1\n---\n\n# Pair d'essai\n")
     liens = ("contredit: [Pair d'essai]\n" if avec_liens else "")
     page = pose("Page capturée",
-                "---\nrole: source\nnom: Page capturée\n"
+                "---\nrole: unite\nnom: Page capturée\n"
                 "apport: \"La page qu'on vient d'écrire.\"\n"
-                f"categorie: antiquite/rome\n{liens}---\n\n# Page capturée\n")
+                f"domaine: domaine-b/b1\n{liens}---\n\n# Page capturée\n")
     return page
 
 
@@ -287,7 +287,7 @@ def scenario_rayon_tenu(j: Journal, mo: Modele, tmp: Path) -> None:
     print("\n4. RAYON TENU — le cas positif : tout est touché, code 0")
     racine = tmp / "tenu"
     page = _vault_d_essai(racine, mo, avec_liens=True)
-    touches = {f"Antiquité/{p.name}" for p in (racine / "Antiquité").iterdir()}
+    touches = {f"Domaine B/{p.name}" for p in (racine / "Domaine B").iterdir()}
     r = ctrl.controle(mo, racine, page, touches)
     j.verifie("aucune ligne tue", not r.tues,
               " · ".join(c.ligne.n for c in r.tues))
@@ -296,7 +296,7 @@ def scenario_rayon_tenu(j: Journal, mo: Modele, tmp: Path) -> None:
     j.verifie("la notion et le pair sont HONORÉS",
               etats.get("P4") == ctrl.HONOREE and etats.get("P5") == ctrl.HONOREE,
               str(etats))
-    j.verifie("la chronologie absente est SANS OBJET, pas tue",
+    j.verifie("la séquence absente est SANS OBJET, pas tue",
               etats.get("P3") == ctrl.SANS_OBJET, str(etats))
     j.verifie("les hubs sont DÉLÉGUÉS aux générateurs, pas exigés ici",
               etats.get("P1") == ctrl.DELEGUEE and etats.get("P2") == ctrl.DELEGUEE,
@@ -351,14 +351,14 @@ def scenario_exploitation(j: Journal, mo: Modele) -> None:
               "10.1" in expl.absence(muet)
               and "fiction" in expl.absence(muet), expl.absence(muet))
     j.verifie("les deux skills restants ne citent plus le troisième",
-              "preparer-un-propos" not in "\n".join(skills.rendus(muet).values()))
+              "preparer-un-livrable" not in "\n".join(skills.rendus(muet).values()))
     j.verifie("déclaré, il est écrit", len(skills.rendus(mo)) == 3,
               str(sorted(skills.rendus(mo))))
     # Le filtre eliminatoire : VIDE par defaut, et le skill l ecrit en clair.
-    j.verifie("aucun champ éliminatoire dans HistoBrain, et le skill le DIT",
+    j.verifie("aucun champ éliminatoire dans BrainRef, et le skill le DIT",
               not expl.eliminatoires(mo)
               and "Rien ne disqualifie" in skills.rendus(mo)[
-                  ".claude/skills/preparer-un-propos/SKILL.md"])
+                  ".claude/skills/preparer-un-livrable/SKILL.md"])
 
 
 def scenario_semis(j: Journal, mo: Modele, tmp: Path) -> None:
@@ -367,8 +367,8 @@ def scenario_semis(j: Journal, mo: Modele, tmp: Path) -> None:
     s = semis.seme(mo, racine, ecrire=True, avec_git=False)
     j.verifie("le semis n'est pas refusé", not s.refuse, " · ".join(s.plan.refus))
     poses = {f.chemin for f in s.plan.fichiers}
-    for nom in ("enrichir-histobrain", "cloturer-histobrain",
-                "preparer-un-propos"):
+    for nom in ("enrichir-brainref", "cloturer-brainref",
+                "preparer-un-livrable"):
         j.verifie(f"`.claude/skills/{nom}/SKILL.md` posé",
                   f".claude/skills/{nom}/SKILL.md" in poses)
     j.verifie("aucun `.gitkeep` ne subsiste dans un dossier de skill écrit",
@@ -386,7 +386,7 @@ def scenario_semis(j: Journal, mo: Modele, tmp: Path) -> None:
     # chose parce qu ils la derivent du meme endroit. C est le constat E4,
     # applique aux deux fichiers les plus lus du vault.
     routeur = (racine / "CLAUDE.md").read_text(encoding="utf-8")
-    capture = (racine / ".claude/skills/enrichir-histobrain/SKILL.md").read_text(
+    capture = (racine / ".claude/skills/enrichir-brainref/SKILL.md").read_text(
         encoding="utf-8")
     for li in P.derive(mo):
         j.verifie(f"{li.n} — même cible dans `CLAUDE.md` et dans la capture",
@@ -414,8 +414,8 @@ def main() -> int:
     print("épreuve — les trois skills de BrainKit, lot 7")
     j = Journal()
     tmp = Path(tempfile.mkdtemp(prefix="bk7-"))
-    mo_h = charge(HISTO)
-    mo_c = compose_cimebrain(tmp / "cime")
+    mo_h = charge(REFERENCE)
+    mo_c = compose_deuxieme(tmp / "deux")
     try:
         lignes = scenario_derivation(j, mo_h)
         scenario_genericite(j, mo_h, mo_c, lignes)

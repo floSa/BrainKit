@@ -4,9 +4,15 @@
 # ///
 """fidelite.py — le manifeste sait-il redire le vault ?
 
-Lot 2 de BrainKit. Lit UN manifeste (`exemples/devbrain.brain.yml`) et UN vault
-(DevBrain), et rapporte CHAQUE divergence entre ce que le manifeste declare et ce
-que le vault est. Rien d autre :
+Lot 2 de BrainKit. Lit UN manifeste et UN vault, DONNES EN ARGUMENT, et rapporte
+CHAQUE divergence entre ce que le manifeste declare et ce que le vault est.
+
+Le kit n embarque AUCUN manifeste d instance, donc cet outil n a plus de defaut :
+`--vault` est obligatoire, et `--manifeste` vaut `<vault>/brain.yml` sauf mention
+contraire. Un vault de defaut code dans le kit ferait rendre un verdict sur le
+brain de quelqu un d autre.
+
+Rien d autre :
 
   - LECTURE SEULE. Aucune ecriture, aucun deplacement, aucun artefact genere.
   - CE N EST PAS le validateur de vault. Les dix regles de `brain-v3.md` §10
@@ -35,10 +41,10 @@ Un groupe de divergences sans verdict sort en `INEXPLIQUEE` et l outil sort en
 code 1. C est le critere du lot, tenu par du code : aucune divergence ne traine.
 
 Usage :
-    uv run outils/fidelite.py                       # les chemins par defaut
+    uv run outils/fidelite.py --vault <chemin>      # manifeste = <vault>/brain.yml
     uv run outils/fidelite.py --vault <chemin> --manifeste <chemin>
-    uv run outils/fidelite.py --pages               # nomme TOUTES les pages
-    uv run outils/fidelite.py --groupe C2           # un seul groupe, en entier
+    uv run outils/fidelite.py --vault <chemin> --pages     # nomme TOUTES les pages
+    uv run outils/fidelite.py --vault <chemin> --groupe C2 # un seul groupe, en entier
 
 Sort en 0 si toute divergence porte un verdict, en 1 sinon.
 """
@@ -60,8 +66,6 @@ except ModuleNotFoundError:  # pragma: no cover
     sys.exit("PyYAML manquant — lancer via uv : uv run outils/fidelite.py")
 
 RACINE = Path(__file__).resolve().parent.parent
-MANIFESTE_DEFAUT = RACINE / "exemples" / "devbrain.brain.yml"
-VAULT_DEFAUT = RACINE.parent / "DevBrain"
 
 # Titres de niveau 0 du manifeste : ce ne sont pas des titres markdown mais des
 # marqueurs de place (bandeau, embed, accroche, zone AUTO). Ils ne se cherchent
@@ -1452,18 +1456,24 @@ def imprime(mo: Modele, pages: list[Page], r: Rapport, ns) -> int:
 def passe_jumeau(manifeste: Path, vault: Path) -> int:
     """Les DEUX manifestes sont-ils le meme fichier, a l octet ?
 
-    Remontee 4 du lot 9, remontee 4 du lot 10, fermee ici. `exemples/devbrain.brain.yml`
-    et le `brain.yml` du vault decrivent le meme brain et doivent etre identiques :
-    le premier est ce que le kit teste, le second ce que le vault applique. Ils
-    l ont ete jusqu ici par ATTENTION SEULE, et cinq documents du depot les
-    lisent l un pour l autre — une divergence ferait mentir un jeu d epreuve vert.
+    Quand un manifeste EXTERIEUR au vault est donne en argument, les deux
+    decrivent le meme brain et doivent etre identiques : l un est ce contre quoi
+    on teste, l autre ce que le vault applique. Rien ne les tient synchronises
+    sinon l attention — et une divergence ne casse rien, elle rend juste faux
+    tout ce qu on croit avoir verifie.
 
     Cinq lignes qui evitent une erreur silencieuse, et ce n est pas une figure de
     style : une divergence ne casse rien, elle rend juste faux tout ce qu on
     croit avoir verifie.
     """
     jumeau = vault / "brain.yml"
-    if not jumeau.is_file() or jumeau.resolve() == manifeste.resolve():
+    if jumeau.is_file() and jumeau.resolve() == manifeste.resolve():
+        print(f"\nOK — le manifeste confronté EST celui du vault "
+              f"(`{jumeau}`) : aucun jumeau à comparer.")
+        return 0
+    if not jumeau.is_file():
+        print("\nOK — le vault ne porte pas de `brain.yml` : le manifeste "
+              "donné est le seul en jeu, il n'y a pas de jumeau à comparer.")
         return 0
     a = hashlib.sha256(manifeste.read_bytes()).hexdigest()
     b = hashlib.sha256(jumeau.read_bytes()).hexdigest()
@@ -1482,11 +1492,15 @@ def passe_jumeau(manifeste: Path, vault: Path) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Confronte un brain.yml a son vault.")
-    ap.add_argument("--manifeste", type=Path, default=MANIFESTE_DEFAUT)
-    ap.add_argument("--vault", type=Path, default=VAULT_DEFAUT)
+    ap.add_argument("--vault", type=Path, required=True,
+                    help="la racine du vault a confronter")
+    ap.add_argument("--manifeste", type=Path, default=None,
+                    help="par defaut `<vault>/brain.yml`")
     ap.add_argument("--pages", action="store_true", help="nomme toutes les pages de chaque groupe")
     ap.add_argument("--groupe", help="n imprime qu un code (C2) ou un groupe (C2/notion.Variantes)")
     ns = ap.parse_args()
+    if ns.manifeste is None:
+        ns.manifeste = ns.vault / "brain.yml"
 
     if not ns.manifeste.exists():
         return print(f"manifeste introuvable : {ns.manifeste}") or 1

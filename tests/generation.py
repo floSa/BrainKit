@@ -5,7 +5,7 @@
 """generation.py — le jeu d epreuve des GENERATEURS (lot 4).
 
     uv run tests/generation.py
-    uv run tests/generation.py --vault-devbrain ../DevBrain
+    uv run tests/generation.py --vault-temoin <chemin d un vault reel>
 
 Sept scenarios. Les quatre premiers opposent deux vaults JUMEAUX —
 `tests/genere-vert/` et `tests/genere-rouge/` — qui ne different que par les huit
@@ -37,7 +37,7 @@ taise quand il faut, et c est la moitie qui compte pour un `--check`.
                  `--check` y est silencieux. Plus le cas negatif du perimetre :
                  son manifeste ne declare ni index, ni carte des liens, ni
                  bandeau, et les trois REFUSENT au lieu d inventer un chemin.
-  7. DEVBRAIN  — facultatif : le critere d acceptation du lot, sur le vrai
+  7. TEMOIN    — facultatif : le critere d acceptation du lot, sur un vault reel
                  vault. Saute si le vault n est pas la.
 
 Les mutations des scenarios 3 et 4 ne touchent AUCUN fichier : elles modifient le
@@ -58,6 +58,8 @@ import yaml
 RACINE_KIT = Path(__file__).resolve().parents[1]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import temoin                                          # noqa: E402
 
 from brainkit.generer import charge_corpus, genere_tout            # noqa: E402
 from brainkit.generer.index import catalogue                       # noqa: E402
@@ -315,9 +317,9 @@ def scenario_lot3(j: Journal) -> None:
                       for p in s2.poses))
 
 
-def scenario_devbrain(j: Journal, vault: Path) -> None:
-    print(f"\n7. DEVBRAIN — le critère d'acceptation, sur `{vault.name}`")
-    chemin = RACINE_KIT / "exemples" / "devbrain.brain.yml"
+def scenario_temoin(j: Journal, vault: Path) -> None:
+    print(f"\n7. TÉMOIN — le critère d'acceptation, sur `{vault.name}`")
+    chemin = vault / "brain.yml"
     mo = Modele(yaml.safe_load(chemin.read_text(encoding="utf-8")), chemin)
     s = genere_tout(mo, vault, mode=CHECK)
     par = s.par_artefact()
@@ -366,8 +368,8 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Le jeu d'épreuve des générateurs.")
-    ap.add_argument("--vault-devbrain", type=Path,
-                    default=RACINE_KIT.parent / "DevBrain")
+    ap.add_argument("--vault-temoin", type=Path, default=None,
+                    help="un vault réel ; cf. tests/temoin.py")
     ns = ap.parse_args()
 
     print("épreuve — les générateurs de BrainKit, lot 4")
@@ -378,10 +380,11 @@ def main() -> int:
     scenario_zero_axe(j)
     scenario_reparation(j)
     scenario_lot3(j)
-    if ns.vault_devbrain.is_dir():
-        scenario_devbrain(j, ns.vault_devbrain.resolve())
+    vault = temoin.resout(ns.vault_temoin)
+    if vault is not None and (vault / "brain.yml").is_file():
+        scenario_temoin(j, vault)
     else:
-        print(f"\n7. DEVBRAIN — sauté : `{ns.vault_devbrain}` introuvable")
+        print(f"\n7. TÉMOIN — sauté : {temoin.pourquoi_saute()}")
 
     print()
     if j.echecs:

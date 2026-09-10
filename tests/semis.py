@@ -5,10 +5,10 @@
 """semis.py — le jeu d epreuve du SEMIS (lot 5).
 
     uv run tests/semis.py
-    uv run tests/semis.py --vault-devbrain ../DevBrain
+    uv run tests/semis.py --vault-temoin <chemin d un vault reel>
 
 Sept scenarios. Aucun n ecrit hors d un dossier temporaire, et le scenario 4 lit
-le vrai DevBrain SANS l ouvrir en ecriture.
+un vault REEL sans l ouvrir en ecriture.
 
   1. VIERGE      — HistoBrain seme dans un dossier temporaire. C est le critere
                    d acceptation du lot, verifie et non affirme : un hub par
@@ -23,7 +23,7 @@ le vrai DevBrain SANS l ouvrir en ecriture.
   3. INCOMPLET   — le cas NEGATIF. Trois manifestes ampute EN MEMOIRE, un manque
                    chacun. Chacun est refuse, le refus NOMME le champ, et le
                    dossier cible reste inexistant : pas de semis a moitie.
-  4. GENERICITE  — DevBrain seme depuis son propre manifeste, et sa structure
+  4. GENERICITE  — le vault temoin seme depuis son propre manifeste, et sa structure
                    vide comparee a l arbre REEL. C est la repetition du lot 9 a
                    blanc. Saute si le vault n est pas la.
   5. RE-SEUILLER — sur l instance vierge : aucun `git mv`, et il le dit. Sur un
@@ -50,6 +50,8 @@ import yaml
 RACINE_KIT = Path(__file__).resolve().parents[1]
 if str(RACINE_KIT) not in sys.path:
     sys.path.insert(0, str(RACINE_KIT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import temoin                                          # noqa: E402
 
 from brainkit.generer import genere_tout                            # noqa: E402
 from brainkit.generer.sortie import CHECK                           # noqa: E402
@@ -57,24 +59,23 @@ from brainkit.semer import figer, reseuiller, semis                 # noqa: E402
 from brainkit.valider import valide                                 # noqa: E402
 from brainkit.valider.manifeste import Modele                       # noqa: E402
 
-HISTO = RACINE_KIT / "exemples" / "histobrain.brain.yml"
-DEV = RACINE_KIT / "exemples" / "devbrain.brain.yml"
+REFERENCE = RACINE_KIT / "gabarit" / "brain.yml"
 GENERATION = RACINE_KIT / "tests" / "generation.brain.yml"
 VERT = RACINE_KIT / "tests" / "genere-vert"
 
-# HistoBrain vierge, attendu au FICHIER PRES. Un compte global ne prouverait
-# rien : c est la composition qui est le livrable.
+# L instance de REFERENCE vierge, attendue au FICHIER PRES. Un compte global ne
+# prouverait rien : c est la composition qui est le livrable.
 HUBS_ATTENDUS = {
-    "Préhistoire", "Antiquité", "Moyen Âge", "Époque moderne",
-    "Révolutions et empires", "Âge industriel", "XXe siècle", "Transversal",
-    "Controverses", "Méthodes", "Chronologies",
+    "Domaine A", "Domaine B", "Domaine C", "Domaine D", "Domaine E",
+    "Domaine F", "Domaine G", "Transverse",
+    "Consignes", "Directives", "Séquences",
 }
 GABARITS_ATTENDUS = {
-    "Gabarit - Source", "Gabarit - Notion", "Gabarit - Chronologie",
-    "Gabarit - Hub", "Gabarit - Controverse", "Gabarit - Méthode",
+    "Gabarit - Unité", "Gabarit - Notion", "Gabarit - Séquence",
+    "Gabarit - Hub", "Gabarit - Consigne", "Gabarit - Directive",
 }
 # Les dossiers d axe transverse existent, et ne portent AUCUN hub — arbitrage 2.
-TRANSVERSES_ATTENDUS = {"Thèmes", "Espaces"}
+TRANSVERSES_ATTENDUS = {"Marqueurs", "Secteurs"}
 
 
 class Journal:
@@ -114,8 +115,8 @@ def _git(racine: Path, *args: str) -> tuple[int, str]:
 # --------------------------------------------------------------------------- #
 def scenario_vierge(j: Journal, dossier: Path) -> Modele:
     print("\n1. VIERGE — le critère d'acceptation du lot, vérifié")
-    mo = Modele(charge_dict(HISTO), HISTO)
-    cible = dossier / "histobrain"
+    mo = Modele(charge_dict(REFERENCE), REFERENCE)
+    cible = dossier / "reference"
     s = semis.seme(mo, cible, ecrire=True, avec_git=True)
     j.verifie("le semis ne refuse rien", not s.refuse,
               "\n".join(s.manques + s.plan.refus))
@@ -189,7 +190,7 @@ def scenario_vierge(j: Journal, dossier: Path) -> Modele:
 # --------------------------------------------------------------------------- #
 def scenario_refus(j: Journal, mo: Modele, dossier: Path) -> None:
     print("\n2. REFUS — les quatre situations que le plan d'écriture refuse")
-    seme = dossier / "histobrain"
+    seme = dossier / "reference"
 
     cas = [
         ("cible non vide", seme),
@@ -217,7 +218,7 @@ def scenario_refus(j: Journal, mo: Modele, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_incomplet(j: Journal, dossier: Path) -> None:
     print("\n3. INCOMPLET — le cas NÉGATIF : refusé, jamais semé à moitié")
-    base = charge_dict(HISTO)
+    base = charge_dict(REFERENCE)
 
     def ampute(quoi, mutation) -> tuple[str, dict]:
         m = copy.deepcopy(base)
@@ -248,7 +249,7 @@ def scenario_incomplet(j: Journal, dossier: Path) -> None:
            ampute("la zone AUTO du hub sans balises", sans_balises)]
 
     for i, (quoi, m) in enumerate(cas):
-        mo = Modele(m, HISTO)
+        mo = Modele(m, REFERENCE)
         cible = dossier / f"incomplet-{i}"
         s = semis.seme(mo, cible, ecrire=True)
         j.verifie(f"refusé — {quoi}", bool(s.manques), "aucun manque signalé")
@@ -260,11 +261,12 @@ def scenario_incomplet(j: Journal, dossier: Path) -> None:
 
 # --------------------------------------------------------------------------- #
 def scenario_genericite(j: Journal, dossier: Path, vault: Path) -> None:
-    print("\n4. GÉNÉRICITÉ — DevBrain semé, comparé à l'arbre RÉEL (lecture seule)")
-    mo = Modele(charge_dict(DEV), DEV)
-    cible = dossier / "devbrain-vierge"
+    print("\n4. GÉNÉRICITÉ — le témoin semé, comparé à son arbre RÉEL (lecture seule)")
+    manifeste = vault / "brain.yml"
+    mo = Modele(charge_dict(manifeste), manifeste)
+    cible = dossier / "temoin-vierge"
     s = semis.seme(mo, cible, ecrire=True, avec_git=False)
-    j.verifie("le semis de DevBrain ne refuse rien", not s.refuse,
+    j.verifie("le semis du témoin ne refuse rien", not s.refuse,
               "\n".join(s.manques + s.plan.refus))
     if s.refuse:
         return
@@ -317,7 +319,7 @@ def scenario_genericite(j: Journal, dossier: Path, vault: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_reseuiller(j: Journal, mo: Modele, dossier: Path) -> None:
     print("\n5. RE-SEUILLER — aucun effet à zéro page, une dépromotion réelle sinon")
-    vierge = dossier / "histobrain"
+    vierge = dossier / "reference"
     r = reseuiller.calcule(mo, vierge, 5)
     j.verifie("instance vierge : aucun `git mv`, et l'opération le dit",
               r.sans_effet and not r.refus, str(r.refus))
@@ -379,7 +381,7 @@ def scenario_freeze(j: Journal, mo: Modele, dossier: Path) -> None:
     j.verifie("refuse un dossier qui n'est pas une instance", bool(f.refus),
               "aucun refus")
 
-    cible = dossier / "histobrain"
+    cible = dossier / "reference"
     f = figer.fige(mo, cible, ecrire=False)
     j.verifie("simulation : quatre étapes annoncées, rien d'écrit",
               not f.refus and len(f.etapes) == 4
@@ -410,10 +412,10 @@ def scenario_freeze(j: Journal, mo: Modele, dossier: Path) -> None:
 # --------------------------------------------------------------------------- #
 def scenario_idempotence(j: Journal, mo: Modele, dossier: Path) -> None:
     print("\n7. IDEMPOTENCE — semer deux fois est refusé")
-    s = semis.seme(mo, dossier / "histobrain", ecrire=True)
+    s = semis.seme(mo, dossier / "reference", ecrire=True)
     j.verifie("un second semis au même endroit est refusé",
               s.plan.refuse and not s.plan.fichiers, str(s.plan.refus))
-    neuf = dossier / "histobrain-bis"
+    neuf = dossier / "reference-bis"
     a = semis.seme(mo, neuf, ecrire=True, avec_git=False)
     b = semis.seme(mo, neuf / "encore", ecrire=False, avec_git=False)
     j.verifie("le mode lecture n'écrit rien, même sur une cible libre",
@@ -432,8 +434,8 @@ def main() -> int:
     except (AttributeError, ValueError):        # pragma: no cover
         pass
     ap = argparse.ArgumentParser(description="Le jeu d'épreuve du semis.")
-    ap.add_argument("--vault-devbrain", type=Path,
-                    default=RACINE_KIT.parent / "DevBrain")
+    ap.add_argument("--vault-temoin", type=Path, default=None,
+                    help="un vault réel ; cf. tests/temoin.py")
     ap.add_argument("--garder", action="store_true",
                     help="ne pas effacer le dossier temporaire (pour inspecter)")
     ns = ap.parse_args()
@@ -445,10 +447,11 @@ def main() -> int:
         mo = scenario_vierge(j, tmp)
         scenario_refus(j, mo, tmp)
         scenario_incomplet(j, tmp)
-        if ns.vault_devbrain.is_dir():
-            scenario_genericite(j, tmp, ns.vault_devbrain.resolve())
+        vault = temoin.resout(ns.vault_temoin)
+        if vault is not None and (vault / "brain.yml").is_file():
+            scenario_genericite(j, tmp, vault)
         else:
-            print(f"\n4. GÉNÉRICITÉ — sauté : `{ns.vault_devbrain}` introuvable")
+            print(f"\n4. GÉNÉRICITÉ — sauté : {temoin.pourquoi_saute()}")
         scenario_reseuiller(j, mo, tmp)
         scenario_freeze(j, mo, tmp)
         scenario_idempotence(j, mo, tmp)

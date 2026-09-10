@@ -8,7 +8,7 @@ dans le manifeste.
     from pathlib import Path
     from brainkit.valider import charge, valide
 
-    mo = charge(Path("exemples/devbrain.brain.yml"))
+    mo = charge(Path("<vault>/brain.yml"))
     v = valide(mo, Path("../DevBrain"))
     print(v.code, len(v.dures), len(v.avertissements))
 """
