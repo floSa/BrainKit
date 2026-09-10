@@ -1,0 +1,21 @@
+---
+role: hub
+nom: Segment 1
+apport: "Le segment promu du premier domaine : trois pages le portent."
+---
+
+# Segment 1
+
+## Ce qu'il faut comprendre
+
+Sous-domaine promu : trois pages le portent, le seuil est à deux, et le préfixe
+en garde une au niveau supérieur — les trois conditions de la promotion.
+
+<!-- AUTO:START -->
+### Notions
+- [[Notion A1]] — La notion du premier domaine.
+
+### Unités
+- [[Unité A3]] — La troisième unité du premier domaine.
+- [[Unité A2]] — La deuxième unité du premier domaine.
+<!-- AUTO:END -->

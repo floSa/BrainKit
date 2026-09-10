@@ -62,11 +62,11 @@ PAQUET = RACINE_KIT / "brainkit" / "amont"
 AUJOURDHUI = datetime.date(2026, 9, 8)
 
 # Le bloc `amont:` injete EN MEMOIRE dans le manifeste du jeu d epreuve. Il ne
-# nomme ni depot ni paquet : `nature` est l axe de nature d un brain d histoire,
-# et c est le point — le mecanisme ne connait pas le sujet.
+# nomme ni depot ni paquet : `nature` est un axe de nature quelconque, et c est
+# le point — le mecanisme ne connait pas le sujet.
 AMONT_INJECTE = {
-    "porte_par": ["source"],
-    "champ_url": "cote",
+    "porte_par": ["unite"],
+    "champ_url": "option_exigee",
     "champ_confronte": "nature",
     "side_car": "sidecar.json",
     "faits": {"etat": "fraicheur", "date": "fraicheur_date"},
@@ -84,7 +84,7 @@ COLONNE = {
               "jamais_sonde": "amont non sondé"},
 }
 BANDEAU_INJECTE = {
-    "porte_par": ["source"],
+    "porte_par": ["unite"],
     "vide": "—",
     "balises": ["<!-- AUTO:BANDEAU:START -->", "<!-- AUTO:BANDEAU:END -->"],
     "colonnes": [
@@ -215,22 +215,22 @@ def scenario_negatif(j: Journal) -> None:
 
 # --------------------------------------------------------------------------- #
 SIDE_CAR = {
-    # ouvrage (non éliminatoire) + archivé → sous-clé `archive`
-    "Antiquité/Rome/Suetone - Vies des Cesars.md": {
+    # nature-2 (non éliminatoire) + archivé → sous-clé `archive`
+    "Domaine A/Segment 1/Unité A3.md": {
         "sonde_le": "2026-09-08", "etat": "archive", "date": "2025-08-07"},
-    # ouvrage + au-delà du seuil → sous-clé `ancien`
-    "Transversal/Histoire de France.md": {
+    # nature-2 + au-delà du seuil → sous-clé `ancien`
+    "Transverse/Unité T1.md": {
         "sonde_le": "2026-09-08", "etat": "ancienne", "date": "2019-04-01"},
-    # source-primaire (ÉLIMINATOIRE) + amont vivant → sous-clé `contredit`
-    "Antiquité/Herodote - Histoires.md": {
+    # nature-1 (ÉLIMINATOIRE) + amont vivant → sous-clé `contredit`
+    "Domaine A/Unité A1.md": {
         "sonde_le": "2026-09-08", "etat": "recente", "date": "2026-09-02"},
-    # source-primaire + archivé → RIEN : la page le dit déjà
-    "Antiquité/Rome/Tacite - Annales.md": {
+    # nature-1 + archivé → RIEN : la page le dit déjà
+    "Domaine A/Segment 1/Unité A2.md": {
         "sonde_le": "2026-09-08", "etat": "archive", "date": "2024-01-01"},
     # sondée, rien à atteindre → RIEN, mais DANS la population
-    "XXe siècle/Fonds Moscou.md": {
+    "Domaine B/Unité B1.md": {
         "sonde_le": "2026-09-08", "etat": "sans_amont", "date": ""},
-    # « Kennan » est absente : jamais sondée, donc HORS population
+    # « Unité B2 » est absente : jamais sondée, donc HORS population
 }
 
 
@@ -238,7 +238,7 @@ def scenario_regle(j: Journal) -> None:
     print("\n4. RÈGLE — `amont_concorde` sur un side-car synthétique")
     m = charge_dict()
     m["amont"] = copy.deepcopy(AMONT_INJECTE)
-    m["champs"]["nature"]["eliminatoire"] = ["source-primaire"]
+    m["champs"]["nature"]["eliminatoire"] = ["nature-1"]
     m["regles_de_socle"].append({
         "id": "amont_concorde", "severite": "avertissement",
         "enonce": "L'amont sondé ne contredit pas ce que la page déclare.",
@@ -256,18 +256,18 @@ def scenario_regle(j: Journal) -> None:
         for c in constats:
             par_cle.setdefault(c.cle, []).append(c.page)
         attendu = {
-            "archive": ["Antiquité/Rome/Suetone - Vies des Cesars.md"],
-            "ancien": ["Transversal/Histoire de France.md"],
-            "contredit": ["Antiquité/Herodote - Histoires.md"],
+            "archive": ["Domaine A/Segment 1/Unité A3.md"],
+            "ancien": ["Transverse/Unité T1.md"],
+            "contredit": ["Domaine A/Unité A1.md"],
         }
         j.verifie("les trois sous-clés, et elles seules",
                   {k: sorted(v_) for k, v_ in par_cle.items()} == attendu,
                   f"{ {k: sorted(x) for k, x in par_cle.items()} }")
         j.verifie("une page déjà déclarée morte ne produit RIEN",
-                  "Antiquité/Rome/Tacite - Annales.md"
+                  "Domaine A/Segment 1/Unité A2.md"
                   not in [c.page for c in constats])
         j.verifie("une page sans amont atteignable ne produit RIEN",
-                  "XXe siècle/Fonds Moscou.md" not in [c.page for c in constats])
+                  "Domaine B/Unité B1.md" not in [c.page for c in constats])
         j.verifie("aucun constat n'est DUR",
                   all(c.severite == "avertissement" for c in constats),
                   str({c.severite for c in constats}))
@@ -329,7 +329,7 @@ def scenario_contrat(j: Journal) -> None:
 
     bon = copy.deepcopy(base)
     bon["amont"] = copy.deepcopy(AMONT_INJECTE)
-    bon["amont"]["champ_url"] = "cote"
+    bon["amont"]["champ_url"] = "option_exigee"
     bon["bandeau"] = copy.deepcopy(BANDEAU_INJECTE)
     j.verifie("la déclaration bien formée passe C11 sans un mot",
               codes(bon) == [], str(codes(bon)))
@@ -402,15 +402,15 @@ def scenario_refus(j: Journal) -> None:
     # La normalisation de nom de paquet, et la lecture d une URL de depot :
     # deux fonctions pures, sans reseau, qui decident CE QU ON VA SONDER.
     j.verifie("un nom de paquet se normalise (PEP 503)",
-              normalise("Scikit_Learn.Extra") == "scikit-learn-extra",
-              normalise("Scikit_Learn.Extra"))
+              normalise("Paquet_Exemple.Neutre") == "paquet-exemple-neutre",
+              normalise("Paquet_Exemple.Neutre"))
     a = _amont()
     depot, registre, url = cibles_de_la_page(
-        {"cote": "https://github.com/pola-rs/polars", "nature": "ouvrage"}, a)
+        {"option_exigee": "https://github.com/orga-a/depot-b", "nature": "nature-2"}, a)
     j.verifie("une URL de dépôt donne son slug",
-              depot == ("github", "pola-rs/polars"), str(depot))
+              depot == ("github", "orga-a/depot-b"), str(depot))
     depot, _r, _u = cibles_de_la_page(
-        {"cote": "https://git.deuxfleurs.fr/x/y", "nature": "ouvrage"}, a)
+        {"option_exigee": "https://hote-non-declare.example/x/y", "nature": "nature-2"}, a)
     j.verifie("un hôte non déclaré ne se devine pas : aucune cible",
               depot is None, str(depot))
     j.verifie("aucun registre déclaré ici → aucune cible de registre",

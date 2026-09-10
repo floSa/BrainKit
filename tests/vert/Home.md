@@ -5,8 +5,8 @@ et un `.md` posé ici n'est donc pas contrôlé comme une page. C'est en revanch
 d'ici que partent les hubs de premier niveau, qui n'ont aucun parent pour les
 citer — sans cette porte, quatre d'entre eux seraient injoignables.
 
-## Les périodes
+## Les domaines
 
-- [[Antiquité]] — jusqu'à 476
-- [[XXe siècle]] — après 1914
-- [[Transversal]] — les synthèses de longue durée, sans centre de gravité
+- [[Domaine A]] — le premier domaine
+- [[Domaine B]] — le second domaine
+- [[Transverse]] — ce qui n'a aucun centre de gravité

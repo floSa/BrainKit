@@ -1,12 +1,16 @@
 # ==============================================================================
 # epreuve.brain.yml — le manifeste du JEU D EPREUVE du lot 3.
 # ------------------------------------------------------------------------------
-# CE N EST PAS un vault de demonstration, et ce n est pas HistoBrain. C est le
-# manifeste le plus PETIT qui exerce les quatre mecanismes que le test a blanc
-# « histoire » a exiges et que le DevBrain ne rencontre jamais :
+# CE N EST PAS un vault de demonstration, et il ne parle de RIEN : ses roles,
+# ses axes et ses pages sont volontairement vides de sens — « Unite A1 »,
+# « Domaine B », « nature-2 ». Un jeu d epreuve qui porterait un sujet ferait
+# croire que le kit en a un.
+#
+# C est le manifeste le plus PETIT qui exerce les quatre mecanismes qu un axe
+# simple ne rencontre jamais :
 #
 #   1. `reciproque: {mode: inverse, champ: Y}` — une PAIRE de champs orientee,
-#      la ou le DevBrain n a que des miroirs (`alternatives:` <-> `alternatives:`) ;
+#      la ou un miroir simple n a que `X` <-> `X` ;
 #   2. l axe de rangement NON EXCLUSIF, avec sa REGLE DE MAJORITE ;
 #   3. le PREFIXE TRANSVERSAL, qui l emporte sur les valeurs qu une page traverse ;
 #   4. l axe ABSENT — une page qui ne porte AUCUNE valeur d axe.
@@ -22,7 +26,7 @@
 # Les severites sont ECRITES, et c est le seul endroit du kit ou elles ne sont
 # pas un resultat de mesure : un jeu d epreuve a besoin qu une regle ECHOUE DUR
 # pour prouver qu elle mord. Une instance neuve, elle, recoit tout en
-# `a_mesurer` — cf. histobrain.brain.yml, ou les dix y sont.
+# `a_mesurer` — cf. `gabarit/brain.yml`, ou les dix y sont.
 # ==============================================================================
 
 manifeste: 1
@@ -33,7 +37,7 @@ kit:
 
 brain:
   nom: Épreuve
-  sujet: "Le plus petit brain qui exerce les mécanismes que DevBrain ne rencontre jamais."
+  sujet: "Le plus petit brain qui exerce les mécanismes qu'un axe simple ne rencontre jamais."
   langue: fr
   volume_cible: 24
   usage: perso
@@ -50,49 +54,49 @@ git:
   branche_principale: main
 
 libelles:
-  unite:         { s: source,  p: sources }
+  unite:         { s: unité,   p: unités }
   notion:        { s: notion,  p: notions }
   hub:           { s: hub,     p: hubs }
-  axe_rangement: { s: période, p: périodes }
+  axe_rangement: { s: domaine, p: domaines }
   axe_nature:    { s: nature,  p: natures }
 
 # ------------------------------------------------------------------------------
 roles:
 
-  - id: source
+  - id: unite
     fonction: unite
-    libelle: { s: source, p: sources }
+    libelle: { s: unité, p: unités }
     range_par: axe
     protege: false
     pese_sur_le_seuil: true
     apparait_dans_le_hub: true
     taille_avertissement: 500
     champs:
-      requis: [role, nom, apport, periode]
-      autorises: [role, nom, alias, apport, periode, nature, langue_originale,
-                  cote, contredit, prolonge, prolonge_par]
+      requis: [role, nom, apport, domaine]
+      autorises: [role, nom, alias, apport, domaine, nature, option_permise,
+                  option_exigee, contredit, prolonge, prolonge_par]
       conditionnels:
-        - champ: langue_originale
-          si: "nature == source-primaire"
+        - champ: option_permise
+          si: "nature == nature-1"
           sens: permet
-        - champ: cote
-          si: "nature == archive"
+        - champ: option_exigee
+          si: "nature == nature-3"
           sens: exige
       motif_conditionnels: >
-        LES DEUX SENS, cote a cote, et c est tout l objet de l arbitrage 1. Une
-        langue originale n a de sens QUE pour une source primaire : le champ est
-        PERMIS par la condition, jamais exige — une source primaire en francais
-        n a pas de langue originale a declarer. Une cote de fonds, elle, est
-        EXIGEE des qu il s agit d une archive : sans elle, le document n est pas
-        retrouvable, et c est la seule chose qui fasse d une archive une source.
+        LES DEUX SENS, cote a cote, et c est tout l objet de l arbitrage 1. Le
+        premier champ n a de sens QUE pour la nature 1 : il est PERMIS par la
+        condition, jamais exige — une page de nature 1 qui n a rien a declarer
+        n en declare rien. Le second, lui, est EXIGE des que la nature 3 tient :
+        sans lui la page n est pas retrouvable, et c est la seule chose qui
+        fasse d une page de cette nature une unite.
     corps:
       - { titre: "Ce que c'est", niveau: 2, genre: prose }
-      - { titre: "Ce qu'elle établit / Ce qu'elle ne peut pas établir",
+      - { titre: "Ce qu'elle fait / Ce qu'elle ne fait pas",
           niveau: 2, genre: decision,
-          colonne_positive: "Établit", colonne_negative: "N'établit pas" }
-      - { titre: "Comment y accéder", niveau: 2, genre: etiquetee,
-          obligatoires: [Édition, Langue, Accès, Coût],
-          permises:     [Édition, Langue, Accès, Coût] }
+          colonne_positive: "Fait", colonne_negative: "Ne fait pas" }
+      - { titre: "Repères", niveau: 2, genre: etiquetee,
+          obligatoires: ["Repère A", "Repère B", "Repère C", "Repère D"],
+          permises:     ["Repère A", "Repère B", "Repère C", "Repère D"] }
       - { titre: "Autour",          niveau: 2, genre: libre }
       - { titre: "Contredit par",   niveau: 3, genre: liste_liens, champ: contredit }
       - { titre: "Prolonge",        niveau: 3, genre: liste_liens, champ: prolonge }
@@ -109,14 +113,13 @@ roles:
     taille_avertissement: 500
     champs:
       requis: [role, nom, apport]
-      autorises: [role, nom, alias, apport, periode]
+      autorises: [role, nom, alias, apport, domaine]
       motif: >
-        `periode` est AUTORISEE et NON REQUISE, et c est le cas qui passe pour le
-        mecanisme 4 : une notion peut n avoir aucune periode — l historiographie
-        n appartient a aucun siecle. La regle de chemin l ECARTE et le COMPTE ;
-        elle ne la signale pas. Sur le role `source`, la meme absence echoue,
-        parce que `periode` y est REQUISE : c est le gabarit qui decide, jamais
-        la regle de chemin.
+        `domaine` est AUTORISEE et NON REQUISE, et c est le cas qui passe pour le
+        mecanisme 4 : une notion peut n avoir aucun domaine. La regle de chemin
+        l ECARTE et le COMPTE ; elle ne la signale pas. Sur le role `unite`, la
+        meme absence echoue, parce que `domaine` y est REQUISE : c est le gabarit
+        qui decide, jamais la regle de chemin.
     corps:
       - { titre: "Aperçu",     niveau: 2, genre: libre }
       - { titre: "Voir aussi", niveau: 2, genre: liste_liens, champ: null }
@@ -147,78 +150,77 @@ roles:
         # Aucun `depuis: vues` : ce manifeste n a pas de role `fonction: vue`,
         # et declarer une sous-section sans objet serait declarer du vide.
         sections:
-          - { titre: "Sous-périodes", source: "sous-dossiers portant un hub",
+          - { titre: "Sous-domaines", source: "sous-dossiers portant un hub",
               depuis: sous_dossiers, separateur: " · " }
           - { titre: "Notions", source: "role: notion du dossier",
               depuis: role, role: notion }
-          - { titre: "Sources", source: "role: source du dossier",
-              depuis: role, role: source }
+          - { titre: "Unités", source: "role: unite du dossier",
+              depuis: role, role: unite }
 
 # ------------------------------------------------------------------------------
 axes:
 
   rangement:
-    champ: periode
+    champ: domaine
     # ---------------------- MECANISMES 2, 3 et 4 -----------------------------
     exclusif: false
     regle_de_majorite: true
     definition_de_la_majorite: "la valeur de l'axe est celle qui rassemble le plus de la page"
-    prefixe_transversal: transversal
+    prefixe_transversal: transverse
     motif_prefixe_transversal: >
       Reserve a ce qui n a AUCUN centre de gravite. Il l emporte sur les valeurs
-      qu une page traverse : une synthese de longue duree ne vit pas dans la
-      premiere periode qu elle touche.
+      qu une page traverse : une page qui touche trois domaines ne vit pas dans
+      le premier d entre eux.
     seuil_promotion: 2
     motif_seuil: >
       DERIVE du volume cible, comme partout : volume_cible 24 / 3 prefixes -> ~8
-      pages par periode, donc un seuil bas. Il est petit exprès — un jeu
+      pages par domaine, donc un seuil bas. Il est petit exprès — un jeu
       d epreuve doit faire franchir et NE PAS faire franchir le seuil avec une
       poignee de pages, sinon il ne teste ni la promotion ni son plafond.
     plafond_promotion: true
     motif_plafond: >
-      Un sous-dossier qui ne laisse AUCUNE page au niveau de la periode redouble
-      son parent. C est ce qui rend `Antiquité/Herodote - Histoires.md`
-      necessaire au jeu d epreuve : sans elle, `antiquite/rome` egalerait le
-      total du prefixe et ne se promouvrait pas.
+      Un sous-dossier qui ne laisse AUCUNE page au niveau du domaine redouble
+      son parent. C est ce qui rend `Domaine A/Unité A1.md` necessaire au jeu
+      d epreuve : sans elle, `domaine-a/segment-1` egalerait le total du prefixe
+      et ne se promouvrait pas.
     niveaux: 2
     valeur_courte_autorisee: true
     motif_valeur_courte: >
-      Une valeur NUE est legale : `periode: antiquite` sans sous-valeur. C est ce
-      qui distingue cet axe de celui du DevBrain, ou `categorie:` est TOUJOURS
-      `prefixe/sous`.
+      Une valeur NUE est legale : `domaine: domaine-a` sans sous-valeur. C est ce
+      qui distingue cet axe d un axe toujours compose en `prefixe/sous`.
 
     prefixes:
-      - cle: antiquite
-        dossier: "Antiquité"
-        portee: "jusqu'à 476"
+      - cle: domaine-a
+        dossier: "Domaine A"
+        portee: "le premier domaine"
         sous:
-          rome:  { libelle: "Rome" }
-          grece:
-            libelle: "Monde grec"
+          segment-1: { libelle: "Segment 1" }
+          segment-2:
+            libelle: "Segment 2"
             motif: >
               DECLAREE et jamais promue : aucune page ne la porte, donc aucun
-              dossier `Antiquité/Monde grec/` n existe. C est le cas qui prouve
+              dossier `Domaine A/Segment 2/` n existe. C est le cas qui prouve
               qu un libelle declare n exige pas un dossier — la promotion
               reprendra d elle-meme le jour ou deux pages arriveront.
-      - cle: xxe
-        dossier: "XXe siècle"
-        portee: "après 1914"
+      - cle: domaine-b
+        dossier: "Domaine B"
+        portee: "le second domaine"
         sous: {}
-      - cle: transversal
-        dossier: "Transversal"
-        portee: "les synthèses de longue durée, sans centre de gravité"
+      - cle: transverse
+        dossier: "Transverse"
+        portee: "ce qui n'a aucun centre de gravité"
         sous: {}
 
     rattachements: {}
 
     arbre_de_decision:
-      - { n: D1, question: "La source porte-t-elle sur plus de deux des périodes ci-dessous ?",
-          si_oui: ["transversal"],
-          motif: "Hors chronologie, et EN PREMIER : sans elle, une synthese tomberait dans la premiere periode qu elle touche." }
-      - { n: D2, question: "Son objet est-il antérieur à 476 ?", si_oui: ["antiquite/*"] }
-      - { n: D3, question: "Son objet est-il postérieur à 1914 ?", si_oui: ["xxe"] }
+      - { n: D1, question: "La page porte-t-elle sur plus de deux des domaines ci-dessous ?",
+          si_oui: ["transverse"],
+          motif: "Hors rangement, et EN PREMIER : sans elle, une page qui traverse tomberait dans le premier domaine qu elle touche." }
+      - { n: D2, question: "Relève-t-elle du premier domaine ?", si_oui: ["domaine-a/*"] }
+      - { n: D3, question: "Relève-t-elle du second domaine ?", si_oui: ["domaine-b"] }
       - { n: D4, question: "Aucun des précédents", si_oui: [], arret: true,
-          motif: "ARRET — demander. Une periode manquante ne s invente jamais." }
+          motif: "ARRET — demander. Un domaine manquant ne s invente jamais." }
 
     departages: []
     frontieres: []
@@ -226,22 +228,22 @@ axes:
 
   nature:
     champ: nature
-    porte_par: [source]
+    porte_par: [unite]
     interdit_sur: [notion, hub]
     vide_autorise: true
     motif_vide: >
       Un champ vide est le SEUL signal prevu pour « l arbre n a pas tranche ».
-      Toutes les sources du jeu d epreuve en portent une : l absence est
+      Toutes les unites du jeu d epreuve en portent une : l absence est
       signalee en AVERTISSEMENT, et un avertissement dans le vault VERT
       brouillerait la lecture du verdict.
     valeurs:
-      - { cle: source-primaire, definition: "Produite par les contemporains du fait." }
-      - { cle: ouvrage,         definition: "Livre d'auteur, appareil critique." }
-      - { cle: archive,         definition: "Document non publié, conservé en fonds, avec une cote." }
+      - { cle: nature-1, definition: "La nature qui PERMET un champ conditionnel." }
+      - { cle: nature-2, definition: "La nature par défaut, qui ne conditionne rien." }
+      - { cle: nature-3, definition: "La nature qui EXIGE un champ conditionnel." }
     arbre_de_decision:
-      - { n: N1, question: "Le document est-il conservé en fonds, sans publication ?", si_oui: archive }
-      - { n: N2, question: "Son auteur est-il contemporain du fait ?", si_oui: source-primaire }
-      - { n: N3, question: "Aucun des précédents", si_oui: ouvrage, defaut: true }
+      - { n: N1, question: "La page porte-t-elle la marque que la nature 3 exige ?", si_oui: nature-3 }
+      - { n: N2, question: "La page relève-t-elle du premier cas ?", si_oui: nature-1 }
+      - { n: N3, question: "Aucun des précédents", si_oui: nature-2, defaut: true }
     departages: []
 
   transverses: []
@@ -265,28 +267,27 @@ champs:
     fonction: resume_court
     section: null
     reinjecte_dans: ["Contredit par", "Prolonge", "Prolongée par"]
-  periode:
+  domaine:
     type: enum
     source: axes.rangement
     fonction: aucune
     motif: >
-      `type: enum` sur un axe NON EXCLUSIF, exactement comme
-      histobrain.brain.yml : le champ porte tantot un scalaire, tantot une liste.
-      Le moteur lit les deux, et la remontee est ecrite dans
+      `type: enum` sur un axe NON EXCLUSIF : le champ porte tantot un scalaire,
+      tantot une liste. Le moteur lit les deux, et la remontee est ecrite dans
       design/03-validation.md — c est le contrat qui manque d un mot, pas le
       vault qui a tort.
   nature:
     type: enum
     source: axes.nature
     fonction: aucune
-  langue_originale:
+  option_permise:
     type: ligne
     fonction: aucune
-    motif: "Conditionnel, sens PERMET : n a de sens que pour une source primaire."
-  cote:
+    motif: "Conditionnel, sens PERMET : n a de sens que pour la nature 1."
+  option_exigee:
     type: ligne
     fonction: aucune
-    motif: "Conditionnel, sens EXIGE : une archive sans cote n est pas retrouvable."
+    motif: "Conditionnel, sens EXIGE : une page de nature 3 sans lui n est pas retrouvable."
   contredit:
     type: liens
     reciproque: { mode: symetrique }
@@ -332,16 +333,16 @@ regles:
     enonce: "Toute page d'un rôle `apparait_dans_le_hub` présente dans le dossier apparaît dans le hub du dossier."
     active: true
     severite: dure
-    roles: [source, notion]
+    roles: [unite, notion]
 
   - id: voisinage_declare
     enonce: "Une page dont le dossier porte d'autres pages du même rôle et dont le champ de voisinage est vide est signalée."
     active: false
     severite: a_mesurer
     motif: >
-      DESACTIVEE : dans un brain de sources, l absence de voisin est la NORME.
-      Deux sources d une meme periode ne se contredisent ni ne se prolongent la
-      plupart du temps — meme signaler serait du bruit.
+      DESACTIVEE : dans ce brain, l absence de voisin est la NORME. Deux unites
+      d un meme domaine ne se contredisent ni ne se prolongent la plupart du
+      temps — meme signaler serait du bruit.
 
   - id: redirection_sourcee
     enonce: >
@@ -350,8 +351,8 @@ regles:
       wikilink de cette page.
     active: true
     severite: dure
-    sections: ["Ce qu'elle établit / Ce qu'elle ne peut pas établir"]
-    colonne: "N'établit pas"
+    sections: ["Ce qu'elle fait / Ce qu'elle ne fait pas"]
+    colonne: "Ne fait pas"
     marqueur: "→|->"
     condition: "la cible est une page fichée"
 
@@ -367,7 +368,7 @@ regles:
     enonce: "Une section déclarée `genre: etiquetee` a un vocabulaire FERMÉ."
     active: true
     severite: dure
-    sections: ["Comment y accéder"]
+    sections: ["Repères"]
 
   - id: citation_unique
     enonce: "Une même cible ne se LISTE pas dans deux sections de liste de liens."

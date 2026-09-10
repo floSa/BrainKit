@@ -63,32 +63,32 @@ ROUGE = RACINE_KIT / "tests" / "rouge"
 ROUGE_ATTENDU = {
     # 1 — mode `reciproque: inverse` : la page qui AFFIRME la relation
     ("reciprocite", "prolonge",
-     "Antiquité/Rome/Suetone - Vies des Cesars.md"),
+     "Domaine A/Segment 1/Unité A3.md"),
     # 2 — axe ABSENT sur un role qui l exige
     ("gabarit_par_role", "",
-     "XXe siècle/Anonyme - Note sans periode.md"),
+     "Domaine B/Unité B4.md"),
     # 3 — PREFIXE TRANSVERSAL ignore : la page vit dans une periode qu elle traverse
     ("chemin_categorie", "",
-     "XXe siècle/Kennan - Le long telegramme.md"),
+     "Domaine B/Unité B2.md"),
     # 4 — sens `exige` : la condition tient, le champ manque
     ("gabarit_par_role", "conditionnels",
-     "XXe siècle/Fonds Moscou.md"),
+     "Domaine B/Unité B1.md"),
     # 5 — sens `permet` : le champ est la, la condition ne tient pas
     ("gabarit_par_role", "conditionnels",
-     "XXe siècle/Braudel - La Mediterranee.md"),
+     "Domaine B/Unité B3.md"),
     # 6 — redirection non sourcee vers une page fichee
     ("redirection_sourcee", "",
-     "XXe siècle/Braudel - La Mediterranee.md"),
+     "Domaine B/Unité B3.md"),
     # 7 — axe MULTIPLE : aucune valeur portee ne mene au dossier
     ("chemin_categorie", "",
-     "Transversal/Histoire de France.md"),
+     "Transverse/Unité T1.md"),
 }
 
 # Les deux pages du vault VERT qui portent plusieurs valeurs d axe. Legales tant
 # que l axe n est pas exclusif ; fautives des qu il l est.
 VERT_MULTIVALUES = {
-    "XXe siècle/Kennan - Le long telegramme.md",
-    "Transversal/Histoire de France.md",
+    "Domaine B/Unité B2.md",
+    "Transverse/Unité T1.md",
 }
 
 # Le critere d acceptation du lot, mesure sur les deux validateurs actuels du
@@ -179,7 +179,7 @@ def scenario_rouge(j: Journal) -> None:
               dures == ROUGE_ATTENDU, detail)
     # Le defaut 2 ne doit PAS produire un second constat sur la regle de chemin :
     # une page sans valeur d axe est ecartee de la derivation, pas doublee.
-    double = any(p.endswith("Anonyme - Note sans periode.md")
+    double = any(p.endswith("Unité B4.md")
                  for r, _c, p in dures if r == "chemin_categorie")
     j.verifie("l'axe absent échoue sur le GABARIT, pas sur le chemin", not double)
 

@@ -240,18 +240,18 @@ def scenario_gabarit(j: Journal) -> None:
     print("\n6. GABARIT — la forme mesurable d'`existe_si`")
     _m, _rec, occ, _bl = mesure(modele(), VERT, date=DATE)
     par_titre = {(o.role, o.titre): o for o in occ}
-    autour = par_titre.get(("source", "Autour"))
+    autour = par_titre.get(("unite", "Autour"))
     j.verifie("une section à sous-titres déclarés est vue CONTENEUR",
               autour is not None and autour.conteneur,
               f"{autour}")
     j.verifie("… et son sous-arbre est lu : elle n'est pas déclarée morte",
               autour is not None and not autour.morte and autour.remplies > 0,
               f"remplies={autour.remplies if autour else '—'}")
-    ce_que = par_titre.get(("source", "Ce que c'est"))
+    ce_que = par_titre.get(("unite", "Ce que c'est"))
     j.verifie("une section universelle est mesurée présente ET remplie partout",
               ce_que is not None and ce_que.presentes == ce_que.population
               and ce_que.remplies == ce_que.population, f"{ce_que}")
-    partielle = par_titre.get(("source", "Prolonge"))
+    partielle = par_titre.get(("unite", "Prolonge"))
     j.verifie("une section absente de la plupart des pages est mesurée comme telle",
               partielle is not None
               and 0 < partielle.presentes < partielle.population,

@@ -7,8 +7,8 @@ correct, pour que le verdict ne mesure que ce qu'il prétend mesurer.
 
 Les sept défauts sont énumérés, avec la règle attendue, dans `tests/epreuve.py`.
 
-## Les périodes
+## Les domaines
 
-- [[Antiquité]] — jusqu'à 476
-- [[XXe siècle]] — après 1914
-- [[Transversal]] — les synthèses de longue durée, sans centre de gravité
+- [[Domaine A]] — le premier domaine
+- [[Domaine B]] — le second domaine
+- [[Transverse]] — ce qui n'a aucun centre de gravité
