@@ -85,7 +85,7 @@ def touches_par_git(racine: Path) -> set[str]:
     # et un lot de dix pages neuves devient un seul chemin de dossier — le
     # controle declarerait alors TUE tout ce qui est neuf.
     # `core.quotepath=false` : sans lui, tout chemin non-ASCII sort echappe en
-    # octal (`Antiquit\303\251/`), et aucune comparaison avec le vault ne tient.
+    # octal (`Domaine A/Unit\303\251 A1.md`), et aucune comparaison avec le vault ne tient.
     try:
         sortie = subprocess.run(
             ["git", "-c", "core.quotepath=false", "status", "--porcelain",
